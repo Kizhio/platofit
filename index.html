@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<!-- saved from url=(0047)file:///C:/Users/Kizhio/Downloads/platofit.html -->
+<html lang="es" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="apple-mobile-web-app-title" content="PlatoFit">
+<title>PlatoFit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./PlatoFit_files/css2" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+:root{
+  --bg:#FFFFFF;--card:#F2F9F3;--card2:#E8F3EA;
+  --brd:rgba(45,140,60,.13);--brd2:rgba(45,140,60,.2);
+  --tx:#1A2E1A;--tx2:#4A6A4A;--tx3:#7FA07F;
+  --accent:#2D8C3C;--accent2:#1B6B2E;--accentbg:rgba(45,140,60,.06);
+  --lime:#2D8C3C;--limeg:rgba(45,140,60,.06);
+  --cal:#D4850A;--prot:#2571C5;--hc:#2D8C3C;--fat:#CC4444;--fib:#7C4DCC;
+  --splash-bg:#FFFFFF;--nav-bg:rgba(255,255,255,.88);--nav-grad:rgba(255,255,255,.97);
+  --topbar-bg:rgba(255,255,255,.85);--ring-bg:rgba(0,0,0,.06);
+  --card-shadow:0 1px 6px rgba(0,0,0,.04);
+  --gpt-grad:linear-gradient(135deg,#14532D,#1B6B2E,#22883A);
+  --sat:env(safe-area-inset-top,0px);
+  --sab:env(safe-area-inset-bottom,0px);
+  --sal:env(safe-area-inset-left,0px);
+  --sar:env(safe-area-inset-right,0px);
+  --nav-h:58px;
+}
+[data-theme="dark"]{
+  --bg:#0A0F0A;--card:rgba(255,255,255,.05);--card2:rgba(255,255,255,.08);
+  --brd:rgba(255,255,255,.08);--brd2:rgba(255,255,255,.12);
+  --tx:#E8F0E8;--tx2:#8CA08C;--tx3:#506050;
+  --accent:#4ADE6F;--accent2:#6BF09A;--accentbg:rgba(74,222,111,.06);
+  --lime:#4ADE6F;--limeg:rgba(74,222,111,.06);
+  --cal:#FFB347;--prot:#5EB1FF;--hc:#6BF09A;--fat:#FF6B8A;--fib:#A78BFA;
+  --splash-bg:#0A0F0A;--nav-bg:rgba(10,15,10,.88);--nav-grad:rgba(10,15,10,.97);
+  --topbar-bg:rgba(10,15,10,.8);--ring-bg:rgba(255,255,255,.06);
+  --card-shadow:none;
+  --gpt-grad:linear-gradient(135deg,#071A0A,#0F2D14,#14401C);
+}
+html{height:100%;overflow:hidden}
+body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;display:flex;flex-direction:column;user-select:none;-webkit-user-select:none}
+
+/* ─── SPLASH ─── */
+.splash{position:fixed;inset:0;z-index:999;background:var(--splash-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s,visibility .5s}
+.splash.gone{opacity:0;visibility:hidden;pointer-events:none}
+.splash-logo{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:var(--accent2);opacity:0;transform:scale(.8);animation:splashIn .6s .2s forwards}
+.splash-logo span{color:var(--accent)}
+.splash-sub{font-size:.72rem;color:var(--tx3);letter-spacing:3px;text-transform:uppercase;opacity:0;animation:splashIn .5s .5s forwards}
+.splash-bar{width:120px;height:3px;background:var(--brd);border-radius:2px;margin-top:24px;overflow:hidden;opacity:0;animation:splashIn .4s .3s forwards}
+.splash-fill{height:100%;background:var(--accent);border-radius:2px;width:0;animation:splashFill 1s .4s forwards}
+@keyframes splashIn{to{opacity:1;transform:scale(1)}}
+@keyframes splashFill{to{width:100%}}
+
+/* ─── STATUS BAR SPACER ─── */
+.status-bar{height:var(--sat);flex-shrink:0;background:var(--bg)}
+
+/* ─── TOP BAR (per-page, sticky with blur) ─── */
+.topbar{position:sticky;top:0;z-index:20;padding:14px 20px 10px;padding-left:calc(20px + var(--sal));padding-right:calc(20px + var(--sar));background:var(--topbar-bg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid transparent;transition:border-color .2s}
+.topbar.scrolled{border-bottom-color:var(--brd)}
+.topbar-title{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800}
+
+/* ─── APP CONTAINER ─── */
+.app{flex:1;overflow:hidden;position:relative}
+
+/* ─── PAGES with transitions ─── */
+.pg{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;transform:translateX(30px);transition:opacity .28s ease,transform .28s ease;pointer-events:none;padding-bottom:calc(var(--nav-h) + var(--sab) + 20px)}
+.pg.on{opacity:1;transform:translateX(0);pointer-events:auto}
+.pg.out{opacity:0;transform:translateX(-20px)}
+
+/* ─── BOTTOM NAV ─── */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:0 calc(8px + var(--sal)) calc(var(--sab) + 4px) calc(8px + var(--sar));background:linear-gradient(to top,var(--nav-grad) 60%,transparent)}
+.nav-in{display:flex;max-width:500px;margin:0 auto;background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--brd);border-radius:22px;padding:4px;box-shadow:var(--card-shadow)}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 2px 7px;border:none;background:none;color:var(--tx3);font-family:'Outfit',sans-serif;font-size:.6rem;font-weight:500;cursor:pointer;border-radius:16px;transition:all .2s;position:relative;min-height:48px;justify-content:center}
+.nb .ni{font-size:1.25rem;transition:transform .15s}
+.nb.on{color:var(--accent);background:var(--accentbg)}
+.nb:active .ni{transform:scale(.85)}
+.nb.on .ni{transform:scale(1.1)}
+
+/* ─── DASHBOARD ─── */
+.dh{padding:20px;padding-left:calc(20px + var(--sal));padding-right:calc(20px + var(--sar));padding-top:calc(16px + var(--sat));position:relative;overflow:hidden}
+.dh::before{content:'';position:absolute;top:-60px;right:-30px;width:220px;height:220px;background:radial-gradient(circle,rgba(45,140,60,.06),transparent 70%);pointer-events:none}
+.dh h1{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700;line-height:1.2;color:var(--tx2)}
+.dh h1 span{color:var(--accent)}
+.dh .ds{font-size:.75rem;color:var(--tx3);font-weight:300;margin-top:3px}
+.dh .app-name{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--accent2);margin-bottom:6px}
+.dh .app-name span{color:var(--accent)}
+
+/* Macro rings */
+.rr{display:flex;gap:10px;padding:16px 20px 20px;padding-left:calc(20px + var(--sal));overflow-x:auto;scrollbar-width:none;scroll-snap-type:x mandatory}
+.rr::-webkit-scrollbar{display:none}
+.rc{flex:0 0 88px;scroll-snap-align:start;background:var(--card);border:1px solid var(--brd);border-radius:20px;padding:14px 10px 12px;text-align:center;position:relative;overflow:hidden;transition:transform .15s;box-shadow:var(--card-shadow)}
+.rc:active{transform:scale(.95)}
+.rc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.rc-0::after{background:var(--cal)}.rc-1::after{background:var(--prot)}.rc-2::after{background:var(--hc)}.rc-3::after{background:var(--fat)}.rc-4::after{background:var(--fib)}
+.rc svg{width:50px;height:50px;margin:0 auto 6px;display:block}
+.rbg{fill:none;stroke:var(--ring-bg);stroke-width:4.5}
+.rfg{fill:none;stroke-width:4.5;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)}
+.rc .rv{font-size:1.05rem;font-weight:700;display:block;line-height:1}
+.rc .rl{font-size:.55rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.8px;margin-top:2px}
+
+/* Plate items */
+.dsec{padding:0 20px;padding-left:calc(20px + var(--sal));padding-right:calc(20px + var(--sar))}
+.dlbl{font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--tx3);font-weight:600;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.dlbl button{background:none;border:none;color:var(--accent);font-family:'Outfit',sans-serif;font-size:.68rem;font-weight:600;cursor:pointer;padding:6px 0}
+
+.pi{background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;transition:transform .12s;animation:fadeUp .3s ease;box-shadow:var(--card-shadow)}
+.pi:active{transform:scale(.98)}
+.pi .pin{flex:1;min-width:0}
+.pi .pn{font-size:.88rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pi .pp{font-size:.68rem;color:var(--tx3);font-weight:300;margin-top:2px}
+.pi .pk{font-size:.9rem;font-weight:700;color:var(--cal);margin-right:4px}
+.pi .px{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:1.1rem;padding:8px;margin:-8px;border-radius:50%;transition:all .15s;min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center}
+.pi .px:active{background:rgba(229,91,91,.12);color:var(--fat)}
+
+.ep{text-align:center;padding:40px 20px;color:var(--tx3);font-size:.85rem;font-weight:300;line-height:1.6}
+.ep .ei{font-size:3rem;margin-bottom:10px;opacity:.25}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.disc{font-size:.62rem;color:var(--tx3);text-align:center;padding:16px 24px;line-height:1.5;font-weight:300}
+
+/* ─── SEARCH + PILLS (shared) ─── */
+.sb{position:relative;margin-bottom:10px}
+.sb input{width:100%;padding:14px 16px 14px 46px;background:var(--card);border:1.5px solid var(--brd);border-radius:16px;font-family:'Outfit',sans-serif;font-size:.95rem;color:var(--tx);outline:none;transition:border-color .2s;min-height:48px;box-shadow:var(--card-shadow)}
+.sb input:focus{border-color:var(--accent)}
+.sb input::placeholder{color:var(--tx3)}
+.sb .si{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:1.05rem;color:var(--tx3);pointer-events:none}
+
+.pls{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;scroll-snap-type:x proximity}
+.pls::-webkit-scrollbar{display:none}
+.pl{flex-shrink:0;scroll-snap-align:start;padding:9px 16px;border-radius:30px;border:1px solid var(--brd);background:var(--card);font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:500;color:var(--tx2);cursor:pointer;white-space:nowrap;transition:all .18s;min-height:38px;display:flex;align-items:center}
+.pl:active{transform:scale(.95)}
+.pl.on{background:var(--accent);border-color:var(--accent);color:white;font-weight:700}
+
+.la{padding:8px 20px 20px;padding-left:calc(20px + var(--sal));padding-right:calc(20px + var(--sar))}
+.ct2{font-size:.82rem;font-weight:700;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--brd)}
+
+/* ─── DISH CARD ─── */
+.dc{background:var(--card);border:1px solid var(--brd);border-radius:18px;margin-bottom:8px;overflow:hidden;transition:border-color .25s;box-shadow:var(--card-shadow)}
+.dc.op{border-color:rgba(62,166,78,.35)}
+.dch{display:flex;align-items:center;padding:14px 16px;gap:12px;cursor:pointer;min-height:60px;transition:background .1s}
+.dch:active{background:var(--card)}
+.de{font-size:1.5rem;flex-shrink:0;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:var(--accentbg);border-radius:13px}
+.di{flex:1;min-width:0}
+.dn{font-size:.9rem;font-weight:600}
+.dd2{font-size:.7rem;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.db{flex-shrink:0;text-align:right}
+.dk{font-size:.82rem;font-weight:700;color:var(--cal)}
+.da{font-size:.72rem;color:var(--tx3);transition:transform .25s;display:block;margin-top:2px}
+.dc.op .da{transform:rotate(180deg)}
+.dbd{display:none;padding:0 16px 16px}.dc.op .dbd{display:block;animation:fadeUp .25s ease}
+
+.mr{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}
+.mp{font-size:.68rem;padding:4px 10px;border-radius:20px;font-weight:600}
+.mc{background:rgba(232,150,12,.1);color:var(--cal)}
+.mpr{background:rgba(46,134,222,.08);color:var(--prot)}
+.mh{background:rgba(62,166,78,.08);color:var(--accent)}
+.mf{background:rgba(229,91,91,.08);color:var(--fat)}
+.mfi{background:rgba(139,92,246,.08);color:var(--fib)}
+
+.il{margin:8px 0;list-style:none}
+.il li{display:flex;justify-content:space-between;padding:5px 0;font-size:.78rem;border-bottom:1px solid rgba(0,0,0,.04)}
+.il li:last-child{border:none}
+.iln{color:var(--tx2);font-weight:300}
+.ilk{color:var(--cal);font-weight:600;font-size:.72rem}
+
+.dab{width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:14px;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;margin-top:6px;transition:transform .1s}
+.dab:active{transform:scale(.96)}
+
+/* ─── FOOD CARD ─── */
+.fc{background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:14px 16px;margin-bottom:8px;box-shadow:var(--card-shadow)}
+.fn{font-size:.88rem;font-weight:600;margin-bottom:8px}
+.fp{display:flex;flex-wrap:wrap;gap:6px}
+.fb{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:10px 14px;font-family:'Outfit',sans-serif;font-size:.75rem;color:var(--tx2);cursor:pointer;transition:all .12s;line-height:1.3;min-height:44px}
+.fb strong{display:block;font-weight:700;color:var(--cal);font-size:.78rem;margin-top:3px}
+.fb:active{background:var(--accent);border-color:var(--accent);color:white;transform:scale(.95)}
+.fb:active strong{color:white}
+
+/* ─── MIS PLATOS ─── */
+.mhd{padding:24px 20px 16px;padding-top:calc(20px + var(--sat));text-align:center}
+.mhd h2{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:5px}
+.mhd p{font-size:.82rem;color:var(--tx2);font-weight:300}
+
+.mf2{margin:0 20px 20px;background:var(--card);border:1px solid var(--brd);border-radius:20px;padding:20px;box-shadow:var(--card-shadow)}
+.ml2{font-size:.6rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:5px;display:block}
+.mi2{width:100%;padding:13px 14px;border:1.5px solid var(--brd);border-radius:12px;font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--tx);outline:none;background:var(--card2);margin-bottom:12px;min-height:48px;transition:border-color .2s}
+.mi2:focus{border-color:var(--accent)}
+.mg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.mg3 .mi2{margin:0}
+.mg4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.mg4 .mi2{margin:0}
+.msv{width:100%;padding:15px;background:var(--accent);color:white;border:none;border-radius:14px;font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;min-height:50px;transition:transform .1s}
+.msv:active{transform:scale(.96)}
+
+.cd3{background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:14px 16px;margin:0 20px 8px;display:flex;align-items:center;gap:12px;animation:fadeUp .3s ease;box-shadow:var(--card-shadow)}
+.cd3 .ci3{flex:1;min-width:0}
+.cd3 .cn3{font-size:.88rem;font-weight:600}
+.cd3 .cd4{font-size:.68rem;color:var(--tx3);margin-top:2px}
+.cd3 .ck3{font-size:.8rem;font-weight:700;color:var(--cal);background:rgba(232,150,12,.08);padding:4px 10px;border-radius:10px;flex-shrink:0}
+.cd3 .ca3{background:var(--accent);color:white;border:none;border-radius:10px;padding:9px 14px;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;flex-shrink:0;min-width:40px;min-height:38px;transition:transform .1s}
+.cd3 .ca3:active{transform:scale(.9)}
+.cd3 .cx3{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:1.1rem;padding:8px;flex-shrink:0;min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .15s}
+.cd3 .cx3:active{background:rgba(229,91,91,.1);color:var(--fat)}
+.cde2{text-align:center;padding:36px 20px;color:var(--tx3);font-size:.85rem;font-weight:300}
+
+/* ─── FOTO GPT ─── */
+.gp2{padding:20px;padding-top:calc(16px + var(--sat))}
+.gh2{background:var(--gpt-grad);border-radius:24px;padding:32px 24px;text-align:center;color:white;margin-bottom:20px;position:relative;overflow:hidden}
+.gh2::before{content:'';position:absolute;top:-30%;right:-15%;width:160px;height:160px;background:radial-gradient(circle,rgba(255,255,255,.1),transparent 60%);pointer-events:none}
+.gh2 .gi2{font-size:3.5rem;margin-bottom:12px}
+.gh2 h2{font-family:'Syne',sans-serif;font-size:1.45rem;font-weight:800;margin-bottom:8px}
+.gh2 p{font-size:.82rem;opacity:.7;line-height:1.5;font-weight:300;max-width:300px;margin:0 auto}
+.gh2 .ft2{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:5px 14px;font-size:.72rem;font-weight:700;margin-top:12px;color:white}
+
+.gl2{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--accent);color:white;border-radius:18px;padding:17px;font-family:'Outfit',sans-serif;font-size:1.02rem;font-weight:700;text-decoration:none;margin-bottom:18px;min-height:54px;transition:transform .1s;box-shadow:0 4px 16px rgba(62,166,78,.25)}
+.gl2:active{transform:scale(.97)}
+
+.stc2{background:var(--card);border:1px solid var(--brd);border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:var(--card-shadow)}
+.stc2 h3{font-family:'Syne',sans-serif;font-size:1.02rem;font-weight:700;margin-bottom:16px}
+.st2{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.st2:last-child{margin:0}
+.sn2{width:28px;height:28px;flex-shrink:0;background:var(--accent);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800}
+.stx2{flex:1}
+.stx2 b{font-size:.88rem;font-weight:600;display:block;margin-bottom:2px}
+.stx2 span{font-size:.75rem;color:var(--tx3);font-weight:300;line-height:1.4}
+
+.gn2{background:rgba(62,166,78,.06);border:1px solid rgba(62,166,78,.15);border-radius:16px;padding:14px 18px;font-size:.8rem;color:var(--accent2);line-height:1.5}
+.gn2 strong{font-weight:700;display:block;margin-bottom:3px;color:var(--accent)}
+
+/* ─── THEME TOGGLE ─── */
+.theme-toggle{position:absolute;top:20px;right:20px;right:calc(20px + var(--sar));background:var(--card);border:1px solid var(--brd);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;z-index:5;transition:all .2s;box-shadow:var(--card-shadow)}
+.theme-toggle:active{transform:scale(.9)}
+
+/* ─── TOAST ─── */
+.toast{position:fixed;bottom:calc(var(--nav-h) + var(--sab) + 16px);left:50%;transform:translateX(-50%) translateY(40px) scale(.9);background:var(--accent);color:white;padding:12px 24px;border-radius:16px;font-size:.85rem;font-weight:700;z-index:200;opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.175,.885,.32,1.275);white-space:nowrap;box-shadow:0 8px 32px rgba(45,140,60,.2)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+
+/* ─── INSTALL BANNER ─── */
+.install-hint{margin:16px 20px;background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:14px 16px;font-size:.78rem;color:var(--tx2);line-height:1.5;display:none;box-shadow:var(--card-shadow)}
+.install-hint b{color:var(--tx);display:block;margin-bottom:4px}
+@media(display-mode:browser){.install-hint{display:block}}
+@media(display-mode:standalone){.install-hint{display:none}}
+
+.nr2{text-align:center;padding:40px;color:var(--tx3);font-size:.85rem}
+
+/* ─── PWA standalone adjustments ─── */
+@media(display-mode:standalone){
+  .dh{padding-top:8px}
+  .mhd{padding-top:12px}
+  .gp2{padding-top:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div class="splash gone" id="splash">
+  <div class="splash-logo">Plato<span>Fit</span></div>
+  <div class="splash-sub">cuenta tus macros</div>
+  <div class="splash-bar"><div class="splash-fill"></div></div>
+</div>
+
+<div class="app" id="app" style="opacity: 1;">
+
+  <!-- ═══ DASHBOARD ═══ -->
+  <div class="pg on" id="pg-dash">
+    <div class="dh">
+      <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">🌙</button>
+      <div class="app-name">Plato<span>Fit</span></div>
+      <h1>Tu plato de hoy<span>.</span></h1>
+      <div class="ds" id="dd">jueves, 23 de abril</div>
+    </div>
+    <div class="rr" id="rr"><div class="rc rc-0"><svg viewBox="0 0 50 50"><circle class="rbg" cx="25" cy="25" r="21"></circle><circle class="rfg" cx="25" cy="25" r="21" stroke="var(--cal)" stroke-dasharray="131.94689145077132" stroke-dashoffset="131.94689145077132" transform="rotate(-90 25 25)"></circle></svg><span class="rv" style="color:var(--cal)">0</span><span class="rl">Kcal</span></div><div class="rc rc-1"><svg viewBox="0 0 50 50"><circle class="rbg" cx="25" cy="25" r="21"></circle><circle class="rfg" cx="25" cy="25" r="21" stroke="var(--prot)" stroke-dasharray="131.94689145077132" stroke-dashoffset="131.94689145077132" transform="rotate(-90 25 25)"></circle></svg><span class="rv" style="color:var(--prot)">0</span><span class="rl">Prot</span></div><div class="rc rc-2"><svg viewBox="0 0 50 50"><circle class="rbg" cx="25" cy="25" r="21"></circle><circle class="rfg" cx="25" cy="25" r="21" stroke="var(--hc)" stroke-dasharray="131.94689145077132" stroke-dashoffset="131.94689145077132" transform="rotate(-90 25 25)"></circle></svg><span class="rv" style="color:var(--hc)">0</span><span class="rl">HC</span></div><div class="rc rc-3"><svg viewBox="0 0 50 50"><circle class="rbg" cx="25" cy="25" r="21"></circle><circle class="rfg" cx="25" cy="25" r="21" stroke="var(--fat)" stroke-dasharray="131.94689145077132" stroke-dashoffset="131.94689145077132" transform="rotate(-90 25 25)"></circle></svg><span class="rv" style="color:var(--fat)">0</span><span class="rl">Grasa</span></div><div class="rc rc-4"><svg viewBox="0 0 50 50"><circle class="rbg" cx="25" cy="25" r="21"></circle><circle class="rfg" cx="25" cy="25" r="21" stroke="var(--fib)" stroke-dasharray="131.94689145077132" stroke-dashoffset="131.94689145077132" transform="rotate(-90 25 25)"></circle></svg><span class="rv" style="color:var(--fib)">0</span><span class="rl">Fibra</span></div></div>
+    <div class="dsec">
+      <div class="dlbl"><span>Alimentos añadidos</span><button onclick="clr()" id="cb" style="display:none">Vaciar</button></div>
+      <div id="plist"><div class="ep"><div class="ei">🍽️</div>Añade alimentos desde<br>«Platos» o «Alimentos»</div></div>
+    </div>
+    <div class="install-hint">
+      <b>📲 Instalar como app</b>
+      <strong style="font-size:.72rem;color:var(--tx2);font-weight:400">iPhone:</strong> Safari → Compartir ⬆ → Añadir a pantalla de inicio<br>
+      <strong style="font-size:.72rem;color:var(--tx2);font-weight:400">Android:</strong> Chrome → Menú ⋮ → Añadir a pantalla de inicio
+    </div>
+    <div class="disc">⚠️ Estimación orientativa · BEDCA + «Hora de comer» (Junta de Andalucía)<br>No sustituye el consejo de un nutricionista profesional</div>
+  </div>
+
+  <!-- ═══ PLATOS ═══ -->
+  <div class="pg" id="pg-com">
+    <div class="topbar" id="tb-com">
+      <div class="topbar-title">Platos completos</div>
+    </div>
+    <div style="padding:10px 20px 0"><div class="sb"><span class="si">🔍</span><input id="dsi" placeholder="Buscar plato..."></div><div class="pls" id="dp"><button class="pl on" data-c="all">Todos</button><button class="pl" data-c="legumbres">🫘 Legumbres</button><button class="pl" data-c="arroces">🍚 Arroces</button><button class="pl" data-c="carnes">🍗 Carnes</button><button class="pl" data-c="pescados">🐟 Pescados</button><button class="pl" data-c="verduras">🥗 Verduras</button><button class="pl" data-c="huevos">🥚 Huevos</button><button class="pl" data-c="pasta">🍝 Pasta</button><button class="pl" data-c="desayuno">☕ Desayuno</button></div></div>
+    <div class="la" id="dl"><div class="ct2">🫘 Legumbres</div><div class="dc"><div class="dch"><div class="de">🍲</div><div class="di"><div class="dn">Lentejas vegetarianas</div><div class="dd2">Lentejas, zanahoria, puerro, comino</div></div><div class="db"><span class="dk">450 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">450 kcal</span><span class="mp mpr">22g P</span><span class="mp mh">58g HC</span><span class="mp mf">8g G</span><span class="mp mfi">15g F</span></div><ul class="il"><li><span class="iln">Lentejas 200g</span><span class="ilk">230 kcal</span></li><li><span class="iln">Verduras</span><span class="ilk">40 kcal</span></li><li><span class="iln">Aceite</span><span class="ilk">90 kcal</span></li></ul><button class="dab" data-id="d1">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🫘</div><div class="di"><div class="dn">Cocido garbanzos sin pringue</div><div class="dd2">Garbanzos, pollo, ternera, verduras</div></div><div class="db"><span class="dk">360 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">360 kcal</span><span class="mp mpr">24g P</span><span class="mp mh">42g HC</span><span class="mp mf">9g G</span><span class="mp mfi">10g F</span></div><ul class="il"><li><span class="iln">Garbanzos 150g</span><span class="ilk">246 kcal</span></li><li><span class="iln">Carne</span><span class="ilk">70 kcal</span></li><li><span class="iln">Verduras</span><span class="ilk">30 kcal</span></li></ul><button class="dab" data-id="d2">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🫘</div><div class="di"><div class="dn">Garbanzos con bacalao</div><div class="dd2">Garbanzos, bacalao, espinacas</div></div><div class="db"><span class="dk">250 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">250 kcal</span><span class="mp mpr">22g P</span><span class="mp mh">30g HC</span><span class="mp mf">5g G</span><span class="mp mfi">8g F</span></div><ul class="il"><li><span class="iln">Garbanzos 100g</span><span class="ilk">164 kcal</span></li><li><span class="iln">Bacalao 80g</span><span class="ilk">64 kcal</span></li><li><span class="iln">Espinacas</span><span class="ilk">23 kcal</span></li></ul><button class="dab" data-id="d3">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🫘</div><div class="di"><div class="dn">Judías blancas con almejas</div><div class="dd2">Judías, almejas, perejil, vino</div></div><div class="db"><span class="dk">340 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">340 kcal</span><span class="mp mpr">26g P</span><span class="mp mh">38g HC</span><span class="mp mf">7g G</span><span class="mp mfi">12g F</span></div><ul class="il"><li><span class="iln">Judías 150g</span><span class="ilk">190 kcal</span></li><li><span class="iln">Almejas</span><span class="ilk">50 kcal</span></li><li><span class="iln">Aceite+vino</span><span class="ilk">100 kcal</span></li></ul><button class="dab" data-id="d4">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🍲</div><div class="di"><div class="dn">Lentejas con conejo</div><div class="dd2">Lentejas, conejo, comino</div></div><div class="db"><span class="dk">350 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">350 kcal</span><span class="mp mpr">28g P</span><span class="mp mh">40g HC</span><span class="mp mf">7g G</span><span class="mp mfi">13g F</span></div><ul class="il"><li><span class="iln">Lentejas 150g</span><span class="ilk">174 kcal</span></li><li><span class="iln">Conejo 100g</span><span class="ilk">87 kcal</span></li><li><span class="iln">Verduras</span><span class="ilk">90 kcal</span></li></ul><button class="dab" data-id="d5">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🫘</div><div class="di"><div class="dn">Alubias con chocos</div><div class="dd2">Alubias, choco, tomate</div></div><div class="db"><span class="dk">264 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">264 kcal</span><span class="mp mpr">22g P</span><span class="mp mh">28g HC</span><span class="mp mf">6g G</span><span class="mp mfi">9g F</span></div><ul class="il"><li><span class="iln">Alubias 120g</span><span class="ilk">152 kcal</span></li><li><span class="iln">Choco 80g</span><span class="ilk">66 kcal</span></li><li><span class="iln">Sofrito</span><span class="ilk">46 kcal</span></li></ul><button class="dab" data-id="d6">➕ Añadir al plato</button></div></div><div class="ct2">🍚 Arroces</div><div class="dc"><div class="dch"><div class="de">🍚</div><div class="di"><div class="dn">Arroz con conejo</div><div class="dd2">Arroz, conejo, pimiento</div></div><div class="db"><span class="dk">320 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">320 kcal</span><span class="mp mpr">18g P</span><span class="mp mh">45g HC</span><span class="mp mf">6g G</span><span class="mp mfi">2g F</span></div><ul class="il"><li><span class="iln">Arroz 160g</span><span class="ilk">208 kcal</span></li><li><span class="iln">Conejo</span><span class="ilk">52 kcal</span></li><li><span class="iln">Sofrito</span><span class="ilk">60 kcal</span></li></ul><button class="dab" data-id="d10">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🥘</div><div class="di"><div class="dn">Paella de conejo</div><div class="dd2">Arroz, conejo, judías, alcachofa</div></div><div class="db"><span class="dk">370 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">370 kcal</span><span class="mp mpr">20g P</span><span class="mp mh">48g HC</span><span class="mp mf">8g G</span><span class="mp mfi">4g F</span></div><ul class="il"><li><span class="iln">Arroz 180g</span><span class="ilk">234 kcal</span></li><li><span class="iln">Conejo</span><span class="ilk">61 kcal</span></li><li><span class="iln">Verduras</span><span class="ilk">85 kcal</span></li></ul><button class="dab" data-id="d11">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🍚</div><div class="di"><div class="dn">Arroz pollo y alcachofas</div><div class="dd2">Arroz, pollo, alcachofas</div></div><div class="db"><span class="dk">320 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">320 kcal</span><span class="mp mpr">22g P</span><span class="mp mh">42g HC</span><span class="mp mf">6g G</span><span class="mp mfi">4g F</span></div><ul class="il"><li><span class="iln">Arroz 150g</span><span class="ilk">195 kcal</span></li><li><span class="iln">Pollo 80g</span><span class="ilk">87 kcal</span></li><li><span class="iln">Verduras</span><span class="ilk">75 kcal</span></li></ul><button class="dab" data-id="d12">➕ Añadir al plato</button></div></div><div class="ct2">🍗 Carnes</div><div class="dc"><div class="dch"><div class="de">🍗</div><div class="di"><div class="dn">Pechuga pollo plancha</div><div class="dd2">2 filetes pechuga, limón</div></div><div class="db"><span class="dk">220 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">220 kcal</span><span class="mp mpr">42g P</span><span class="mp mh">0g HC</span><span class="mp mf">5g G</span><span class="mp mfi">0g F</span></div><ul class="il"><li><span class="iln">Pechuga 200g</span><span class="ilk">218 kcal</span></li><li><span class="iln">Aceite</span><span class="ilk">20 kcal</span></li></ul><button class="dab" data-id="d20">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🍗</div><div class="di"><div class="dn">Hamburguesa pollo casera</div><div class="dd2">Pollo picado, clara, curry</div></div><div class="db"><span class="dk">250 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">250 kcal</span><span class="mp mpr">38g P</span><span class="mp mh">1g HC</span><span class="mp mf">8g G</span><span class="mp mfi">0g F</span></div><ul class="il"><li><span class="iln">Pollo 200g</span><span class="ilk">218 kcal</span></li><li><span class="iln">Clara+aceite</span><span class="ilk">37 kcal</span></li></ul><button class="dab" data-id="d21">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🥩</div><div class="di"><div class="dn">Ternera a la plancha</div><div class="dd2">Filete ternera magra 150g</div></div><div class="db"><span class="dk">250 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">250 kcal</span><span class="mp mpr">32g P</span><span class="mp mh">0g HC</span><span class="mp mf">12g G</span><span class="mp mfi">0g F</span></div><ul class="il"><li><span class="iln">Ternera 150g</span><span class="ilk">213 kcal</span></li><li><span class="iln">Aceite</span><span class="ilk">40 kcal</span></li></ul><button class="dab" data-id="d22">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🍗</div><div class="di"><div class="dn">Pollo al chilindrón</div><div class="dd2">Pollo, pimiento, tomate</div></div><div class="db"><span class="dk">240 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">240 kcal</span><span class="mp mpr">30g P</span><span class="mp mh">8g HC</span><span class="mp mf">9g G</span><span class="mp mfi">2g F</span></div><ul class="il"><li><span class="iln">Pollo 180g</span><span class="ilk">197 kcal</span></li><li><span class="iln">Sofrito</span><span class="ilk">85 kcal</span></li></ul><button class="dab" data-id="d23">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🦃</div><div class="di"><div class="dn">Pavo a la plancha</div><div class="dd2">Pechuga pavo 200g</div></div><div class="db"><span class="dk">216 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">216 kcal</span><span class="mp mpr">40g P</span><span class="mp mh">0g HC</span><span class="mp mf">4g G</span><span class="mp mfi">0g F</span></div><ul class="il"><li><span class="iln">Pavo 200g</span><span class="ilk">216 kcal</span></li></ul><button class="dab" data-id="d24">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🐇</div><div class="di"><div class="dn">Estofado de conejo</div><div class="dd2">Conejo, verduras, vino</div></div><div class="db"><span class="dk">180 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">180 kcal</span><span class="mp mpr">22g P</span><span class="mp mh">6g HC</span><span class="mp mf">5g G</span><span class="mp mfi">3g F</span></div><ul class="il"><li><span class="iln">Conejo 150g</span><span class="ilk">131 kcal</span></li><li><span class="iln">Verduras</span><span class="ilk">80 kcal</span></li></ul><button class="dab" data-id="d25">➕ Añadir al plato</button></div></div><div class="ct2">🐟 Pescados</div><div class="dc"><div class="dch"><div class="de">🐟</div><div class="di"><div class="dn">Merluza a la plancha</div><div class="dd2">2 filetes pescado blanco</div></div><div class="db"><span class="dk">160 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">160 kcal</span><span class="mp mpr">30g P</span><span class="mp mh">0g HC</span><span class="mp mf">2g G</span><span class="mp mfi">0g F</span></div><ul class="il"><li><span class="iln">Merluza 200g</span><span class="ilk">154 kcal</span></li><li><span class="iln">Aceite</span><span class="ilk">20 kcal</span></li></ul><button class="dab" data-id="d30">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🐟</div><div class="di"><div class="dn">Pescado en salsa verde</div><div class="dd2">Merluza, ajo, vino, perejil</div></div><div class="db"><span class="dk">180 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">180 kcal</span><span class="mp mpr">28g P</span><span class="mp mh">1g HC</span><span class="mp mf">6g G</span><span class="mp mfi">0g F</span></div><ul class="il"><li><span class="iln">Merluza 180g</span><span class="ilk">139 kcal</span></li><li><span class="iln">Aceite+vino</span><span class="ilk">55 kcal</span></li></ul><button class="dab" data-id="d31">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🐟</div><div class="di"><div class="dn">Bacalao con tomate</div><div class="dd2">Bacalao, sofrito tomate</div></div><div class="db"><span class="dk">160 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">160 kcal</span><span class="mp mpr">26g P</span><span class="mp mh">5g HC</span><span class="mp mf">3g G</span><span class="mp mfi">1g F</span></div><ul class="il"><li><span class="iln">Bacalao 200g</span><span class="ilk">128 kcal</span></li><li><span class="iln">Tomate</span><span class="ilk">40 kcal</span></li></ul><button class="dab" data-id="d32">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🦐</div><div class="di"><div class="dn">Brochetas calabacín gambas</div><div class="dd2">Calabacín, pimiento, gambón</div></div><div class="db"><span class="dk">150 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">150 kcal</span><span class="mp mpr">18g P</span><span class="mp mh">5g HC</span><span class="mp mf">4g G</span><span class="mp mfi">2g F</span></div><ul class="il"><li><span class="iln">Gambón 100g</span><span class="ilk">85 kcal</span></li><li><span class="iln">Verduras</span><span class="ilk">70 kcal</span></li></ul><button class="dab" data-id="d33">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🐟</div><div class="di"><div class="dn">Atún a la plancha</div><div class="dd2">Atún fresco, tomate</div></div><div class="db"><span class="dk">360 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">360 kcal</span><span class="mp mpr">40g P</span><span class="mp mh">4g HC</span><span class="mp mf">18g G</span><span class="mp mfi">1g F</span></div><ul class="il"><li><span class="iln">Atún 200g</span><span class="ilk">320 kcal</span></li><li><span class="iln">Tomate</span><span class="ilk">40 kcal</span></li></ul><button class="dab" data-id="d34">➕ Añadir al plato</button></div></div><div class="ct2">🥗 Verduras</div><div class="dc"><div class="dch"><div class="de">🥗</div><div class="di"><div class="dn">Ensalada mixta con atún</div><div class="dd2">Lechuga, tomate, atún natural</div></div><div class="db"><span class="dk">120 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">120 kcal</span><span class="mp mpr">14g P</span><span class="mp mh">6g HC</span><span class="mp mf">4g G</span><span class="mp mfi">3g F</span></div><ul class="il"><li><span class="iln">Lechuga+tomate</span><span class="ilk">41 kcal</span></li><li><span class="iln">Atún 50g</span><span class="ilk">55 kcal</span></li><li><span class="iln">Aceite</span><span class="ilk">45 kcal</span></li></ul><button class="dab" data-id="d40">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🥦</div><div class="di"><div class="dn">Menestra de verduras</div><div class="dd2">Col, judías verdes, guisantes</div></div><div class="db"><span class="dk">100 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">100 kcal</span><span class="mp mpr">5g P</span><span class="mp mh">12g HC</span><span class="mp mf">3g G</span><span class="mp mfi">6g F</span></div><ul class="il"><li><span class="iln">Verduras 300g</span><span class="ilk">60 kcal</span></li><li><span class="iln">Aceite</span><span class="ilk">45 kcal</span></li></ul><button class="dab" data-id="d41">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🍳</div><div class="di"><div class="dn">Verduras a la plancha</div><div class="dd2">Calabacín, pimiento, berenjena</div></div><div class="db"><span class="dk">80 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">80 kcal</span><span class="mp mpr">3g P</span><span class="mp mh">10g HC</span><span class="mp mf">3g G</span><span class="mp mfi">4g F</span></div><ul class="il"><li><span class="iln">Verduras 300g</span><span class="ilk">55 kcal</span></li><li><span class="iln">Aceite</span><span class="ilk">45 kcal</span></li></ul><button class="dab" data-id="d42">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🥬</div><div class="di"><div class="dn">Espinacas con champiñones</div><div class="dd2">Espinacas, champiñón</div></div><div class="db"><span class="dk">70 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">70 kcal</span><span class="mp mpr">6g P</span><span class="mp mh">4g HC</span><span class="mp mf">3g G</span><span class="mp mfi">5g F</span></div><ul class="il"><li><span class="iln">Espinacas 200g</span><span class="ilk">46 kcal</span></li><li><span class="iln">Champiñones</span><span class="ilk">22 kcal</span></li></ul><button class="dab" data-id="d43">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🍅</div><div class="di"><div class="dn">Pisto con atún</div><div class="dd2">Calabacín, berenjena, tomate, atún</div></div><div class="db"><span class="dk">140 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">140 kcal</span><span class="mp mpr">16g P</span><span class="mp mh">10g HC</span><span class="mp mf">4g G</span><span class="mp mfi">4g F</span></div><ul class="il"><li><span class="iln">Pisto 250g</span><span class="ilk">50 kcal</span></li><li><span class="iln">Atún 60g</span><span class="ilk">66 kcal</span></li><li><span class="iln">Tomate frito</span><span class="ilk">24 kcal</span></li></ul><button class="dab" data-id="d44">➕ Añadir al plato</button></div></div><div class="ct2">🥚 Huevos</div><div class="dc"><div class="dch"><div class="de">🥚</div><div class="di"><div class="dn">Tortilla francesa ligera</div><div class="dd2">1 yema + 2 claras</div></div><div class="db"><span class="dk">110 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">110 kcal</span><span class="mp mpr">12g P</span><span class="mp mh">0g HC</span><span class="mp mf">6g G</span><span class="mp mfi">0g F</span></div><ul class="il"><li><span class="iln">Huevo 1y+2c</span><span class="ilk">89 kcal</span></li><li><span class="iln">Aceite</span><span class="ilk">20 kcal</span></li></ul><button class="dab" data-id="d50">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🥚</div><div class="di"><div class="dn">Revuelto espinacas</div><div class="dd2">Espinacas, 1y+2c</div></div><div class="db"><span class="dk">150 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">150 kcal</span><span class="mp mpr">14g P</span><span class="mp mh">2g HC</span><span class="mp mf">8g G</span><span class="mp mfi">3g F</span></div><ul class="il"><li><span class="iln">Espinacas</span><span class="ilk">35 kcal</span></li><li><span class="iln">Huevo</span><span class="ilk">89 kcal</span></li><li><span class="iln">Aceite</span><span class="ilk">40 kcal</span></li></ul><button class="dab" data-id="d51">➕ Añadir al plato</button></div></div><div class="ct2">🍝 Pasta</div><div class="dc"><div class="dch"><div class="de">🍝</div><div class="di"><div class="dn">Espagueti con champiñones</div><div class="dd2">Espagueti, champiñones, ajo</div></div><div class="db"><span class="dk">390 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">390 kcal</span><span class="mp mpr">14g P</span><span class="mp mh">60g HC</span><span class="mp mf">8g G</span><span class="mp mfi">4g F</span></div><ul class="il"><li><span class="iln">Espagueti 200g</span><span class="ilk">260 kcal</span></li><li><span class="iln">Champiñones</span><span class="ilk">22 kcal</span></li><li><span class="iln">Aceite</span><span class="ilk">90 kcal</span></li></ul><button class="dab" data-id="d60">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🍝</div><div class="di"><div class="dn">Fideos con atún</div><div class="dd2">Fideos, atún, tomate</div></div><div class="db"><span class="dk">260 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">260 kcal</span><span class="mp mpr">18g P</span><span class="mp mh">35g HC</span><span class="mp mf">5g G</span><span class="mp mfi">3g F</span></div><ul class="il"><li><span class="iln">Fideos 150g</span><span class="ilk">158 kcal</span></li><li><span class="iln">Atún 60g</span><span class="ilk">66 kcal</span></li><li><span class="iln">Sofrito</span><span class="ilk">40 kcal</span></li></ul><button class="dab" data-id="d61">➕ Añadir al plato</button></div></div><div class="ct2">☕ Desayuno</div><div class="dc"><div class="dch"><div class="de">☕</div><div class="di"><div class="dn">Tostada + café con leche</div><div class="dd2">Pan integral, aceite, leche</div></div><div class="db"><span class="dk">280 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">280 kcal</span><span class="mp mpr">8g P</span><span class="mp mh">22g HC</span><span class="mp mf">12g G</span><span class="mp mfi">3g F</span></div><ul class="il"><li><span class="iln">Pan 30g</span><span class="ilk">70 kcal</span></li><li><span class="iln">Aceite 10g</span><span class="ilk">90 kcal</span></li><li><span class="iln">Leche 200ml</span><span class="ilk">68 kcal</span></li></ul><button class="dab" data-id="d70">➕ Añadir al plato</button></div></div><div class="dc"><div class="dch"><div class="de">🥣</div><div class="di"><div class="dn">Avena con leche y fruta</div><div class="dd2">Avena 40g, leche, fruta</div></div><div class="db"><span class="dk">250 kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">250 kcal</span><span class="mp mpr">12g P</span><span class="mp mh">38g HC</span><span class="mp mf">5g G</span><span class="mp mfi">5g F</span></div><ul class="il"><li><span class="iln">Avena 40g</span><span class="ilk">152 kcal</span></li><li><span class="iln">Leche 150ml</span><span class="ilk">51 kcal</span></li><li><span class="iln">Fruta</span><span class="ilk">50 kcal</span></li></ul><button class="dab" data-id="d71">➕ Añadir al plato</button></div></div></div>
+  </div>
+
+  <!-- ═══ ALIMENTOS ═══ -->
+  <div class="pg" id="pg-ali">
+    <div class="topbar" id="tb-ali">
+      <div class="topbar-title">Alimentos</div>
+    </div>
+    <div style="padding:10px 20px 0"><div class="sb"><span class="si">🔍</span><input id="fsi" placeholder="Buscar alimento..."></div><div class="pls" id="ffp"><button class="pl on" data-c="all">Todos</button><button class="pl" data-c="proteinas">🥩 Proteínas</button><button class="pl" data-c="lacteos">🥛 Lácteos</button><button class="pl" data-c="cereales">🌾 Cereales</button><button class="pl" data-c="verduras_i">🥦 Verduras</button><button class="pl" data-c="frutas">🍎 Frutas</button><button class="pl" data-c="secos">🥜 F.secos</button><button class="pl" data-c="grasas">🫒 Grasas</button><button class="pl" data-c="suplementos">💪 Suplem.</button></div></div>
+    <div class="la" id="fl"><div class="ct2">🥩 Proteínas</div><div class="fc"><div class="fn">Pechuga pollo</div><div class="fp"><button class="fb" data-fi="1" data-pi="0">1 filete 150g<strong>165 kcal · 35g P</strong></button><button class="fb" data-fi="1" data-pi="1">2 filetes 200g<strong>220 kcal · 46g P</strong></button></div></div><div class="fc"><div class="fn">Pavo pechuga</div><div class="fp"><button class="fb" data-fi="2" data-pi="0">200g<strong>216 kcal · 44g P</strong></button><button class="fb" data-fi="2" data-pi="1">100g<strong>108 kcal · 22g P</strong></button></div></div><div class="fc"><div class="fn">Ternera magra</div><div class="fp"><button class="fb" data-fi="3" data-pi="0">Filete 150g<strong>213 kcal · 32g P</strong></button></div></div><div class="fc"><div class="fn">Conejo</div><div class="fp"><button class="fb" data-fi="4" data-pi="0">150g<strong>131 kcal · 27g P</strong></button><button class="fb" data-fi="4" data-pi="1">250g<strong>218 kcal · 45g P</strong></button></div></div><div class="fc"><div class="fn">Merluza</div><div class="fp"><button class="fb" data-fi="5" data-pi="0">2 filetes 200g<strong>154 kcal · 34g P</strong></button><button class="fb" data-fi="5" data-pi="1">1 filete 100g<strong>77 kcal · 17g P</strong></button></div></div><div class="fc"><div class="fn">Atún fresco</div><div class="fp"><button class="fb" data-fi="6" data-pi="0">Rodaja 150g<strong>162 kcal · 35g P</strong></button></div></div><div class="fc"><div class="fn">Atún lata natural</div><div class="fp"><button class="fb" data-fi="7" data-pi="0">Lata 52g<strong>57 kcal · 13g P</strong></button><button class="fb" data-fi="7" data-pi="1">Lata 80g<strong>88 kcal · 20g P</strong></button></div></div><div class="fc"><div class="fn">Salmón</div><div class="fp"><button class="fb" data-fi="8" data-pi="0">125g<strong>260 kcal · 25g P</strong></button></div></div><div class="fc"><div class="fn">Gambas</div><div class="fp"><button class="fb" data-fi="9" data-pi="0">80g<strong>77 kcal · 14g P</strong></button><button class="fb" data-fi="9" data-pi="1">150g<strong>144 kcal · 27g P</strong></button></div></div><div class="fc"><div class="fn">Huevo entero</div><div class="fp"><button class="fb" data-fi="10" data-pi="0">1 huevo 60g<strong>86 kcal · 8g P</strong></button><button class="fb" data-fi="10" data-pi="1">2 huevos 120g<strong>172 kcal · 15g P</strong></button></div></div><div class="fc"><div class="fn">Clara huevo</div><div class="fp"><button class="fb" data-fi="11" data-pi="0">2 claras 70g<strong>34 kcal · 7g P</strong></button></div></div><div class="fc"><div class="fn">Jamón serrano</div><div class="fp"><button class="fb" data-fi="12" data-pi="0">2 lonchas 20g<strong>79 kcal · 6g P</strong></button><button class="fb" data-fi="12" data-pi="1">50g<strong>198 kcal · 16g P</strong></button></div></div><div class="fc"><div class="fn">Bacalao</div><div class="fp"><button class="fb" data-fi="13" data-pi="0">200g<strong>160 kcal · 36g P</strong></button></div></div><div class="fc"><div class="fn">Hígado</div><div class="fp"><button class="fb" data-fi="14" data-pi="0">120g<strong>180 kcal · 24g P</strong></button></div></div><div class="ct2">🥛 Lácteos</div><div class="fc"><div class="fn">Leche desnatada</div><div class="fp"><button class="fb" data-fi="20" data-pi="0">Vaso 200ml<strong>68 kcal · 7g P</strong></button></div></div><div class="fc"><div class="fn">Yogur natural</div><div class="fp"><button class="fb" data-fi="21" data-pi="0">125g<strong>76 kcal · 5g P</strong></button></div></div><div class="fc"><div class="fn">Yogur griego</div><div class="fp"><button class="fb" data-fi="22" data-pi="0">125g<strong>150 kcal · 6g P</strong></button></div></div><div class="fc"><div class="fn">Queso Burgos</div><div class="fp"><button class="fb" data-fi="23" data-pi="0">60g<strong>120 kcal · 7g P</strong></button></div></div><div class="ct2">🌾 Cereales</div><div class="fc"><div class="fn">Arroz cocido</div><div class="fp"><button class="fb" data-fi="30" data-pi="0">1 cazo 100g<strong>130 kcal · 3g P</strong></button><button class="fb" data-fi="30" data-pi="1">2 cazos 200g<strong>260 kcal · 5g P</strong></button></div></div><div class="fc"><div class="fn">Pasta cocida</div><div class="fp"><button class="fb" data-fi="31" data-pi="0">2 cazos 180g<strong>236 kcal · 9g P</strong></button></div></div><div class="fc"><div class="fn">Pan integral</div><div class="fp"><button class="fb" data-fi="32" data-pi="0">Rebanada 30g<strong>70 kcal · 3g P</strong></button><button class="fb" data-fi="32" data-pi="1">Pieza 60g<strong>140 kcal · 6g P</strong></button></div></div><div class="fc"><div class="fn">Patata hervida</div><div class="fp"><button class="fb" data-fi="33" data-pi="0">2 cazos 200g<strong>154 kcal · 4g P</strong></button><button class="fb" data-fi="33" data-pi="1">1 cazo 100g<strong>77 kcal · 2g P</strong></button></div></div><div class="fc"><div class="fn">Avena copos</div><div class="fp"><button class="fb" data-fi="34" data-pi="0">40g<strong>152 kcal · 5g P</strong></button><button class="fb" data-fi="34" data-pi="1">60g<strong>228 kcal · 8g P</strong></button></div></div><div class="fc"><div class="fn">Lentejas cocidas</div><div class="fp"><button class="fb" data-fi="35" data-pi="0">3 cazos 200g<strong>232 kcal · 18g P</strong></button></div></div><div class="fc"><div class="fn">Garbanzos cocidos</div><div class="fp"><button class="fb" data-fi="36" data-pi="0">3 cazos 200g<strong>328 kcal · 18g P</strong></button></div></div><div class="ct2">🥦 Verduras</div><div class="fc"><div class="fn">Tomate</div><div class="fp"><button class="fb" data-fi="40" data-pi="0">1 ud 150g<strong>29 kcal · 1g P</strong></button></div></div><div class="fc"><div class="fn">Espinacas</div><div class="fp"><button class="fb" data-fi="41" data-pi="0">Plato 200g<strong>46 kcal · 6g P</strong></button></div></div><div class="fc"><div class="fn">Brócoli</div><div class="fp"><button class="fb" data-fi="42" data-pi="0">250g<strong>85 kcal · 8g P</strong></button></div></div><div class="fc"><div class="fn">Champiñón</div><div class="fp"><button class="fb" data-fi="43" data-pi="0">150g<strong>33 kcal · 5g P</strong></button></div></div><div class="fc"><div class="fn">Calabacín</div><div class="fp"><button class="fb" data-fi="44" data-pi="0">200g<strong>34 kcal · 2g P</strong></button></div></div><div class="fc"><div class="fn">Judías verdes</div><div class="fp"><button class="fb" data-fi="45" data-pi="0">250g<strong>50 kcal · 5g P</strong></button></div></div><div class="fc"><div class="fn">Guisantes</div><div class="fp"><button class="fb" data-fi="46" data-pi="0">2 cazos 150g<strong>140 kcal · 11g P</strong></button></div></div><div class="fc"><div class="fn">Aguacate</div><div class="fp"><button class="fb" data-fi="47" data-pi="0">Medio 80g<strong>128 kcal · 2g P</strong></button></div></div><div class="ct2">🍎 Frutas</div><div class="fc"><div class="fn">Manzana</div><div class="fp"><button class="fb" data-fi="50" data-pi="0">1 ud 180g<strong>94 kcal · 1g P</strong></button></div></div><div class="fc"><div class="fn">Plátano</div><div class="fp"><button class="fb" data-fi="51" data-pi="0">1 ud 120g<strong>108 kcal · 1g P</strong></button></div></div><div class="fc"><div class="fn">Naranja</div><div class="fp"><button class="fb" data-fi="52" data-pi="0">1 ud 200g<strong>72 kcal · 1g P</strong></button></div></div><div class="fc"><div class="fn">Fresas</div><div class="fp"><button class="fb" data-fi="53" data-pi="0">200g<strong>64 kcal · 1g P</strong></button></div></div><div class="ct2">🥜 F.secos</div><div class="fc"><div class="fn">Almendras</div><div class="fp"><button class="fb" data-fi="60" data-pi="0">20g<strong>130 kcal · 4g P</strong></button><button class="fb" data-fi="60" data-pi="1">30g<strong>195 kcal · 6g P</strong></button></div></div><div class="fc"><div class="fn">Nueces</div><div class="fp"><button class="fb" data-fi="61" data-pi="0">20g<strong>131 kcal · 3g P</strong></button></div></div><div class="ct2">🫒 Grasas</div><div class="fc"><div class="fn">Aceite oliva</div><div class="fp"><button class="fb" data-fi="70" data-pi="0">1 cuch 10g<strong>90 kcal · 0g P</strong></button><button class="fb" data-fi="70" data-pi="1">2 cuch 20g<strong>180 kcal · 0g P</strong></button></div></div><div class="ct2">💪 Suplem.</div><div class="fc"><div class="fn">Whey protein</div><div class="fp"><button class="fb" data-fi="80" data-pi="0">1 cazo 30g<strong>120 kcal · 24g P</strong></button></div></div><div class="fc"><div class="fn">Creatina</div><div class="fp"><button class="fb" data-fi="81" data-pi="0">5g<strong>0 kcal · 0g P</strong></button></div></div></div>
+  </div>
+
+  <!-- ═══ MIS PLATOS ═══ -->
+  <div class="pg" id="pg-mis">
+    <div class="mhd">
+      <h2>Mis platos</h2>
+      <p>Guarda tus comidas habituales con todos los macros</p>
+    </div>
+    <div class="mf2">
+      <label class="ml2">Nombre</label><input class="mi2" id="cn" placeholder="Ej: Pollo + arroz del gym">
+      <label class="ml2">Descripción</label><input class="mi2" id="cds" placeholder="Ej: Pechuga 200g + arroz basmati 150g">
+      <div class="mg3">
+        <div><label class="ml2">Kcal</label><input class="mi2" id="cc" type="number" inputmode="numeric" placeholder="350"></div>
+        <div><label class="ml2">Prot (g)</label><input class="mi2" id="cp" type="number" inputmode="numeric" placeholder="35"></div>
+        <div><label class="ml2">HC (g)</label><input class="mi2" id="cch" type="number" inputmode="numeric" placeholder="40"></div>
+      </div>
+      <div class="mg4">
+        <div><label class="ml2">Grasa (g)</label><input class="mi2" id="cff" type="number" inputmode="numeric" placeholder="8"></div>
+        <div><label class="ml2">Fibra (g)</label><input class="mi2" id="cfi" type="number" inputmode="numeric" placeholder="3"></div>
+      </div>
+      <button class="msv" onclick="svm()">💾 Guardar plato</button>
+    </div>
+    <div style="padding:0 20px 6px"><div class="ct2">Guardados</div></div>
+    <div id="myl"><div class="cde2">Aún no tienes platos guardados</div></div>
+  </div>
+
+  <!-- ═══ FOTO IA ═══ -->
+  <div class="pg" id="pg-foto">
+    <div class="gp2">
+      <div class="gh2">
+        <div class="gi2">📸</div>
+        <h2>Análisis con IA</h2>
+        <p>Sube una foto y recibe kcal, proteínas, HC, grasas y fibra al instante</p>
+        <div class="ft2">🆓 100% gratis</div>
+      </div>
+      <a class="gl2" href="https://chatgpt.com/g/g-69ea68d8c53081919493e68f3c095e61-macroscan" target="_blank">🚀 Abrir PlatoFit en ChatGPT</a>
+      <div class="stc2">
+        <h3>¿Cómo funciona?</h3>
+        <div class="st2"><div class="sn2">1</div><div class="stx2"><b>Instala ChatGPT gratis</b><span>App Store o Google Play</span></div></div>
+        <div class="st2"><div class="sn2">2</div><div class="stx2"><b>Crea cuenta (solo email)</b><span>Sin tarjeta ni pago</span></div></div>
+        <div class="st2"><div class="sn2">3</div><div class="stx2"><b>Abre PlatoFit</b><span>El botón de arriba te lleva directo</span></div></div>
+        <div class="st2"><div class="sn2">4</div><div class="stx2"><b>Sube foto → copia macros aquí</b><span>Regístralos en «Mis platos»</span></div></div>
+      </div>
+      <div class="gn2"><strong>✅ No necesitas pago</strong>La versión gratuita de ChatGPT es suficiente.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="nav" id="nav" style="opacity: 1;">
+  <div class="nav-in">
+    <button class="nb on" data-p="dash"><span class="ni">📊</span>Resumen</button>
+    <button class="nb" data-p="com"><span class="ni">🍽️</span>Platos</button>
+    <button class="nb" data-p="ali"><span class="ni">🥩</span>Alimentos</button>
+    <button class="nb" data-p="mis"><span class="ni">⭐</span>Guardados</button>
+    <button class="nb" data-p="foto"><span class="ni">📸</span>Foto IA</button>
+  </div>
+</div>
+
+<div class="toast" id="tt"></div>
+
+<script>
+// ═══ THEME TOGGLE ═══
+function getTheme(){return localStorage.getItem('ms_theme')||'light'}
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙';
+  const mc=document.querySelector('meta[name="theme-color"]');
+  if(mc)mc.setAttribute('content',t==='dark'?'#0A0F0A':'#FFFFFF');
+  localStorage.setItem('ms_theme',t);
+}
+function toggleTheme(){applyTheme(getTheme()==='dark'?'light':'dark')}
+// Apply saved theme immediately
+(function(){const t=getTheme();if(t==='dark')document.documentElement.setAttribute('data-theme','dark')})();
+
+// ═══ SPLASH ═══
+setTimeout(()=>{document.getElementById('splash').classList.add('gone');document.getElementById('app').style.opacity='1';document.getElementById('nav').style.opacity='1';applyTheme(getTheme())},1500);
+
+// ═══ DATA ═══
+const D=[
+{id:'d1',ct:'legumbres',e:'🍲',n:'Lentejas vegetarianas',d:'Lentejas, zanahoria, puerro, comino',k:450,p:22,c:58,f:8,fi:15,i:[{n:'Lentejas 200g',k:230},{n:'Verduras',k:40},{n:'Aceite',k:90}]},
+{id:'d2',ct:'legumbres',e:'🫘',n:'Cocido garbanzos sin pringue',d:'Garbanzos, pollo, ternera, verduras',k:360,p:24,c:42,f:9,fi:10,i:[{n:'Garbanzos 150g',k:246},{n:'Carne',k:70},{n:'Verduras',k:30}]},
+{id:'d3',ct:'legumbres',e:'🫘',n:'Garbanzos con bacalao',d:'Garbanzos, bacalao, espinacas',k:250,p:22,c:30,f:5,fi:8,i:[{n:'Garbanzos 100g',k:164},{n:'Bacalao 80g',k:64},{n:'Espinacas',k:23}]},
+{id:'d4',ct:'legumbres',e:'🫘',n:'Judías blancas con almejas',d:'Judías, almejas, perejil, vino',k:340,p:26,c:38,f:7,fi:12,i:[{n:'Judías 150g',k:190},{n:'Almejas',k:50},{n:'Aceite+vino',k:100}]},
+{id:'d5',ct:'legumbres',e:'🍲',n:'Lentejas con conejo',d:'Lentejas, conejo, comino',k:350,p:28,c:40,f:7,fi:13,i:[{n:'Lentejas 150g',k:174},{n:'Conejo 100g',k:87},{n:'Verduras',k:90}]},
+{id:'d6',ct:'legumbres',e:'🫘',n:'Alubias con chocos',d:'Alubias, choco, tomate',k:264,p:22,c:28,f:6,fi:9,i:[{n:'Alubias 120g',k:152},{n:'Choco 80g',k:66},{n:'Sofrito',k:46}]},
+{id:'d10',ct:'arroces',e:'🍚',n:'Arroz con conejo',d:'Arroz, conejo, pimiento',k:320,p:18,c:45,f:6,fi:2,i:[{n:'Arroz 160g',k:208},{n:'Conejo',k:52},{n:'Sofrito',k:60}]},
+{id:'d11',ct:'arroces',e:'🥘',n:'Paella de conejo',d:'Arroz, conejo, judías, alcachofa',k:370,p:20,c:48,f:8,fi:4,i:[{n:'Arroz 180g',k:234},{n:'Conejo',k:61},{n:'Verduras',k:85}]},
+{id:'d12',ct:'arroces',e:'🍚',n:'Arroz pollo y alcachofas',d:'Arroz, pollo, alcachofas',k:320,p:22,c:42,f:6,fi:4,i:[{n:'Arroz 150g',k:195},{n:'Pollo 80g',k:87},{n:'Verduras',k:75}]},
+{id:'d20',ct:'carnes',e:'🍗',n:'Pechuga pollo plancha',d:'2 filetes pechuga, limón',k:220,p:42,c:0,f:5,fi:0,i:[{n:'Pechuga 200g',k:218},{n:'Aceite',k:20}]},
+{id:'d21',ct:'carnes',e:'🍗',n:'Hamburguesa pollo casera',d:'Pollo picado, clara, curry',k:250,p:38,c:1,f:8,fi:0,i:[{n:'Pollo 200g',k:218},{n:'Clara+aceite',k:37}]},
+{id:'d22',ct:'carnes',e:'🥩',n:'Ternera a la plancha',d:'Filete ternera magra 150g',k:250,p:32,c:0,f:12,fi:0,i:[{n:'Ternera 150g',k:213},{n:'Aceite',k:40}]},
+{id:'d23',ct:'carnes',e:'🍗',n:'Pollo al chilindrón',d:'Pollo, pimiento, tomate',k:240,p:30,c:8,f:9,fi:2,i:[{n:'Pollo 180g',k:197},{n:'Sofrito',k:85}]},
+{id:'d24',ct:'carnes',e:'🦃',n:'Pavo a la plancha',d:'Pechuga pavo 200g',k:216,p:40,c:0,f:4,fi:0,i:[{n:'Pavo 200g',k:216}]},
+{id:'d25',ct:'carnes',e:'🐇',n:'Estofado de conejo',d:'Conejo, verduras, vino',k:180,p:22,c:6,f:5,fi:3,i:[{n:'Conejo 150g',k:131},{n:'Verduras',k:80}]},
+{id:'d30',ct:'pescados',e:'🐟',n:'Merluza a la plancha',d:'2 filetes pescado blanco',k:160,p:30,c:0,f:2,fi:0,i:[{n:'Merluza 200g',k:154},{n:'Aceite',k:20}]},
+{id:'d31',ct:'pescados',e:'🐟',n:'Pescado en salsa verde',d:'Merluza, ajo, vino, perejil',k:180,p:28,c:1,f:6,fi:0,i:[{n:'Merluza 180g',k:139},{n:'Aceite+vino',k:55}]},
+{id:'d32',ct:'pescados',e:'🐟',n:'Bacalao con tomate',d:'Bacalao, sofrito tomate',k:160,p:26,c:5,f:3,fi:1,i:[{n:'Bacalao 200g',k:128},{n:'Tomate',k:40}]},
+{id:'d33',ct:'pescados',e:'🦐',n:'Brochetas calabacín gambas',d:'Calabacín, pimiento, gambón',k:150,p:18,c:5,f:4,fi:2,i:[{n:'Gambón 100g',k:85},{n:'Verduras',k:70}]},
+{id:'d34',ct:'pescados',e:'🐟',n:'Atún a la plancha',d:'Atún fresco, tomate',k:360,p:40,c:4,f:18,fi:1,i:[{n:'Atún 200g',k:320},{n:'Tomate',k:40}]},
+{id:'d40',ct:'verduras',e:'🥗',n:'Ensalada mixta con atún',d:'Lechuga, tomate, atún natural',k:120,p:14,c:6,f:4,fi:3,i:[{n:'Lechuga+tomate',k:41},{n:'Atún 50g',k:55},{n:'Aceite',k:45}]},
+{id:'d41',ct:'verduras',e:'🥦',n:'Menestra de verduras',d:'Col, judías verdes, guisantes',k:100,p:5,c:12,f:3,fi:6,i:[{n:'Verduras 300g',k:60},{n:'Aceite',k:45}]},
+{id:'d42',ct:'verduras',e:'🍳',n:'Verduras a la plancha',d:'Calabacín, pimiento, berenjena',k:80,p:3,c:10,f:3,fi:4,i:[{n:'Verduras 300g',k:55},{n:'Aceite',k:45}]},
+{id:'d43',ct:'verduras',e:'🥬',n:'Espinacas con champiñones',d:'Espinacas, champiñón',k:70,p:6,c:4,f:3,fi:5,i:[{n:'Espinacas 200g',k:46},{n:'Champiñones',k:22}]},
+{id:'d44',ct:'verduras',e:'🍅',n:'Pisto con atún',d:'Calabacín, berenjena, tomate, atún',k:140,p:16,c:10,f:4,fi:4,i:[{n:'Pisto 250g',k:50},{n:'Atún 60g',k:66},{n:'Tomate frito',k:24}]},
+{id:'d50',ct:'huevos',e:'🥚',n:'Tortilla francesa ligera',d:'1 yema + 2 claras',k:110,p:12,c:0,f:6,fi:0,i:[{n:'Huevo 1y+2c',k:89},{n:'Aceite',k:20}]},
+{id:'d51',ct:'huevos',e:'🥚',n:'Revuelto espinacas',d:'Espinacas, 1y+2c',k:150,p:14,c:2,f:8,fi:3,i:[{n:'Espinacas',k:35},{n:'Huevo',k:89},{n:'Aceite',k:40}]},
+{id:'d60',ct:'pasta',e:'🍝',n:'Espagueti con champiñones',d:'Espagueti, champiñones, ajo',k:390,p:14,c:60,f:8,fi:4,i:[{n:'Espagueti 200g',k:260},{n:'Champiñones',k:22},{n:'Aceite',k:90}]},
+{id:'d61',ct:'pasta',e:'🍝',n:'Fideos con atún',d:'Fideos, atún, tomate',k:260,p:18,c:35,f:5,fi:3,i:[{n:'Fideos 150g',k:158},{n:'Atún 60g',k:66},{n:'Sofrito',k:40}]},
+{id:'d70',ct:'desayuno',e:'☕',n:'Tostada + café con leche',d:'Pan integral, aceite, leche',k:280,p:8,c:22,f:12,fi:3,i:[{n:'Pan 30g',k:70},{n:'Aceite 10g',k:90},{n:'Leche 200ml',k:68}]},
+{id:'d71',ct:'desayuno',e:'🥣',n:'Avena con leche y fruta',d:'Avena 40g, leche, fruta',k:250,p:12,c:38,f:5,fi:5,i:[{n:'Avena 40g',k:152},{n:'Leche 150ml',k:51},{n:'Fruta',k:50}]},
+];
+
+const FF=[
+{id:1,ct:'proteinas',n:'Pechuga pollo',v:{k:110,p:23,c:0,f:1.2,fi:0},o:[{n:'1 filete 150g',g:150},{n:'2 filetes 200g',g:200}]},
+{id:2,ct:'proteinas',n:'Pavo pechuga',v:{k:108,p:22,c:0,f:2,fi:0},o:[{n:'200g',g:200},{n:'100g',g:100}]},
+{id:3,ct:'proteinas',n:'Ternera magra',v:{k:142,p:21,c:0,f:5,fi:0},o:[{n:'Filete 150g',g:150}]},
+{id:4,ct:'proteinas',n:'Conejo',v:{k:87,p:18,c:0,f:1.5,fi:0},o:[{n:'150g',g:150},{n:'250g',g:250}]},
+{id:5,ct:'proteinas',n:'Merluza',v:{k:77,p:17,c:0,f:0.5,fi:0},o:[{n:'2 filetes 200g',g:200},{n:'1 filete 100g',g:100}]},
+{id:6,ct:'proteinas',n:'Atún fresco',v:{k:108,p:23,c:0,f:1,fi:0},o:[{n:'Rodaja 150g',g:150}]},
+{id:7,ct:'proteinas',n:'Atún lata natural',v:{k:110,p:25,c:0,f:1,fi:0},o:[{n:'Lata 52g',g:52},{n:'Lata 80g',g:80}]},
+{id:8,ct:'proteinas',n:'Salmón',v:{k:208,p:20,c:0,f:13,fi:0},o:[{n:'125g',g:125}]},
+{id:9,ct:'proteinas',n:'Gambas',v:{k:96,p:18,c:0,f:1,fi:0},o:[{n:'80g',g:80},{n:'150g',g:150}]},
+{id:10,ct:'proteinas',n:'Huevo entero',v:{k:143,p:12.5,c:0.7,f:10,fi:0},o:[{n:'1 huevo 60g',g:60},{n:'2 huevos 120g',g:120}]},
+{id:11,ct:'proteinas',n:'Clara huevo',v:{k:49,p:10.6,c:0.6,f:0,fi:0},o:[{n:'2 claras 70g',g:70}]},
+{id:12,ct:'proteinas',n:'Jamón serrano',v:{k:395,p:31,c:0,f:24,fi:0},o:[{n:'2 lonchas 20g',g:20},{n:'50g',g:50}]},
+{id:13,ct:'proteinas',n:'Bacalao',v:{k:80,p:18,c:0,f:0.5,fi:0},o:[{n:'200g',g:200}]},
+{id:14,ct:'proteinas',n:'Hígado',v:{k:150,p:20,c:2,f:5,fi:0},o:[{n:'120g',g:120}]},
+{id:20,ct:'lacteos',n:'Leche desnatada',v:{k:34,p:3.3,c:4.8,f:0.2,fi:0},o:[{n:'Vaso 200ml',g:200}]},
+{id:21,ct:'lacteos',n:'Yogur natural',v:{k:61,p:4,c:4.4,f:3.2,fi:0},o:[{n:'125g',g:125}]},
+{id:22,ct:'lacteos',n:'Yogur griego',v:{k:120,p:4.8,c:3.2,f:9.6,fi:0},o:[{n:'125g',g:125}]},
+{id:23,ct:'lacteos',n:'Queso Burgos',v:{k:200,p:12,c:3,f:15,fi:0},o:[{n:'60g',g:60}]},
+{id:30,ct:'cereales',n:'Arroz cocido',v:{k:130,p:2.5,c:28,f:0.3,fi:0.4},o:[{n:'1 cazo 100g',g:100},{n:'2 cazos 200g',g:200}]},
+{id:31,ct:'cereales',n:'Pasta cocida',v:{k:131,p:5,c:25,f:0.9,fi:1.4},o:[{n:'2 cazos 180g',g:180}]},
+{id:32,ct:'cereales',n:'Pan integral',v:{k:233,p:10,c:43,f:3.3,fi:8},o:[{n:'Rebanada 30g',g:30},{n:'Pieza 60g',g:60}]},
+{id:33,ct:'cereales',n:'Patata hervida',v:{k:77,p:2,c:17,f:0.1,fi:1.4},o:[{n:'2 cazos 200g',g:200},{n:'1 cazo 100g',g:100}]},
+{id:34,ct:'cereales',n:'Avena copos',v:{k:380,p:13.3,c:65,f:7,fi:10},o:[{n:'40g',g:40},{n:'60g',g:60}]},
+{id:35,ct:'cereales',n:'Lentejas cocidas',v:{k:116,p:9,c:20,f:0.4,fi:7.9},o:[{n:'3 cazos 200g',g:200}]},
+{id:36,ct:'cereales',n:'Garbanzos cocidos',v:{k:164,p:8.9,c:27,f:2.6,fi:7.6},o:[{n:'3 cazos 200g',g:200}]},
+{id:40,ct:'verduras_i',n:'Tomate',v:{k:19,p:0.9,c:3.5,f:0.2,fi:1.2},o:[{n:'1 ud 150g',g:150}]},
+{id:41,ct:'verduras_i',n:'Espinacas',v:{k:23,p:2.9,c:1.3,f:0.4,fi:2.2},o:[{n:'Plato 200g',g:200}]},
+{id:42,ct:'verduras_i',n:'Brócoli',v:{k:34,p:3.3,c:2,f:0.4,fi:3},o:[{n:'250g',g:250}]},
+{id:43,ct:'verduras_i',n:'Champiñón',v:{k:22,p:3.1,c:0.5,f:0.3,fi:1},o:[{n:'150g',g:150}]},
+{id:44,ct:'verduras_i',n:'Calabacín',v:{k:17,p:1.2,c:2,f:0.3,fi:1},o:[{n:'200g',g:200}]},
+{id:45,ct:'verduras_i',n:'Judías verdes',v:{k:20,p:1.8,c:3,f:0.1,fi:3},o:[{n:'250g',g:250}]},
+{id:46,ct:'verduras_i',n:'Guisantes',v:{k:93,p:7,c:10,f:0.5,fi:5},o:[{n:'2 cazos 150g',g:150}]},
+{id:47,ct:'verduras_i',n:'Aguacate',v:{k:160,p:2,c:1.8,f:15,fi:6.7},o:[{n:'Medio 80g',g:80}]},
+{id:50,ct:'frutas',n:'Manzana',v:{k:52,p:0.3,c:12,f:0.2,fi:2.4},o:[{n:'1 ud 180g',g:180}]},
+{id:51,ct:'frutas',n:'Plátano',v:{k:90,p:1.1,c:20,f:0.3,fi:2.6},o:[{n:'1 ud 120g',g:120}]},
+{id:52,ct:'frutas',n:'Naranja',v:{k:36,p:0.7,c:8.5,f:0.1,fi:1.8},o:[{n:'1 ud 200g',g:200}]},
+{id:53,ct:'frutas',n:'Fresas',v:{k:32,p:0.7,c:6,f:0.3,fi:2},o:[{n:'200g',g:200}]},
+{id:60,ct:'secos',n:'Almendras',v:{k:651,p:21,c:4,f:55,fi:12},o:[{n:'20g',g:20},{n:'30g',g:30}]},
+{id:61,ct:'secos',n:'Nueces',v:{k:654,p:15,c:7,f:63,fi:7},o:[{n:'20g',g:20}]},
+{id:70,ct:'grasas',n:'Aceite oliva',v:{k:900,p:0,c:0,f:100,fi:0},o:[{n:'1 cuch 10g',g:10},{n:'2 cuch 20g',g:20}]},
+{id:80,ct:'suplementos',n:'Whey protein',v:{k:400,p:80,c:7,f:5,fi:0},o:[{n:'1 cazo 30g',g:30}]},
+{id:81,ct:'suplementos',n:'Creatina',v:{k:0,p:0,c:0,f:0,fi:0},o:[{n:'5g',g:5}]},
+];
+
+const DC={legumbres:'🫘 Legumbres',arroces:'🍚 Arroces',carnes:'🍗 Carnes',pescados:'🐟 Pescados',verduras:'🥗 Verduras',huevos:'🥚 Huevos',pasta:'🍝 Pasta',desayuno:'☕ Desayuno'};
+const FC2={proteinas:'🥩 Proteínas',lacteos:'🥛 Lácteos',cereales:'🌾 Cereales',verduras_i:'🥦 Verduras',frutas:'🍎 Frutas',secos:'🥜 F.secos',grasas:'🫒 Grasas',suplementos:'💪 Suplem.'};
+
+let plate=[],dCat='all',dQ='',fCat='all',fQ='',curPg='dash';
+
+// ═══ NAV with transitions ═══
+document.querySelectorAll('.nb').forEach(b=>b.addEventListener('click',()=>{
+  const pg=b.dataset.p;if(pg===curPg)return;
+  document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  const oldEl=document.getElementById('pg-'+curPg);
+  const newEl=document.getElementById('pg-'+pg);
+  oldEl.classList.remove('on');oldEl.classList.add('out');
+  setTimeout(()=>{oldEl.classList.remove('out');newEl.classList.add('on');newEl.scrollTop=0;curPg=pg},50);
+}));
+
+// ═══ Topbar scroll effect ═══
+['pg-com','pg-ali'].forEach(id=>{
+  const pg=document.getElementById(id);
+  const tb=pg.querySelector('.topbar');
+  if(pg&&tb)pg.addEventListener('scroll',()=>tb.classList.toggle('scrolled',pg.scrollTop>10));
+});
+
+// ═══ PLATE ═══
+function ap(n,po,k,p,c,f,fi){plate.push({n,po,k:k||0,p:p||0,c:c||0,f:f||0,fi:fi||0});rd();ts('✅ '+n)}
+function rp(i){plate.splice(i,1);rd()}
+function clr(){plate=[];rd()}
+
+// ═══ DASHBOARD ═══
+function rd(){
+  document.getElementById('dd').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+  const t={k:0,p:0,c:0,f:0,fi:0};plate.forEach(x=>{t.k+=x.k;t.p+=x.p;t.c+=x.c;t.f+=x.f;t.fi+=x.fi});
+  const g={k:2200,p:150,c:250,f:70,fi:30};
+  const R=[{l:'Kcal',v:Math.round(t.k),g:g.k,cl:'var(--cal)'},{l:'Prot',v:Math.round(t.p),g:g.p,cl:'var(--prot)'},{l:'HC',v:Math.round(t.c),g:g.c,cl:'var(--hc)'},{l:'Grasa',v:Math.round(t.f),g:g.f,cl:'var(--fat)'},{l:'Fibra',v:Math.round(t.fi),g:g.fi,cl:'var(--fib)'}];
+  const ci=2*Math.PI*21;
+  document.getElementById('rr').innerHTML=R.map((r,i)=>{const pc=Math.min(r.v/r.g,1);const off=ci-(pc*ci);return`<div class="rc rc-${i}"><svg viewBox="0 0 50 50"><circle class="rbg" cx="25" cy="25" r="21"/><circle class="rfg" cx="25" cy="25" r="21" stroke="${r.cl}" stroke-dasharray="${ci}" stroke-dashoffset="${off}" transform="rotate(-90 25 25)"/></svg><span class="rv" style="color:${r.cl}">${r.v}</span><span class="rl">${r.l}</span></div>`}).join('');
+  const pl=document.getElementById('plist'),cb=document.getElementById('cb');
+  if(!plate.length){pl.innerHTML='<div class="ep"><div class="ei">🍽️</div>Añade alimentos desde<br>«Platos» o «Alimentos»</div>';cb.style.display='none'}
+  else{cb.style.display='';pl.innerHTML=plate.map((x,i)=>`<div class="pi"><div class="pin"><div class="pn">${x.n}</div><div class="pp">${x.po} · ${x.p}g P · ${x.c}g HC · ${x.f}g G</div></div><div class="pk">${Math.round(x.k)}</div><button class="px" onclick="rp(${i})">✕</button></div>`).join('')}
+}
+
+// ═══ DISHES ═══
+function idp(){
+  const e=document.getElementById('dp');
+  e.innerHTML='<button class="pl on" data-c="all">Todos</button>'+Object.entries(DC).map(([k,v])=>`<button class="pl" data-c="${k}">${v}</button>`).join('');
+  e.addEventListener('click',ev=>{const b=ev.target.closest('.pl');if(!b)return;dCat=b.dataset.c;dQ='';document.getElementById('dsi').value='';e.querySelectorAll('.pl').forEach(x=>x.classList.remove('on'));b.classList.add('on');rds()});
+}
+document.getElementById('dsi').addEventListener('input',e=>{dQ=e.target.value.trim();dCat='all';document.querySelectorAll('#dp .pl').forEach(x=>x.classList.remove('on'));document.querySelector('#dp .pl[data-c="all"]').classList.add('on');rds()});
+function rds(){
+  const it=D.filter(x=>(dCat==='all'||x.ct===dCat)&&(!dQ||x.n.toLowerCase().includes(dQ.toLowerCase())||x.d.toLowerCase().includes(dQ.toLowerCase())));
+  const el=document.getElementById('dl');
+  if(!it.length){el.innerHTML='<div class="nr2">😕 Sin resultados</div>';return}
+  let h='';
+  if(dQ||dCat!=='all')h=it.map(dh).join('');
+  else{const g2={};it.forEach(x=>{(g2[x.ct]=g2[x.ct]||[]).push(x)});h=Object.entries(g2).map(([c2,arr])=>`<div class="ct2">${DC[c2]}</div>${arr.map(dh).join('')}`).join('')}
+  el.innerHTML=h;
+  el.querySelectorAll('.dch').forEach(h2=>h2.addEventListener('click',()=>h2.closest('.dc').classList.toggle('op')));
+  el.querySelectorAll('.dab').forEach(b=>b.addEventListener('click',ev=>{ev.stopPropagation();const x=D.find(z=>z.id===b.dataset.id);if(x)ap(x.n,'Plato completo',x.k,x.p,x.c,x.f,x.fi)}));
+}
+function dh(x){return`<div class="dc"><div class="dch"><div class="de">${x.e}</div><div class="di"><div class="dn">${x.n}</div><div class="dd2">${x.d}</div></div><div class="db"><span class="dk">${x.k} kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">${x.k} kcal</span><span class="mp mpr">${x.p}g P</span><span class="mp mh">${x.c}g HC</span><span class="mp mf">${x.f}g G</span><span class="mp mfi">${x.fi}g F</span></div><ul class="il">${x.i.map(i2=>`<li><span class="iln">${i2.n}</span><span class="ilk">${i2.k} kcal</span></li>`).join('')}</ul><button class="dab" data-id="${x.id}">➕ Añadir al plato</button></div></div>`}
+
+// ═══ FOODS ═══
+function ifp(){
+  const e=document.getElementById('ffp');
+  e.innerHTML='<button class="pl on" data-c="all">Todos</button>'+Object.entries(FC2).map(([k,v])=>`<button class="pl" data-c="${k}">${v}</button>`).join('');
+  e.addEventListener('click',ev=>{const b=ev.target.closest('.pl');if(!b)return;fCat=b.dataset.c;fQ='';document.getElementById('fsi').value='';e.querySelectorAll('.pl').forEach(x=>x.classList.remove('on'));b.classList.add('on');rfs()});
+}
+document.getElementById('fsi').addEventListener('input',e=>{fQ=e.target.value.trim();fCat='all';document.querySelectorAll('#ffp .pl').forEach(x=>x.classList.remove('on'));document.querySelector('#ffp .pl[data-c="all"]').classList.add('on');rfs()});
+function rfs(){
+  const it=FF.filter(x=>(fCat==='all'||x.ct===fCat)&&(!fQ||x.n.toLowerCase().includes(fQ.toLowerCase())));
+  const el=document.getElementById('fl');
+  if(!it.length){el.innerHTML='<div class="nr2">😕 Sin resultados</div>';return}
+  let h='';
+  if(fQ||fCat!=='all')h=it.map(fh).join('');
+  else{const g2={};it.forEach(x=>{(g2[x.ct]=g2[x.ct]||[]).push(x)});h=Object.entries(g2).map(([c2,arr])=>`<div class="ct2">${FC2[c2]}</div>${arr.map(fh).join('')}`).join('')}
+  el.innerHTML=h;
+  el.querySelectorAll('.fb').forEach(b=>b.addEventListener('click',()=>{
+    const x=FF.find(z=>z.id===parseInt(b.dataset.fi));const po=x.o[parseInt(b.dataset.pi)];const m=po.g/100;const s=x.v;
+    ap(x.n,po.n,Math.round(s.k*m),+(s.p*m).toFixed(1),+(s.c*m).toFixed(1),+(s.f*m).toFixed(1),+(s.fi*m).toFixed(1));
+  }));
+}
+function fh(x){return`<div class="fc"><div class="fn">${x.n}</div><div class="fp">${x.o.map((po,i)=>{const m=po.g/100;return`<button class="fb" data-fi="${x.id}" data-pi="${i}">${po.n}<strong>${Math.round(x.v.k*m)} kcal · ${(x.v.p*m).toFixed(0)}g P</strong></button>`}).join('')}</div></div>`}
+
+// ═══ MIS PLATOS ═══
+function lm(){try{return JSON.parse(localStorage.getItem('ms3')||'[]')}catch{return[]}}
+function smm(d){try{localStorage.setItem('ms3',JSON.stringify(d))}catch{}}
+function svm(){
+  const n=document.getElementById('cn').value.trim();if(!n){alert('Escribe un nombre');return}
+  const k=+document.getElementById('cc').value||0,p=+document.getElementById('cp').value||0,c=+document.getElementById('cch').value||0,f=+document.getElementById('cff').value||0,fi=+document.getElementById('cfi').value||0;
+  const ds2=document.getElementById('cds').value.trim();
+  if(!k&&!p){alert('Indica al menos kcal o proteínas');return}
+  const dd2=lm();dd2.unshift({id:Date.now(),n,ds:ds2,k,p,c,f,fi});smm(dd2);
+  ['cn','cds','cc','cp','cch','cff','cfi'].forEach(x=>document.getElementById(x).value='');
+  rm();ts('💾 Guardado');
+}
+function dm(id){smm(lm().filter(x=>x.id!==id));rm()}
+function rm(){
+  const dd2=lm(),el=document.getElementById('myl');
+  if(!dd2.length){el.innerHTML='<div class="cde2">Aún no tienes platos guardados</div>';return}
+  el.innerHTML=dd2.map(x=>`<div class="cd3"><div class="ci3"><div class="cn3">${x.n}</div><div class="cd4">${x.ds||''} · ${x.p}g P · ${x.c}g HC · ${x.f}g G</div></div><div class="ck3">${x.k}</div><button class="ca3" onclick="ap('${x.n.replace(/'/g,"\\'")}','Mis platos',${x.k},${x.p},${x.c},${x.f},${x.fi})">＋</button><button class="cx3" onclick="dm(${x.id})">✕</button></div>`).join('');
+}
+
+// ═══ TOAST ═══
+let tT;function ts(m){const t=document.getElementById('tt');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2200)}
+
+// ═══ INIT ═══
+idp();ifp();rd();rds();rfs();rm();
+</script>
+
+
+</body></html>

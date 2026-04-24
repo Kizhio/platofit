@@ -215,9 +215,11 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 
 /* ─── FOTO IA (native) ─── */
 
-.ia-upload-area{background:var(--card);border:2px dashed var(--brd2);border-radius:20px;padding:36px 20px;text-align:center;cursor:pointer;margin-bottom:16px;transition:all .2s;position:relative;overflow:hidden;min-height:160px;display:flex;align-items:center;justify-content:center;box-shadow:var(--card-shadow)}
-.ia-upload-area:active{transform:scale(.98);border-color:var(--accent)}
-.ia-upload-area.has-img{padding:0;border-style:solid;border-color:var(--accent)}
+.ia-btns-row{display:flex;gap:10px;margin-bottom:16px}
+.ia-pick-btn{flex:1;padding:16px 10px;background:var(--card);border:1.5px solid var(--brd2);border-radius:16px;font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:600;color:var(--tx2);cursor:pointer;transition:all .15s;min-height:54px;box-shadow:var(--card-shadow)}
+.ia-pick-btn:active{transform:scale(.96);border-color:var(--accent);color:var(--accent)}
+
+.ia-upload-area{border:2px solid var(--accent);border-radius:20px;margin-bottom:16px;overflow:hidden;box-shadow:var(--card-shadow)}
 .ia-upload-icon{font-size:2.8rem;margin-bottom:10px;opacity:.6}
 .ia-upload-text{font-size:.92rem;font-weight:600;color:var(--tx2)}
 .ia-upload-hint{font-size:.7rem;color:var(--tx3);margin-top:4px;font-weight:300}
@@ -434,14 +436,16 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
       </div>
 
       <!-- Upload area -->
-      <div id="ia-upload-area" class="ia-upload-area">
-        <input type="file" id="ia-file" accept="image/*" style="display:none" onchange="iaPreview(this)">
-        <div id="ia-upload-content" onclick="document.getElementById('ia-file').click()">
-          <div class="ia-upload-icon">📷</div>
-          <div class="ia-upload-text">Toca para subir una foto</div>
-          <div class="ia-upload-hint">JPG, PNG o WebP</div>
-        </div>
-        <img id="ia-preview" class="ia-preview-img" style="display:none" onclick="document.getElementById('ia-file').click()">
+      <input type="file" id="ia-file-cam" accept="image/*" capture="environment" style="display:none" onchange="iaPreview(this)">
+      <input type="file" id="ia-file-gal" accept="image/*" style="display:none" onchange="iaPreview(this)">
+      
+      <div id="ia-upload-area" class="ia-upload-area" style="display:none">
+        <img id="ia-preview" class="ia-preview-img" onclick="document.getElementById('ia-file-gal').click()">
+      </div>
+
+      <div class="ia-btns-row">
+        <button class="ia-pick-btn" onclick="document.getElementById('ia-file-cam').click()">📷 Hacer foto</button>
+        <button class="ia-pick-btn" onclick="document.getElementById('ia-file-gal').click()">🖼️ Galería</button>
       </div>
 
       <!-- Analyze button -->
@@ -815,9 +819,7 @@ function iaPreview(input) {
   reader.onload = function(e) {
     const img = document.getElementById('ia-preview');
     img.src = e.target.result;
-    img.style.display = 'block';
-    document.getElementById('ia-upload-content').style.display = 'none';
-    document.getElementById('ia-upload-area').classList.add('has-img');
+    document.getElementById('ia-upload-area').style.display = 'block';
     
     const btn = document.getElementById('ia-analyze-btn');
     const u = iaGetUsage();

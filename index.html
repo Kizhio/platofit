@@ -806,8 +806,10 @@ function iaSaveUsage(u) { localStorage.setItem('pf_ia_usage', JSON.stringify(u))
 function iaUpdateBadge() {
   const u = iaGetUsage();
   const rem = Math.max(0, IA_DAILY_LIMIT - u.count);
-  document.getElementById('ia-remaining').textContent = rem;
-  document.getElementById('ia-limit-badge').textContent = '🆓 ' + rem + '/' + IA_DAILY_LIMIT + ' análisis hoy';
+  const remEl = document.getElementById('ia-remaining');
+  const badgeEl = document.getElementById('ia-limit-badge');
+  if (remEl) remEl.textContent = rem;
+  if (badgeEl) badgeEl.innerHTML = '🆓 ' + rem + '/' + IA_DAILY_LIMIT + ' análisis hoy';
 }
 
 function iaPreview(input) {
@@ -914,8 +916,8 @@ async function iaAnalyze() {
     
   } catch (err) {
     console.error('IA error:', err);
-    document.getElementById('ia-error').textContent = '❌ Error de conexión. Comprueba tu internet e inténtalo de nuevo.';
-    document.getElementById('ia-error').style.display = 'block';
+    const errEl = document.getElementById('ia-error');
+    if (errEl) { errEl.textContent = '❌ Error de conexión. Comprueba tu internet e inténtalo de nuevo.'; errEl.style.display = 'block'; }
     btn.disabled = false;
     document.getElementById('ia-btn-text').textContent = '🔍 Reintentar';
   }

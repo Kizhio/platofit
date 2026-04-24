@@ -213,7 +213,26 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 .cd3 .cx3:active{background:rgba(229,91,91,.1);color:var(--fat)}
 .cde2{text-align:center;padding:36px 20px;color:var(--tx3);font-size:.85rem;font-weight:300}
 
-/* ─── FOTO GPT ─── */
+/* ─── FOTO IA (native) ─── */
+
+.ia-upload-area{background:var(--card);border:2px dashed var(--brd2);border-radius:20px;padding:36px 20px;text-align:center;cursor:pointer;margin-bottom:16px;transition:all .2s;position:relative;overflow:hidden;min-height:160px;display:flex;align-items:center;justify-content:center;box-shadow:var(--card-shadow)}
+.ia-upload-area:active{transform:scale(.98);border-color:var(--accent)}
+.ia-upload-area.has-img{padding:0;border-style:solid;border-color:var(--accent)}
+.ia-upload-icon{font-size:2.8rem;margin-bottom:10px;opacity:.6}
+.ia-upload-text{font-size:.92rem;font-weight:600;color:var(--tx2)}
+.ia-upload-hint{font-size:.7rem;color:var(--tx3);margin-top:4px;font-weight:300}
+.ia-preview-img{width:100%;max-height:300px;object-fit:cover;border-radius:18px;display:block}
+
+.ia-loading{display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px}
+.ia-spinner{width:36px;height:36px;border:3px solid var(--brd);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ia-loading-text{font-size:.85rem;color:var(--tx2);font-weight:500}
+
+#ia-result .il{margin:12px 0 0;list-style:none}
+#ia-result .il li{display:flex;justify-content:space-between;padding:6px 0;font-size:.78rem;border-bottom:1px solid rgba(0,0,0,.04)}
+#ia-result .il li:last-child{border:none}
+
+/* ─── FOTO GPT (legacy styles kept for reuse) ─── */
 
 .gh2{background:var(--gpt-grad);border-radius:24px;padding:32px 24px;text-align:center;color:white;margin-bottom:20px;position:relative;overflow:hidden}
 .gh2::before{content:'';position:absolute;top:-30%;right:-15%;width:160px;height:160px;background:radial-gradient(circle,rgba(255,255,255,.1),transparent 60%);pointer-events:none}
@@ -406,21 +425,52 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
       <h1>Análisis con IA<span>.</span></h1>
     </div>
     <div class="gp2-body">
+      <!-- Hero -->
       <div class="gh2">
         <div class="gi2">📸</div>
-        <h2>Análisis con IA</h2>
-        <p>Sube una foto y recibe kcal, proteínas, HC, grasas y fibra al instante</p>
-        <div class="ft2">🆓 100% gratis</div>
+        <h2>Foto → Macros</h2>
+        <p>Haz una foto a tu comida y obtén kcal, proteínas, HC, grasas y fibra al instante</p>
+        <div class="ft2" id="ia-limit-badge">🆓 <span id="ia-remaining">3</span>/3 análisis hoy</div>
       </div>
-      <a class="gl2" href="https://chatgpt.com/g/g-69ea68d8c53081919493e68f3c095e61-macroscan" target="_blank" rel="noopener noreferrer">🚀 Abrir PlatoFit en ChatGPT</a>
-      <div class="stc2">
+
+      <!-- Upload area -->
+      <div id="ia-upload-area" class="ia-upload-area" onclick="document.getElementById('ia-file').click()">
+        <input type="file" id="ia-file" accept="image/*" capture="environment" style="display:none" onchange="iaPreview(this)">
+        <div id="ia-upload-content">
+          <div class="ia-upload-icon">📷</div>
+          <div class="ia-upload-text">Toca para hacer foto o elegir imagen</div>
+          <div class="ia-upload-hint">JPG, PNG o WebP · máx. 5MB</div>
+        </div>
+        <img id="ia-preview" class="ia-preview-img" style="display:none">
+      </div>
+
+      <!-- Analyze button -->
+      <button class="gl2" id="ia-analyze-btn" onclick="iaAnalyze()" disabled>
+        <span id="ia-btn-text">📸 Selecciona una foto primero</span>
+      </button>
+
+      <!-- Result area -->
+      <div id="ia-result" style="display:none">
+        <div class="stc2" id="ia-result-card">
+          <h3 id="ia-result-name">—</h3>
+          <div class="mr" id="ia-result-macros"></div>
+          <div id="ia-result-items"></div>
+          <div id="ia-result-note" class="gn2" style="display:none;margin-top:12px"></div>
+          <button class="dab" onclick="iaAddToPlate()" style="margin-top:14px">➕ Añadir al plato de hoy</button>
+        </div>
+      </div>
+
+      <!-- Error area -->
+      <div id="ia-error" class="gn2" style="display:none;border-color:rgba(229,91,91,.3);color:var(--fat);background:rgba(229,91,91,.06)"></div>
+
+      <!-- How it works -->
+      <div class="stc2" style="margin-top:18px">
         <h3>¿Cómo funciona?</h3>
-        <div class="st2"><div class="sn2">1</div><div class="stx2"><b>Instala ChatGPT gratis</b><span>App Store o Google Play</span></div></div>
-        <div class="st2"><div class="sn2">2</div><div class="stx2"><b>Crea cuenta (solo email)</b><span>Sin tarjeta ni pago</span></div></div>
-        <div class="st2"><div class="sn2">3</div><div class="stx2"><b>Abre PlatoFit</b><span>El botón de arriba te lleva directo</span></div></div>
-        <div class="st2"><div class="sn2">4</div><div class="stx2"><b>Sube foto → copia macros aquí</b><span>Regístralos en «Mis platos»</span></div></div>
+        <div class="st2"><div class="sn2">1</div><div class="stx2"><b>Haz una foto</b><span>A tu plato, snack o cualquier comida</span></div></div>
+        <div class="st2"><div class="sn2">2</div><div class="stx2"><b>La IA analiza</b><span>Identifica ingredientes y porciones</span></div></div>
+        <div class="st2"><div class="sn2">3</div><div class="stx2"><b>Añade al plato</b><span>Un toque y se suman a tu registro diario</span></div></div>
       </div>
-      <div class="gn2"><strong>✅ No necesitas pago</strong>La versión gratuita de ChatGPT es suficiente.</div>
+      <div class="disc">⚠️ La IA estima a partir de la imagen · Los valores son orientativos</div>
     </div>
   </div>
 </div>
@@ -607,7 +657,8 @@ function saveToday(){const h=getHistory();const t={k:0,p:0,c:0,f:0,fi:0};plate.f
 function loadToday(){const h=getHistory();const d=h[todayKey()];if(d&&d.items)plate=d.items.map(x=>({...x}));else plate=[]}
 function renderWeek(){
   const h=getHistory();const days=[];const dn=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.toISOString().slice(0,10);const isToday=k===todayKey();const data=h[k];const kcal=data?Math.round(data.totals.k):0;days.push({key:k,name:dn[d.getDay()],num:d.getDate(),kcal,isToday,hasData:!!data})}
+  const today=new Date();const dow=today.getDay();const mondayOffset=(dow===0?-6:1-dow);const monday=new Date(today);monday.setDate(today.getDate()+mondayOffset);
+  for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(monday.getDate()+i);const k=d.toISOString().slice(0,10);const isToday=k===todayKey();const data=h[k];const kcal=data?Math.round(data.totals.k):0;days.push({key:k,name:dn[d.getDay()],num:d.getDate(),kcal,isToday,hasData:!!data})}
   document.getElementById('weekbar').innerHTML=days.map(d=>'<div class="week-day'+(d.isToday?' on':'')+(d.hasData?'':' empty')+'" data-day="'+d.key+'"><span class="wd-n">'+d.name+'</span><span class="wd-k">'+(d.hasData?d.kcal:'—')+'</span></div>').join('');
   document.querySelectorAll('.week-day').forEach(el=>el.addEventListener('click',()=>{const dk=el.dataset.day;if(dk===todayKey())return;const data=getHistory()[dk];if(!data)return;const t=data.totals;const items=data.items||[];const dateStr=new Date(dk+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});let msg='📅 '+dateStr+'\n'+Math.round(t.k)+' kcal · '+Math.round(t.p)+'g P · '+Math.round(t.c)+'g HC · '+Math.round(t.f)+'g G · '+Math.round(t.fi)+'g F';if(items.length)msg+='\n\n'+items.map(x=>x.n+' ('+Math.round(x.k)+' kcal)').join('\n');alert(msg)}))
 }
@@ -732,7 +783,174 @@ function rm(){
 // ═══ TOAST ═══
 let tT;function ts(m){const t=document.getElementById('tt');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2200)}
 
-// ═══ INIT ═══
+// ═══ FOTO IA (native) ═══
+// ⚠️ CAMBIA ESTA URL por la de tu Worker desplegado
+const IA_API_URL = 'https://platofit-api.ejmanosalvas.workers.dev/analyze';
+const IA_DAILY_LIMIT = 3;
+
+let iaCurrentResult = null;
+let iaCurrentFile = null;
+
+function iaGetUsage() {
+  try {
+    const d = JSON.parse(localStorage.getItem('pf_ia_usage') || '{}');
+    if (d.date !== todayKey()) return { date: todayKey(), count: 0 };
+    return d;
+  } catch { return { date: todayKey(), count: 0 }; }
+}
+function iaSaveUsage(u) { localStorage.setItem('pf_ia_usage', JSON.stringify(u)); }
+function iaUpdateBadge() {
+  const u = iaGetUsage();
+  const rem = Math.max(0, IA_DAILY_LIMIT - u.count);
+  document.getElementById('ia-remaining').textContent = rem;
+  document.getElementById('ia-limit-badge').textContent = '🆓 ' + rem + '/' + IA_DAILY_LIMIT + ' análisis hoy';
+}
+
+function iaPreview(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { alert('La imagen es demasiado grande (máx. 5MB)'); return; }
+  
+  iaCurrentFile = file;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = document.getElementById('ia-preview');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.getElementById('ia-upload-content').style.display = 'none';
+    document.getElementById('ia-upload-area').classList.add('has-img');
+    
+    const btn = document.getElementById('ia-analyze-btn');
+    const u = iaGetUsage();
+    if (u.count >= IA_DAILY_LIMIT) {
+      btn.disabled = true;
+      document.getElementById('ia-btn-text').textContent = '🚫 Sin análisis disponibles hoy';
+    } else {
+      btn.disabled = false;
+      document.getElementById('ia-btn-text').textContent = '🔍 Analizar comida';
+    }
+  };
+  reader.readAsDataURL(file);
+  
+  // Reset previous results
+  document.getElementById('ia-result').style.display = 'none';
+  document.getElementById('ia-error').style.display = 'none';
+  iaCurrentResult = null;
+}
+
+async function iaAnalyze() {
+  if (!iaCurrentFile) return;
+  const u = iaGetUsage();
+  if (u.count >= IA_DAILY_LIMIT) {
+    document.getElementById('ia-error').textContent = 'Has alcanzado el límite diario de ' + IA_DAILY_LIMIT + ' análisis. ¡Vuelve mañana!';
+    document.getElementById('ia-error').style.display = 'block';
+    return;
+  }
+  
+  const btn = document.getElementById('ia-analyze-btn');
+  btn.disabled = true;
+  document.getElementById('ia-btn-text').innerHTML = '<div class="ia-spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></div>Analizando...';
+  document.getElementById('ia-result').style.display = 'none';
+  document.getElementById('ia-error').style.display = 'none';
+  
+  try {
+    // Redimensionar imagen para ahorrar tokens
+    const base64 = await iaResizeImage(iaCurrentFile, 800);
+    
+    const res = await fetch(IA_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: base64 })
+    });
+    
+    const data = await res.json();
+    
+    if (data.error) {
+      document.getElementById('ia-error').textContent = '❌ ' + data.error;
+      document.getElementById('ia-error').style.display = 'block';
+      btn.disabled = false;
+      document.getElementById('ia-btn-text').textContent = '🔍 Reintentar';
+      return;
+    }
+    
+    // Guardar uso
+    u.count++;
+    iaSaveUsage(u);
+    iaUpdateBadge();
+    
+    // Mostrar resultado
+    iaCurrentResult = data;
+    document.getElementById('ia-result-name').textContent = data.nombre || 'Comida analizada';
+    document.getElementById('ia-result-macros').innerHTML =
+      '<span class="mp mc">' + (data.kcal||0) + ' kcal</span>' +
+      '<span class="mp mpr">' + (data.proteina||0) + 'g P</span>' +
+      '<span class="mp mh">' + (data.hc||0) + 'g HC</span>' +
+      '<span class="mp mf">' + (data.grasa||0) + 'g G</span>' +
+      '<span class="mp mfi">' + (data.fibra||0) + 'g F</span>';
+    
+    if (data.items && data.items.length) {
+      document.getElementById('ia-result-items').innerHTML =
+        '<ul class="il">' + data.items.map(function(it) {
+          return '<li><span class="iln">' + it.nombre + (it.gramos_aprox ? ' ~' + it.gramos_aprox + 'g' : '') + '</span><span class="ilk">' + it.kcal + ' kcal</span></li>';
+        }).join('') + '</ul>';
+    } else {
+      document.getElementById('ia-result-items').innerHTML = '';
+    }
+    
+    const noteEl = document.getElementById('ia-result-note');
+    if (data.nota) {
+      noteEl.innerHTML = '<strong>💡 Nota</strong>' + data.nota;
+      noteEl.style.display = 'block';
+    } else {
+      noteEl.style.display = 'none';
+    }
+    
+    document.getElementById('ia-result').style.display = 'block';
+    document.getElementById('ia-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    
+    btn.disabled = false;
+    document.getElementById('ia-btn-text').textContent = '📸 Analizar otra foto';
+    
+  } catch (err) {
+    console.error('IA error:', err);
+    document.getElementById('ia-error').textContent = '❌ Error de conexión. Comprueba tu internet e inténtalo de nuevo.';
+    document.getElementById('ia-error').style.display = 'block';
+    btn.disabled = false;
+    document.getElementById('ia-btn-text').textContent = '🔍 Reintentar';
+  }
+}
+
+function iaAddToPlate() {
+  if (!iaCurrentResult) return;
+  const d = iaCurrentResult;
+  ap(d.nombre || 'Foto IA', 'Análisis IA', d.kcal||0, d.proteina||0, d.hc||0, d.grasa||0, d.fibra||0);
+  ts('✅ Añadido: ' + (d.nombre || 'Foto IA'));
+}
+
+function iaResizeImage(file, maxDim) {
+  return new Promise(function(resolve) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        let w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+          else { w = Math.round(w * maxDim / h); h = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.85));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// Init IA badge
+iaUpdateBadge();
 loadToday();idp();ifp();rd();rds();rfs();rm();
 </script>
 </body>

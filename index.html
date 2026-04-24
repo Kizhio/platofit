@@ -426,27 +426,27 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
     </div>
     <div class="gp2-body">
       <!-- Hero -->
-      <div class="gh2">
-        <div class="gi2">📸</div>
-        <h2>Foto → Macros</h2>
-        <p>Haz una foto a tu comida y obtén kcal, proteínas, HC, grasas y fibra al instante</p>
+      <div class="gh2" style="padding:22px 20px">
+        <div class="gi2" style="font-size:2.2rem;margin-bottom:8px">📸</div>
+        <h2 style="font-size:1.2rem;margin-bottom:6px">Foto → Macros</h2>
+        <p style="font-size:.78rem;margin:0 auto">Sube o haz una foto a tu comida y obtén los macros al instante</p>
         <div class="ft2" id="ia-limit-badge">🆓 <span id="ia-remaining">3</span>/3 análisis hoy</div>
       </div>
 
       <!-- Upload area -->
-      <div id="ia-upload-area" class="ia-upload-area" onclick="document.getElementById('ia-file').click()">
-        <input type="file" id="ia-file" accept="image/*" capture="environment" style="display:none" onchange="iaPreview(this)">
-        <div id="ia-upload-content">
+      <div id="ia-upload-area" class="ia-upload-area">
+        <input type="file" id="ia-file" accept="image/*" style="display:none" onchange="iaPreview(this)">
+        <div id="ia-upload-content" onclick="document.getElementById('ia-file').click()">
           <div class="ia-upload-icon">📷</div>
-          <div class="ia-upload-text">Toca para hacer foto o elegir imagen</div>
-          <div class="ia-upload-hint">JPG, PNG o WebP · máx. 5MB</div>
+          <div class="ia-upload-text">Toca para subir una foto</div>
+          <div class="ia-upload-hint">JPG, PNG o WebP</div>
         </div>
-        <img id="ia-preview" class="ia-preview-img" style="display:none">
+        <img id="ia-preview" class="ia-preview-img" style="display:none" onclick="document.getElementById('ia-file').click()">
       </div>
 
       <!-- Analyze button -->
       <button class="gl2" id="ia-analyze-btn" onclick="iaAnalyze()" disabled>
-        <span id="ia-btn-text">📸 Selecciona una foto primero</span>
+        <span id="ia-btn-text">☝️ Sube una foto para empezar</span>
       </button>
 
       <!-- Result area -->
@@ -809,7 +809,6 @@ function iaUpdateBadge() {
 function iaPreview(input) {
   const file = input.files[0];
   if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { alert('La imagen es demasiado grande (máx. 5MB)'); return; }
   
   iaCurrentFile = file;
   const reader = new FileReader();

@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#FFFFFF">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <meta name="apple-mobile-web-app-title" content="PlatoFit">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -212,7 +213,8 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 .cde2{text-align:center;padding:36px 20px;color:var(--tx3);font-size:.85rem;font-weight:300}
 
 /* ─── FOTO GPT ─── */
-.gp2{padding:20px;padding-top:calc(16px + var(--sat))}
+.gp2-body{padding:0 20px 20px}
+.dh-sub{padding-top:calc(16px + var(--sat))}
 .gh2{background:var(--gpt-grad);border-radius:24px;padding:32px 24px;text-align:center;color:white;margin-bottom:20px;position:relative;overflow:hidden}
 .gh2::before{content:'';position:absolute;top:-30%;right:-15%;width:160px;height:160px;background:radial-gradient(circle,rgba(255,255,255,.1),transparent 60%);pointer-events:none}
 .gh2 .gi2{font-size:3.5rem;margin-bottom:12px}
@@ -254,8 +256,7 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 /* ─── PWA standalone adjustments ─── */
 @media(display-mode:standalone){
   .dh{padding-top:8px}
-  .mhd{padding-top:12px}
-  .gp2{padding-top:12px}
+  .dh-sub{padding-top:8px}
 }
 </style>
 </head>
@@ -293,8 +294,9 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 
   <!-- ═══ PLATOS ═══ -->
   <div class="pg" id="pg-com">
-    <div class="topbar" id="tb-com">
-      <div class="topbar-title">Platos completos</div>
+    <div class="dh dh-sub">
+      <div class="app-name">Plato<span>Fit</span></div>
+      <h1>Platos completos<span>.</span></h1>
     </div>
     <div style="padding:10px 20px 0"><div class="sb"><span class="si">🔍</span><input id="dsi" placeholder="Buscar plato..."></div><div class="pls" id="dp"></div></div>
     <div class="la" id="dl"></div>
@@ -302,8 +304,9 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 
   <!-- ═══ ALIMENTOS ═══ -->
   <div class="pg" id="pg-ali">
-    <div class="topbar" id="tb-ali">
-      <div class="topbar-title">Alimentos</div>
+    <div class="dh dh-sub">
+      <div class="app-name">Plato<span>Fit</span></div>
+      <h1>Alimentos<span>.</span></h1>
     </div>
     <div style="padding:10px 20px 0"><div class="sb"><span class="si">🔍</span><input id="fsi" placeholder="Buscar alimento..."></div><div class="pls" id="ffp"></div></div>
     <div class="la" id="fl"></div>
@@ -311,9 +314,10 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 
   <!-- ═══ MIS PLATOS ═══ -->
   <div class="pg" id="pg-mis">
-    <div class="mhd">
-      <h2>Mis platos</h2>
-      <p>Guarda tus comidas habituales con todos los macros</p>
+    <div class="dh dh-sub">
+      <div class="app-name">Plato<span>Fit</span></div>
+      <h1>Mis platos<span>.</span></h1>
+      <div class="ds">Guarda tus comidas habituales con todos los macros</div>
     </div>
     <div class="mf2">
       <label class="ml2">Nombre</label><input class="mi2" id="cn" placeholder="Ej: Pollo + arroz del gym">
@@ -335,14 +339,18 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 
   <!-- ═══ FOTO IA ═══ -->
   <div class="pg" id="pg-foto">
-    <div class="gp2">
+    <div class="dh dh-sub">
+      <div class="app-name">Plato<span>Fit</span></div>
+      <h1>Análisis con IA<span>.</span></h1>
+    </div>
+    <div class="gp2-body">
       <div class="gh2">
         <div class="gi2">📸</div>
         <h2>Análisis con IA</h2>
         <p>Sube una foto y recibe kcal, proteínas, HC, grasas y fibra al instante</p>
         <div class="ft2">🆓 100% gratis</div>
       </div>
-      <a class="gl2" href="https://chatgpt.com/g/g-69ea68d8c53081919493e68f3c095e61-macroscan" target="_blank">🚀 Abrir PlatoFit en ChatGPT</a>
+      <a class="gl2" href="https://chatgpt.com/g/g-69ea68d8c53081919493e68f3c095e61-macroscan" target="_blank" rel="noopener noreferrer">🚀 Abrir PlatoFit en ChatGPT</a>
       <div class="stc2">
         <h3>¿Cómo funciona?</h3>
         <div class="st2"><div class="sn2">1</div><div class="stx2"><b>Instala ChatGPT gratis</b><span>App Store o Google Play</span></div></div>
@@ -481,11 +489,7 @@ document.querySelectorAll('.nb').forEach(b=>b.addEventListener('click',()=>{
 }));
 
 // ═══ Topbar scroll effect ═══
-['pg-com','pg-ali'].forEach(id=>{
-  const pg=document.getElementById(id);
-  const tb=pg.querySelector('.topbar');
-  if(pg&&tb)pg.addEventListener('scroll',()=>tb.classList.toggle('scrolled',pg.scrollTop>10));
-});
+// (headers now use dashboard-style layout, no sticky topbar needed)
 
 // ═══ PLATE ═══
 function ap(n,po,k,p,c,f,fi){plate.push({n,po,k:k||0,p:p||0,c:c||0,f:f||0,fi:fi||0});rd();ts('✅ '+n)}

@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -34,6 +35,19 @@
 <meta name="twitter:title" content="PlatoFit — Cuenta tus macros fácil">
 <meta name="twitter:description" content="📊 Controla tus calorías y macros al instante. Análisis por foto con IA y +60 platos andaluces.">
 <meta name="twitter:image" content="https://www.platofit.com/og-image.png">
+<!-- ═══ GOOGLE ANALYTICS 4 ═══ -->
+<!-- 🔴 IMPORTANTE: Sustituye G-XXXXXXXXXX por tu ID real de GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX', {
+    page_title: 'PlatoFit',
+    page_location: window.location.href
+  });
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
@@ -811,6 +825,11 @@ function startTrial(){
   closeProModal();
   updateProUI();
   ts('🎁 ¡Prueba Pro activada! 3 días gratis');
+  // GA4: Trial iniciado
+  gtag('event', 'pro_trial_start', {
+    event_category: 'Conversion',
+    event_label: 'trial_3_dias'
+  });
 }
 function activateProAfterPayment(subscriptionID){
   localStorage.setItem('pf_pro','true');
@@ -819,6 +838,18 @@ function activateProAfterPayment(subscriptionID){
   closeProModal();
   updateProUI();
   ts('👑 ¡PlatoFit Pro activado!');
+  // GA4: Conversión de pago (evento de compra estándar de GA4)
+  gtag('event', 'purchase', {
+    transaction_id: subscriptionID,
+    value: 2.99,
+    currency: 'EUR',
+    items: [{ item_id: 'platofit_pro', item_name: 'PlatoFit Pro', price: 2.99 }]
+  });
+  gtag('event', 'pro_activated', {
+    event_category: 'Conversion',
+    event_label: 'pago_paypal',
+    value: 2.99
+  });
 }
 function restorePro(){
   const subId=localStorage.getItem('pf_sub_id');
@@ -864,6 +895,11 @@ function redeemCode(){
     msg.className='promo-msg ok';msg.textContent='✅ ¡Pro '+gift.label+' activado!';
     input.value='';
     updateProUI();
+    // GA4: Código regalo canjeado
+    gtag('event', 'pro_code_redeemed', {
+      event_category: 'Conversion',
+      event_label: 'codigo_regalo_' + gift.label
+    });
     setTimeout(()=>{closeProModal();ts('🎁 ¡Código canjeado! Pro '+gift.label)},1200);
   } else {
     msg.className='promo-msg err';msg.textContent='❌ Código no válido';
@@ -893,6 +929,11 @@ function openProModal(){
     trialBtn.style.display='';
   }
   document.getElementById('proModal').classList.add('show');
+  // GA4: Modal Pro visto
+  gtag('event', 'pro_modal_open', {
+    event_category: 'Conversion',
+    event_label: isPro() && isTrialActive() ? 'desde_trial' : 'desde_free'
+  });
   // Load PayPal SDK on first open, not at page load
   loadPayPalSDK();
   if(!paypalRendered && typeof paypal!=='undefined'){
@@ -1603,6 +1644,11 @@ function renderPayPalButton(){
     onError:function(err){
       console.error('PayPal error:',err);
       ts('❌ Error en el pago. Inténtalo de nuevo.');
+      // GA4: Error en el pago
+      gtag('event', 'pro_payment_error', {
+        event_category: 'Conversion',
+        event_label: 'error_paypal'
+      });
     }
   }).render('#paypal-button-container-P-2YU010977W121804LNHWJKRQ');
 }
@@ -1617,6 +1663,42 @@ function loadPayPalSDK(){
   s.onload=function(){renderPayPalButton()};
   document.head.appendChild(s);
 }
+
+// ═══ GOOGLE ANALYTICS — EVENTOS PWA ═══
+
+// 1. Detecta si el usuario abre la app como PWA instalada (no desde el navegador)
+if (window.matchMedia('(display-mode: standalone)').matches) {
+  gtag('event', 'pwa_session', {
+    event_category: 'PWA',
+    event_label: 'Abre como app instalada'
+  });
+}
+
+// 2. Registra cuando el navegador muestra el prompt de instalación
+window.addEventListener('beforeinstallprompt', () => {
+  gtag('event', 'pwa_install_prompt', {
+    event_category: 'PWA',
+    event_label: 'Prompt de instalación mostrado'
+  });
+});
+
+// 3. Registra cuando el usuario instala la PWA
+window.addEventListener('appinstalled', () => {
+  gtag('event', 'pwa_installed', {
+    event_category: 'PWA',
+    event_label: 'App instalada'
+  });
+});
+
+// 4. Detecta el dispositivo del usuario
+(function(){
+  const ua = navigator.userAgent;
+  const device = /iPhone|iPad/i.test(ua) ? 'iOS' : /Android/i.test(ua) ? 'Android' : 'Desktop';
+  gtag('event', 'device_type', {
+    event_category: 'Dispositivo',
+    event_label: device
+  });
+})();
 
 // ═══ INIT ═══
 iaUpdateBadge();

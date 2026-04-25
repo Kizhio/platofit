@@ -13,7 +13,27 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
-<title>PlatoFit Pro</title>
+<title>PlatoFit — Cuenta tus macros fácil</title>
+<meta name="description" content="Cuenta tus macros y calorías con PlatoFit. Base de datos de platos andaluces, análisis por foto con IA, planificador semanal y escáner de código de barras.">
+<meta name="keywords" content="macros, calorías, nutrición, fitness, dieta, platos andaluces, contador calorías, app nutrición">
+<meta name="author" content="PlatoFit">
+
+<!-- Open Graph (WhatsApp, Facebook, LinkedIn) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://platofit.com">
+<meta property="og:title" content="PlatoFit — Cuenta tus macros fácil">
+<meta property="og:description" content="📊 Controla tus calorías y macros al instante. Base de datos de platos, análisis por foto con IA y planificador semanal.">
+<meta property="og:image" content="https://platofit.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="PlatoFit">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PlatoFit — Cuenta tus macros fácil">
+<meta name="twitter:description" content="📊 Controla tus calorías y macros al instante. Análisis por foto con IA y +60 platos andaluces.">
+<meta name="twitter:image" content="https://platofit.com/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
@@ -873,6 +893,8 @@ function openProModal(){
     trialBtn.style.display='';
   }
   document.getElementById('proModal').classList.add('show');
+  // Load PayPal SDK on first open, not at page load
+  loadPayPalSDK();
   if(!paypalRendered && typeof paypal!=='undefined'){
     renderPayPalButton();
   }
@@ -1600,8 +1622,6 @@ function loadPayPalSDK(){
 iaUpdateBadge();
 updateProUI();
 loadToday();idp();ifp();rd();rds();rfs();rm();
-// Load PayPal SDK after app init
-setTimeout(loadPayPalSDK, 2000);
 </script>
 </body>
 </html>

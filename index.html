@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
-<title>PlatoFit</title>
+<title>PlatoFit Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
@@ -29,6 +29,8 @@
   --topbar-bg:rgba(255,255,255,.85);--ring-bg:rgba(0,0,0,.06);
   --card-shadow:0 1px 6px rgba(0,0,0,.04);
   --gpt-grad:linear-gradient(135deg,#14532D,#1B6B2E,#22883A);
+  --pro-grad:linear-gradient(135deg,#D4850A,#E8A020,#F0C040);
+  --pro-glow:rgba(212,133,10,.15);
   --sat:env(safe-area-inset-top,0px);
   --sab:env(safe-area-inset-bottom,0px);
   --sal:env(safe-area-inset-left,0px);
@@ -46,6 +48,8 @@
   --topbar-bg:rgba(10,15,10,.8);--ring-bg:rgba(255,255,255,.06);
   --card-shadow:none;
   --gpt-grad:linear-gradient(135deg,#071A0A,#0F2D14,#14401C);
+  --pro-grad:linear-gradient(135deg,#8B6914,#A07818,#B8901C);
+  --pro-glow:rgba(255,179,71,.1);
 }
 html{height:100%;overflow:hidden}
 body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;display:flex;flex-direction:column;user-select:none;-webkit-user-select:none}
@@ -64,7 +68,7 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 /* ─── STATUS BAR SPACER ─── */
 .status-bar{height:var(--sat);flex-shrink:0;background:var(--bg)}
 
-/* ─── TOP BAR (per-page, sticky with blur) ─── */
+/* ─── TOP BAR ─── */
 .topbar{position:sticky;top:0;z-index:20;padding:14px 20px 10px;padding-left:calc(20px + var(--sal));padding-right:calc(20px + var(--sar));background:var(--topbar-bg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid transparent;transition:border-color .2s}
 .topbar.scrolled{border-bottom-color:var(--brd)}
 .topbar-title{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800}
@@ -72,7 +76,7 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 /* ─── APP CONTAINER ─── */
 .app{flex:1;overflow:hidden;position:relative}
 
-/* ─── PAGES with transitions ─── */
+/* ─── PAGES ─── */
 .pg{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;transform:translateX(30px);transition:opacity .28s ease,transform .28s ease;pointer-events:none;padding-bottom:calc(var(--nav-h) + var(--sab) + 20px)}
 .pg.on{opacity:1;transform:translateX(0);pointer-events:auto}
 .pg.out{opacity:0;transform:translateX(-20px)}
@@ -80,8 +84,8 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 /* ─── BOTTOM NAV ─── */
 .nav{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:0 calc(8px + var(--sal)) calc(var(--sab) + 4px) calc(8px + var(--sar));background:linear-gradient(to top,var(--nav-grad) 60%,transparent)}
 .nav-in{display:flex;max-width:500px;margin:0 auto;background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--brd);border-radius:22px;padding:4px;box-shadow:var(--card-shadow)}
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 2px 7px;border:none;background:none;color:var(--tx3);font-family:'Outfit',sans-serif;font-size:.6rem;font-weight:500;cursor:pointer;border-radius:16px;transition:all .2s;position:relative;min-height:48px;justify-content:center}
-.nb .ni{font-size:1.25rem;transition:transform .15s}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 2px 7px;border:none;background:none;color:var(--tx3);font-family:'Outfit',sans-serif;font-size:.55rem;font-weight:500;cursor:pointer;border-radius:16px;transition:all .2s;position:relative;min-height:48px;justify-content:center}
+.nb .ni{font-size:1.15rem;transition:transform .15s}
 .nb.on{color:var(--accent);background:var(--accentbg)}
 .nb:active .ni{transform:scale(.85)}
 .nb.on .ni{transform:scale(1.1)}
@@ -92,8 +96,12 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 .dh h1{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700;line-height:1.2;color:var(--tx2)}
 .dh h1 span{color:var(--accent)}
 .dh .ds{font-size:.75rem;color:var(--tx3);font-weight:300;margin-top:3px}
-.dh .app-name{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--accent2);margin-bottom:6px}
+.dh .app-name{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--accent2);margin-bottom:6px;display:flex;align-items:center;gap:8px}
 .dh .app-name span{color:var(--accent)}
+
+/* Pro badge */
+.pro-badge{display:inline-flex;align-items:center;gap:3px;background:var(--pro-grad);color:white;font-family:'Outfit',sans-serif;font-size:.55rem;font-weight:700;padding:3px 8px;border-radius:8px;letter-spacing:.5px;text-transform:uppercase;box-shadow:0 2px 8px var(--pro-glow);vertical-align:middle;cursor:pointer}
+.pro-badge.free{background:var(--card);color:var(--tx3);border:1px solid var(--brd);box-shadow:none}
 
 /* Macro rings */
 .rr{display:flex;gap:10px;padding:16px 20px 20px;padding-left:calc(20px + var(--sal));overflow-x:auto;scrollbar-width:none;scroll-snap-type:x mandatory}
@@ -107,6 +115,7 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 .rfg{fill:none;stroke-width:4.5;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)}
 .rc .rv{font-size:1.05rem;font-weight:700;display:block;line-height:1}
 .rc .rl{font-size:.55rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.8px;margin-top:2px}
+.rc .rg{font-size:.48rem;color:var(--tx3);margin-top:1px;display:block}
 
 /* Plate items */
 .dsec{padding:0 20px;padding-left:calc(20px + var(--sal));padding-right:calc(20px + var(--sar))}
@@ -129,7 +138,7 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 
 .disc{font-size:.62rem;color:var(--tx3);text-align:center;padding:16px 24px;line-height:1.5;font-weight:300}
 
-/* ─── SEARCH + PILLS (shared) ─── */
+/* ─── SEARCH + PILLS ─── */
 .sb{position:relative;margin-bottom:10px}
 .sb input{width:100%;padding:14px 16px 14px 46px;background:var(--card);border:1.5px solid var(--brd);border-radius:16px;font-family:'Outfit',sans-serif;font-size:.95rem;color:var(--tx);outline:none;transition:border-color .2s;min-height:48px;box-shadow:var(--card-shadow)}
 .sb input:focus{border-color:var(--accent)}
@@ -213,8 +222,7 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 .cd3 .cx3:active{background:rgba(229,91,91,.1);color:var(--fat)}
 .cde2{text-align:center;padding:36px 20px;color:var(--tx3);font-size:.85rem;font-weight:300}
 
-/* ─── FOTO IA (native) ─── */
-
+/* ─── FOTO IA ─── */
 .ia-btns-row{display:flex;gap:10px;margin-bottom:16px}
 .ia-pick-btn{flex:1;padding:16px 10px;background:var(--card);border:1.5px solid var(--brd2);border-radius:16px;font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:600;color:var(--tx2);cursor:pointer;transition:all .15s;min-height:54px;box-shadow:var(--card-shadow)}
 .ia-pick-btn:active{transform:scale(.96);border-color:var(--accent);color:var(--accent)}
@@ -234,8 +242,6 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 #ia-result .il li{display:flex;justify-content:space-between;padding:6px 0;font-size:.78rem;border-bottom:1px solid rgba(0,0,0,.04)}
 #ia-result .il li:last-child{border:none}
 
-/* ─── FOTO GPT (legacy styles kept for reuse) ─── */
-
 .gh2{background:var(--gpt-grad);border-radius:24px;padding:32px 24px;text-align:center;color:white;margin-bottom:20px;position:relative;overflow:hidden}
 .gh2::before{content:'';position:absolute;top:-30%;right:-15%;width:160px;height:160px;background:radial-gradient(circle,rgba(255,255,255,.1),transparent 60%);pointer-events:none}
 .gh2 .gi2{font-size:3.5rem;margin-bottom:12px}
@@ -243,7 +249,7 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 .gh2 p{font-size:.82rem;opacity:.7;line-height:1.5;font-weight:300;max-width:300px;margin:0 auto}
 .gh2 .ft2{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:5px 14px;font-size:.72rem;font-weight:700;margin-top:12px;color:white}
 
-.gl2{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--accent);color:white;border-radius:18px;padding:17px;font-family:'Outfit',sans-serif;font-size:1.02rem;font-weight:700;text-decoration:none;margin-bottom:18px;min-height:54px;transition:transform .1s;box-shadow:0 4px 16px rgba(62,166,78,.25)}
+.gl2{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--accent);color:white;border-radius:18px;padding:17px;font-family:'Outfit',sans-serif;font-size:1.02rem;font-weight:700;text-decoration:none;margin-bottom:18px;min-height:54px;transition:transform .1s;box-shadow:0 4px 16px rgba(62,166,78,.25);border:none;cursor:pointer}
 .gl2:active{transform:scale(.97)}
 
 .stc2{background:var(--card);border:1px solid var(--brd);border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:var(--card-shadow)}
@@ -274,13 +280,11 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 
 .nr2{text-align:center;padding:40px;color:var(--tx3);font-size:.85rem}
 
-/* ─── PWA standalone adjustments ─── */
 @media(display-mode:standalone){
   .dh{padding-top:8px}
   .dh-sub{padding-top:8px}
 }
 
-/* ─── Sub-page headers ─── */
 .dh-sub{padding-top:calc(16px + var(--sat))}
 
 /* ─── Universal search on dashboard ─── */
@@ -306,9 +310,6 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 .week-day.on .wd-k{color:rgba(255,255,255,.9)}
 .week-day.empty .wd-k{color:var(--tx3);font-weight:400}
 
-/* Ring goal label */
-.rc .rg{font-size:.48rem;color:var(--tx3);margin-top:1px;display:block}
-
 /* Custom weight input */
 .cw{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--brd)}
 .cw label{font-size:.72rem;color:var(--tx3);font-weight:400;white-space:nowrap}
@@ -331,6 +332,101 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 /* Foto GPT body */
 .gp2-body{padding:0 20px 20px}
 
+/* ═══════════════════════════════════════ */
+/* ═══  PRO FEATURES STYLES            ═══ */
+/* ═══════════════════════════════════════ */
+
+/* ─── PRO PAYWALL MODAL ─── */
+.pro-modal-bg{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.pro-modal-bg.show{display:flex}
+.pro-modal{background:var(--bg);border-radius:28px;width:calc(100% - 40px);max-width:400px;padding:0;overflow:hidden;animation:proIn .4s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes proIn{from{opacity:0;transform:scale(.85) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.pro-hero{background:var(--pro-grad);padding:36px 24px 28px;text-align:center;color:white;position:relative;overflow:hidden}
+.pro-hero::before{content:'';position:absolute;top:-40%;right:-20%;width:200px;height:200px;background:radial-gradient(circle,rgba(255,255,255,.2),transparent 60%);pointer-events:none}
+.pro-hero::after{content:'';position:absolute;bottom:-40%;left:-20%;width:180px;height:180px;background:radial-gradient(circle,rgba(255,255,255,.1),transparent 60%);pointer-events:none}
+.pro-hero .pro-icon{font-size:3rem;margin-bottom:12px}
+.pro-hero h2{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;margin-bottom:6px}
+.pro-hero p{font-size:.82rem;opacity:.85;font-weight:300;line-height:1.4}
+.pro-body{padding:24px}
+.pro-feature{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.pro-feature:last-of-type{margin-bottom:20px}
+.pro-feat-icon{width:36px;height:36px;border-radius:12px;background:var(--accentbg);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.pro-feat-text{flex:1}
+.pro-feat-text b{font-size:.88rem;font-weight:600;display:block;margin-bottom:2px}
+.pro-feat-text span{font-size:.72rem;color:var(--tx3);font-weight:300;line-height:1.4}
+.pro-price{text-align:center;margin:20px 0 16px}
+.pro-price .amount{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--cal)}
+.pro-price .period{font-size:.78rem;color:var(--tx3);font-weight:400}
+.pro-cta{width:100%;padding:17px;background:var(--pro-grad);color:white;border:none;border-radius:16px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:transform .1s;box-shadow:0 4px 20px var(--pro-glow)}
+.pro-cta:active{transform:scale(.97)}
+.pro-close{width:100%;padding:12px;background:none;border:none;color:var(--tx3);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;margin-top:8px}
+.pro-restore{font-size:.68rem;text-align:center;color:var(--tx3);margin-top:8px}
+
+/* ─── PROGRESS CHARTS PAGE ─── */
+.chart-container{padding:0 20px 20px;padding-left:calc(20px + var(--sal));padding-right:calc(20px + var(--sar))}
+.chart-card{background:var(--card);border:1px solid var(--brd);border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:var(--card-shadow)}
+.chart-card h3{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.chart-canvas{width:100%;height:180px;position:relative}
+.chart-bar-row{display:flex;align-items:flex-end;gap:6px;height:140px;padding:0 4px}
+.chart-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.chart-bar{width:100%;border-radius:8px 8px 4px 4px;transition:height .6s cubic-bezier(.4,0,.2,1);min-height:2px;position:relative}
+.chart-bar-label{font-size:.58rem;color:var(--tx3);font-weight:500;text-transform:uppercase}
+.chart-bar-val{font-size:.62rem;font-weight:700;color:var(--tx2)}
+.chart-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.chart-legend-item{display:flex;align-items:center;gap:5px;font-size:.68rem;color:var(--tx2);font-weight:500}
+.chart-legend-dot{width:10px;height:10px;border-radius:4px}
+.chart-avg{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.chart-avg-item{flex:1;min-width:70px;background:var(--card2);border-radius:12px;padding:10px;text-align:center}
+.chart-avg-item .cav{font-size:1.1rem;font-weight:700;display:block}
+.chart-avg-item .cal2{font-size:.58rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;display:block}
+.chart-period-pills{display:flex;gap:6px;margin-bottom:16px}
+.chart-period-pill{padding:8px 16px;border-radius:20px;border:1px solid var(--brd);background:var(--card);font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:500;color:var(--tx2);cursor:pointer;transition:all .15s}
+.chart-period-pill.on{background:var(--accent);border-color:var(--accent);color:white;font-weight:700}
+.chart-period-pill:active{transform:scale(.95)}
+
+/* ─── MEAL PLANNER ─── */
+.planner-container{padding:0 20px 20px;padding-left:calc(20px + var(--sal));padding-right:calc(20px + var(--sar))}
+.planner-day{background:var(--card);border:1px solid var(--brd);border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:var(--card-shadow)}
+.planner-day-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;cursor:pointer}
+.planner-day-header h3{font-family:'Syne',sans-serif;font-size:.92rem;font-weight:700}
+.planner-day-header .pd-kcal{font-size:.78rem;font-weight:700;color:var(--cal)}
+.planner-day-header .pd-arrow{font-size:.72rem;color:var(--tx3);transition:transform .25s}
+.planner-day.open .pd-arrow{transform:rotate(180deg)}
+.planner-day-body{display:none}
+.planner-day.open .planner-day-body{display:block;animation:fadeUp .25s ease}
+.planner-meal{margin-bottom:10px}
+.planner-meal-label{font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);font-weight:600;margin-bottom:6px}
+.planner-meal-items{display:flex;flex-direction:column;gap:4px}
+.planner-meal-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--card2);border-radius:10px;font-size:.78rem}
+.planner-meal-item .pmi-name{font-weight:500;flex:1}
+.planner-meal-item .pmi-kcal{font-weight:600;color:var(--cal);font-size:.72rem}
+.planner-meal-item .pmi-del{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:.9rem;padding:4px;margin-left:6px;border-radius:50%;min-width:28px;min-height:28px;display:flex;align-items:center;justify-content:center}
+.planner-meal-item .pmi-del:active{color:var(--fat);background:rgba(229,91,91,.1)}
+.planner-add-btn{width:100%;padding:10px;background:none;border:1.5px dashed var(--brd2);border-radius:12px;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:500;color:var(--accent);cursor:pointer;transition:all .15s;margin-top:6px}
+.planner-add-btn:active{background:var(--accentbg);transform:scale(.97)}
+.planner-totals{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--brd)}
+.planner-totals .mp{font-size:.62rem;padding:3px 8px}
+
+/* ─── BARCODE SCANNER ─── */
+.barcode-section{padding:0 20px 20px}
+.barcode-card{background:var(--card);border:1px solid var(--brd);border-radius:20px;padding:20px;text-align:center;box-shadow:var(--card-shadow)}
+.barcode-card h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:8px}
+.barcode-card p{font-size:.78rem;color:var(--tx3);font-weight:300;margin-bottom:16px}
+.barcode-input-row{display:flex;gap:8px;margin-bottom:12px}
+.barcode-input{flex:1;padding:13px 14px;border:1.5px solid var(--brd);border-radius:12px;font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--tx);outline:none;background:var(--card2);min-height:48px;transition:border-color .2s}
+.barcode-input:focus{border-color:var(--accent)}
+.barcode-scan-btn{padding:12px 18px;background:var(--accent);color:white;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:transform .1s;min-height:48px;white-space:nowrap}
+.barcode-scan-btn:active{transform:scale(.95)}
+.barcode-result{background:var(--card2);border-radius:16px;padding:16px;text-align:left;animation:fadeUp .3s ease}
+.barcode-result .br-name{font-size:.95rem;font-weight:700;margin-bottom:8px}
+
+/* ─── PRO LOCK OVERLAY ─── */
+.pro-lock{position:relative}
+.pro-lock::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,.6);border-radius:inherit;z-index:2;pointer-events:none}
+[data-theme="dark"] .pro-lock::after{background:rgba(10,15,10,.6)}
+.pro-lock-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;background:var(--pro-grad);color:white;padding:10px 20px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px var(--pro-glow);white-space:nowrap;transition:transform .1s}
+.pro-lock-badge:active{transform:translate(-50%,-50%) scale(.95)}
+
 </style>
 </head>
 <body>
@@ -348,17 +444,14 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
   <div class="pg on" id="pg-dash">
     <div class="dh">
       <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">🌙</button>
-      <div class="app-name">Plato<span>Fit</span></div>
+      <div class="app-name">Plato<span>Fit</span> <span class="pro-badge free" id="proBadgeMain" onclick="openProModal()">FREE</span></div>
       <h1>Tu plato de hoy<span>.</span></h1>
       <div class="ds" id="dd"></div>
     </div>
-    <!-- Universal search -->
     <div class="usb"><div class="sb"><span class="si">🔍</span><input id="usi" placeholder="Buscar plato o alimento..."></div></div>
     <div id="usr" class="usr" style="display:none"></div>
-    <!-- Week history bar -->
     <div class="week-bar" id="weekbar"></div>
     <div class="rr" id="rr"></div>
-    <!-- Action buttons -->
     <div class="action-row">
       <button class="action-btn" onclick="openGoals()">⚙️ Objetivos</button>
       <button class="action-btn acc" onclick="shareDay()">📤 Compartir</button>
@@ -427,15 +520,26 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
       <h1>Análisis con IA<span>.</span></h1>
     </div>
     <div class="gp2-body">
-      <!-- Hero -->
       <div class="gh2" style="padding:22px 20px">
         <div class="gi2" style="font-size:2.2rem;margin-bottom:8px">📸</div>
         <h2 style="font-size:1.2rem;margin-bottom:6px">Foto → Macros</h2>
         <p style="font-size:.78rem;margin:0 auto">Sube o haz una foto a tu comida y obtén los macros al instante</p>
-        <div class="ft2" id="ia-limit-badge">🆓 <span id="ia-remaining">3</span>/3 análisis hoy</div>
+        <div class="ft2" id="ia-limit-badge">🆓 <span id="ia-remaining">2</span>/2 análisis hoy</div>
       </div>
 
-      <!-- Upload area -->
+      <!-- Barcode Scanner PRO -->
+      <div class="barcode-section" style="margin-bottom:16px">
+        <div class="barcode-card" id="barcodeCard">
+          <h3>🔎 Escáner de código de barras <span class="pro-badge" onclick="openProModal()" id="barcodePro">PRO</span></h3>
+          <p>Introduce el código de barras de un producto envasado</p>
+          <div class="barcode-input-row">
+            <input class="barcode-input" id="barcodeInput" type="text" inputmode="numeric" placeholder="Ej: 8410376014440">
+            <button class="barcode-scan-btn" id="barcodeScanBtn" onclick="scanBarcode()">🔍 Buscar</button>
+          </div>
+          <div id="barcodeResult"></div>
+        </div>
+      </div>
+
       <input type="file" id="ia-file-cam" accept="image/*" capture="environment" style="display:none" onchange="iaPreview(this)">
       <input type="file" id="ia-file-gal" accept="image/*" style="display:none" onchange="iaPreview(this)">
       
@@ -448,12 +552,10 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
         <button class="ia-pick-btn" onclick="document.getElementById('ia-file-gal').click()">🖼️ Galería</button>
       </div>
 
-      <!-- Analyze button -->
       <button class="gl2" id="ia-analyze-btn" onclick="iaAnalyze()" disabled>
         <span id="ia-btn-text">☝️ Sube una foto para empezar</span>
       </button>
 
-      <!-- Result area -->
       <div id="ia-result" style="display:none">
         <div class="stc2" id="ia-result-card">
           <h3 id="ia-result-name">—</h3>
@@ -464,10 +566,8 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
         </div>
       </div>
 
-      <!-- Error area -->
       <div id="ia-error" class="gn2" style="display:none;border-color:rgba(229,91,91,.3);color:var(--fat);background:rgba(229,91,91,.06)"></div>
 
-      <!-- How it works -->
       <div class="stc2" style="margin-top:18px">
         <h3>¿Cómo funciona?</h3>
         <div class="st2"><div class="sn2">1</div><div class="stx2"><b>Haz una foto</b><span>A tu plato, snack o cualquier comida</span></div></div>
@@ -477,6 +577,34 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
       <div class="disc">⚠️ La IA estima a partir de la imagen · Los valores son orientativos</div>
     </div>
   </div>
+
+  <!-- ═══ PROGRESO (PRO) ═══ -->
+  <div class="pg" id="pg-prog">
+    <div class="dh dh-sub">
+      <div class="app-name">Plato<span>Fit</span> <span class="pro-badge" id="progProBadge" onclick="openProModal()">PRO</span></div>
+      <h1>Tu progreso<span>.</span></h1>
+      <div class="ds">Visualiza tus macros a lo largo del tiempo</div>
+    </div>
+    <div class="chart-container" id="chartsArea">
+      <div class="chart-period-pills">
+        <button class="chart-period-pill on" data-period="7" onclick="setChartPeriod(7)">7 días</button>
+        <button class="chart-period-pill" data-period="14" onclick="setChartPeriod(14)">14 días</button>
+        <button class="chart-period-pill" data-period="30" onclick="setChartPeriod(30)">30 días</button>
+      </div>
+      <div id="chartContent"></div>
+    </div>
+  </div>
+
+  <!-- ═══ PLANIFICADOR (PRO) ═══ -->
+  <div class="pg" id="pg-plan">
+    <div class="dh dh-sub">
+      <div class="app-name">Plato<span>Fit</span> <span class="pro-badge" id="planProBadge" onclick="openProModal()">PRO</span></div>
+      <h1>Plan semanal<span>.</span></h1>
+      <div class="ds">Organiza tus comidas para toda la semana</div>
+    </div>
+    <div class="planner-container" id="plannerArea"></div>
+  </div>
+
 </div>
 
 <!-- GOALS MODAL -->
@@ -496,7 +624,45 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- PRO MODAL -->
+<div class="pro-modal-bg" id="proModal">
+  <div class="pro-modal">
+    <div class="pro-hero">
+      <div class="pro-icon">👑</div>
+      <h2>PlatoFit Pro</h2>
+      <p>Desbloquea todo el potencial de tu nutrición</p>
+    </div>
+    <div class="pro-body">
+      <div class="pro-feature">
+        <div class="pro-feat-icon">📸</div>
+        <div class="pro-feat-text"><b>Análisis IA ilimitados</b><span>Sin límite diario · Analiza todas las fotos que quieras</span></div>
+      </div>
+      <div class="pro-feature">
+        <div class="pro-feat-icon">📊</div>
+        <div class="pro-feat-text"><b>Gráficas de progreso</b><span>Visualiza tus macros y calorías a lo largo del tiempo</span></div>
+      </div>
+      <div class="pro-feature">
+        <div class="pro-feat-icon">📅</div>
+        <div class="pro-feat-text"><b>Planificador semanal</b><span>Organiza tus comidas para toda la semana</span></div>
+      </div>
+      <div class="pro-feature">
+        <div class="pro-feat-icon">🔎</div>
+        <div class="pro-feat-text"><b>Escáner de código de barras</b><span>Busca productos envasados por su código</span></div>
+      </div>
+      <div class="pro-price">
+        <span class="amount">2,99 €</span>
+        <span class="period">/ mes</span>
+      </div>
+      <!-- PayPal Button -->
+      <div id="paypal-button-container-P-2YU010977W121804LNHWJKRQ" style="margin-bottom:10px"></div>
+      <div id="pro-paypal-loading" style="text-align:center;padding:12px;font-size:.82rem;color:var(--tx3)">Cargando métodos de pago...</div>
+      <button class="pro-close" onclick="closeProModal()">Ahora no</button>
+      <div class="pro-restore">¿Ya eres Pro? <a href="#" onclick="restorePro();return false" style="color:var(--accent);font-weight:600">Restaurar compra</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV (7 tabs now) -->
 <div class="nav" id="nav" style="opacity:0">
   <div class="nav-in">
     <button class="nb on" data-p="dash"><span class="ni">📊</span>Resumen</button>
@@ -504,6 +670,8 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
     <button class="nb" data-p="ali"><span class="ni">🥩</span>Alimentos</button>
     <button class="nb" data-p="mis"><span class="ni">⭐</span>Guardados</button>
     <button class="nb" data-p="foto"><span class="ni">📸</span>Foto IA</button>
+    <button class="nb" data-p="prog"><span class="ni">📈</span>Progreso</button>
+    <button class="nb" data-p="plan"><span class="ni">📅</span>Plan</button>
   </div>
 </div>
 
@@ -525,7 +693,69 @@ function toggleTheme(){applyTheme(getTheme()==='dark'?'light':'dark')}
 // ═══ SPLASH ═══
 setTimeout(()=>{document.getElementById('splash').classList.add('gone');document.getElementById('app').style.opacity='1';document.getElementById('nav').style.opacity='1';applyTheme(getTheme())},1500);
 
-// ═══ DATA — DISHES (expanded) ═══
+// ═══ PRO SYSTEM ═══
+function isPro(){
+  const pro=localStorage.getItem('pf_pro');
+  if(pro!=='true') return false;
+  // Check expiry (35 days from activation)
+  const exp=localStorage.getItem('pf_pro_exp');
+  if(exp && Date.now()>parseInt(exp)){
+    // Expired — keep pro if they have a subscription ID (they might still be subscribed)
+    // In a real system you'd verify with PayPal API here
+    return true; // Be generous, keep active
+  }
+  return true;
+}
+function activateProAfterPayment(subscriptionID){
+  localStorage.setItem('pf_pro','true');
+  localStorage.setItem('pf_sub_id', subscriptionID);
+  localStorage.setItem('pf_pro_exp', (Date.now() + 35*24*60*60*1000).toString());
+  closeProModal();
+  updateProUI();
+  ts('👑 ¡PlatoFit Pro activado!');
+}
+function restorePro(){
+  const subId=localStorage.getItem('pf_sub_id');
+  if(subId){
+    localStorage.setItem('pf_pro','true');
+    updateProUI();
+    closeProModal();
+    ts('👑 Pro restaurado');
+  } else {
+    ts('No se encontró suscripción previa');
+  }
+}
+let paypalRendered=false;
+function openProModal(){
+  document.getElementById('proModal').classList.add('show');
+  // Render PayPal button once the SDK is loaded
+  if(!paypalRendered && typeof paypal!=='undefined'){
+    renderPayPalButton();
+  }
+}
+function closeProModal(){document.getElementById('proModal').classList.remove('show')}
+function updateProUI(){
+  const pro=isPro();
+  const badge=document.getElementById('proBadgeMain');
+  if(pro){
+    badge.textContent='PRO';badge.classList.remove('free');badge.classList.add('pro-badge');
+  } else {
+    badge.textContent='FREE';badge.classList.add('free');
+  }
+  // Update IA limit badge
+  iaUpdateBadge();
+  // Update barcode
+  const bc=document.getElementById('barcodeCard');
+  const bpro=document.getElementById('barcodePro');
+  if(pro){bpro.style.display='none';document.getElementById('barcodeInput').disabled=false;document.getElementById('barcodeScanBtn').disabled=false}
+  else{bpro.style.display='';document.getElementById('barcodeInput').disabled=true;document.getElementById('barcodeScanBtn').disabled=true;document.getElementById('barcodeInput').placeholder='Función PRO'}
+  // Progress & Planner badges
+  const pgBadge=document.getElementById('progProBadge');
+  const plBadge=document.getElementById('planProBadge');
+  if(pro){if(pgBadge)pgBadge.style.display='none';if(plBadge)plBadge.style.display='none'}
+}
+
+// ═══ DATA — DISHES ═══
 const D=[
 {id:'d1',ct:'legumbres',e:'🍲',n:'Lentejas vegetarianas',d:'Lentejas, zanahoria, puerro, comino',k:450,p:22,c:58,f:8,fi:15,i:[{n:'Lentejas 200g',k:230},{n:'Verduras',k:40},{n:'Aceite',k:90}]},
 {id:'d2',ct:'legumbres',e:'🫘',n:'Cocido garbanzos sin pringue',d:'Garbanzos, pollo, ternera, verduras',k:360,p:24,c:42,f:9,fi:10,i:[{n:'Garbanzos 150g',k:246},{n:'Carne',k:70},{n:'Verduras',k:30}]},
@@ -578,7 +808,7 @@ const D=[
 {id:'d83',ct:'snacks',e:'🥪',n:'Bocadillo de pavo',d:'Pan integral, pechuga pavo, tomate',k:250,p:18,c:30,f:5,fi:3,i:[{n:'Pan 60g',k:140},{n:'Pavo 50g',k:54},{n:'Tomate+aceite',k:56}]},
 ];
 
-// ═══ DATA — FOODS (expanded) ═══
+// ═══ DATA — FOODS ═══
 const FF=[
 {id:1,ct:'proteinas',n:'Pechuga pollo',v:{k:110,p:23,c:0,f:1.2,fi:0},o:[{n:'1 filete 150g',g:150},{n:'2 filetes 200g',g:200}]},
 {id:2,ct:'proteinas',n:'Pavo pechuga',v:{k:108,p:22,c:0,f:2,fi:0},o:[{n:'200g',g:200},{n:'100g',g:100}]},
@@ -653,11 +883,11 @@ function openGoals(){const g=getGoals();document.getElementById('gk').value=g.k;
 function closeGoals(){document.getElementById('goalModal').classList.remove('show')}
 function saveGoals(){const g={k:+document.getElementById('gk').value||2200,p:+document.getElementById('gp').value||150,c:+document.getElementById('gc').value||250,f:+document.getElementById('gf').value||70,fi:+document.getElementById('gfi').value||30};localStorage.setItem('pf_goals',JSON.stringify(g));closeGoals();rd();ts('✅ Objetivos guardados')}
 
-// ═══ HISTORY (7 days max) ═══
+// ═══ HISTORY (30 days for pro) ═══
 function todayKey(){return new Date().toISOString().slice(0,10)}
 function getHistory(){try{return JSON.parse(localStorage.getItem('pf_hist'))||{}}catch{return{}}}
 function saveHistory(h){localStorage.setItem('pf_hist',JSON.stringify(h))}
-function saveToday(){const h=getHistory();const t={k:0,p:0,c:0,f:0,fi:0};plate.forEach(x=>{t.k+=x.k;t.p+=x.p;t.c+=x.c;t.f+=x.f;t.fi+=x.fi});h[todayKey()]={totals:t,items:plate.map(x=>({...x}))};const keys=Object.keys(h).sort().reverse().slice(0,7);const nh={};keys.forEach(k=>nh[k]=h[k]);saveHistory(nh)}
+function saveToday(){const h=getHistory();const t={k:0,p:0,c:0,f:0,fi:0};plate.forEach(x=>{t.k+=x.k;t.p+=x.p;t.c+=x.c;t.f+=x.f;t.fi+=x.fi});h[todayKey()]={totals:t,items:plate.map(x=>({...x}))};const maxDays=isPro()?30:7;const keys=Object.keys(h).sort().reverse().slice(0,maxDays);const nh={};keys.forEach(k=>nh[k]=h[k]);saveHistory(nh)}
 function loadToday(){const h=getHistory();const d=h[todayKey()];if(d&&d.items)plate=d.items.map(x=>({...x}));else plate=[]}
 function renderWeek(){
   const h=getHistory();const days=[];const dn=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
@@ -670,10 +900,15 @@ function renderWeek(){
 // ═══ NAV ═══
 document.querySelectorAll('.nb').forEach(b=>b.addEventListener('click',()=>{
   const pg=b.dataset.p;if(pg===curPg)return;
+  // Pro-gated pages
+  if((pg==='prog'||pg==='plan')&&!isPro()){openProModal();return}
   document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));b.classList.add('on');
   const oldEl=document.getElementById('pg-'+curPg);const newEl=document.getElementById('pg-'+pg);
   oldEl.classList.remove('on');oldEl.classList.add('out');
-  setTimeout(()=>{oldEl.classList.remove('out');newEl.classList.add('on');newEl.scrollTop=0;curPg=pg},50);
+  setTimeout(()=>{oldEl.classList.remove('out');newEl.classList.add('on');newEl.scrollTop=0;curPg=pg;
+    if(pg==='prog')renderCharts();
+    if(pg==='plan')renderPlanner();
+  },50);
 }));
 
 // ═══ PLATE ═══
@@ -787,10 +1022,9 @@ function rm(){
 // ═══ TOAST ═══
 let tT;function ts(m){const t=document.getElementById('tt');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2200)}
 
-// ═══ FOTO IA (native) ═══
-// ⚠️ CAMBIA ESTA URL por la de tu Worker desplegado
+// ═══ FOTO IA ═══
 const IA_API_URL = 'https://platofit-api.ejmanosalvas.workers.dev/analyze';
-const IA_DAILY_LIMIT = 3;
+function getIALimit(){return isPro()?999:2}
 
 let iaCurrentResult = null;
 let iaCurrentFile = null;
@@ -805,27 +1039,32 @@ function iaGetUsage() {
 function iaSaveUsage(u) { localStorage.setItem('pf_ia_usage', JSON.stringify(u)); }
 function iaUpdateBadge() {
   const u = iaGetUsage();
-  const rem = Math.max(0, IA_DAILY_LIMIT - u.count);
+  const limit = getIALimit();
+  const rem = Math.max(0, limit - u.count);
   const remEl = document.getElementById('ia-remaining');
   const badgeEl = document.getElementById('ia-limit-badge');
-  if (remEl) remEl.textContent = rem;
-  if (badgeEl) badgeEl.innerHTML = '🆓 ' + rem + '/' + IA_DAILY_LIMIT + ' análisis hoy';
+  if(isPro()){
+    if(remEl) remEl.textContent = '∞';
+    if(badgeEl) badgeEl.innerHTML = '👑 Análisis ilimitados';
+  } else {
+    if(remEl) remEl.textContent = rem;
+    if(badgeEl) badgeEl.innerHTML = '🆓 ' + rem + '/' + limit + ' análisis hoy';
+  }
 }
 
 function iaPreview(input) {
   const file = input.files[0];
   if (!file) return;
-  
   iaCurrentFile = file;
   const reader = new FileReader();
   reader.onload = function(e) {
     const img = document.getElementById('ia-preview');
     img.src = e.target.result;
     document.getElementById('ia-upload-area').style.display = 'block';
-    
     const btn = document.getElementById('ia-analyze-btn');
     const u = iaGetUsage();
-    if (u.count >= IA_DAILY_LIMIT) {
+    const limit = getIALimit();
+    if (!isPro() && u.count >= limit) {
       btn.disabled = true;
       document.getElementById('ia-btn-text').textContent = '🚫 Sin análisis disponibles hoy';
     } else {
@@ -834,8 +1073,6 @@ function iaPreview(input) {
     }
   };
   reader.readAsDataURL(file);
-  
-  // Reset previous results
   document.getElementById('ia-result').style.display = 'none';
   document.getElementById('ia-error').style.display = 'none';
   iaCurrentResult = null;
@@ -844,30 +1081,21 @@ function iaPreview(input) {
 async function iaAnalyze() {
   if (!iaCurrentFile) return;
   const u = iaGetUsage();
-  if (u.count >= IA_DAILY_LIMIT) {
-    document.getElementById('ia-error').textContent = 'Has alcanzado el límite diario de ' + IA_DAILY_LIMIT + ' análisis. ¡Vuelve mañana!';
+  const limit = getIALimit();
+  if (!isPro() && u.count >= limit) {
+    document.getElementById('ia-error').textContent = 'Has alcanzado el límite diario de ' + limit + ' análisis. ¡Hazte Pro para análisis ilimitados!';
     document.getElementById('ia-error').style.display = 'block';
     return;
   }
-  
   const btn = document.getElementById('ia-analyze-btn');
   btn.disabled = true;
   document.getElementById('ia-btn-text').innerHTML = '<div class="ia-spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></div>Analizando...';
   document.getElementById('ia-result').style.display = 'none';
   document.getElementById('ia-error').style.display = 'none';
-  
   try {
-    // Redimensionar imagen para ahorrar tokens
     const base64 = await iaResizeImage(iaCurrentFile, 800);
-    
-    const res = await fetch(IA_API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image: base64 })
-    });
-    
+    const res = await fetch(IA_API_URL, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:base64})});
     const data = await res.json();
-    
     if (data.error) {
       document.getElementById('ia-error').textContent = '❌ ' + data.error;
       document.getElementById('ia-error').style.display = 'block';
@@ -875,13 +1103,9 @@ async function iaAnalyze() {
       document.getElementById('ia-btn-text').textContent = '🔍 Reintentar';
       return;
     }
-    
-    // Guardar uso
     u.count++;
     iaSaveUsage(u);
     iaUpdateBadge();
-    
-    // Mostrar resultado
     iaCurrentResult = data;
     document.getElementById('ia-result-name').textContent = data.nombre || 'Comida analizada';
     document.getElementById('ia-result-macros').innerHTML =
@@ -890,7 +1114,6 @@ async function iaAnalyze() {
       '<span class="mp mh">' + (data.hc||0) + 'g HC</span>' +
       '<span class="mp mf">' + (data.grasa||0) + 'g G</span>' +
       '<span class="mp mfi">' + (data.fibra||0) + 'g F</span>';
-    
     if (data.items && data.items.length) {
       document.getElementById('ia-result-items').innerHTML =
         '<ul class="il">' + data.items.map(function(it) {
@@ -899,21 +1122,12 @@ async function iaAnalyze() {
     } else {
       document.getElementById('ia-result-items').innerHTML = '';
     }
-    
     const noteEl = document.getElementById('ia-result-note');
-    if (data.nota) {
-      noteEl.innerHTML = '<strong>💡 Nota</strong>' + data.nota;
-      noteEl.style.display = 'block';
-    } else {
-      noteEl.style.display = 'none';
-    }
-    
+    if (data.nota) {noteEl.innerHTML = '<strong>💡 Nota</strong>' + data.nota;noteEl.style.display = 'block'} else {noteEl.style.display = 'none'}
     document.getElementById('ia-result').style.display = 'block';
     document.getElementById('ia-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    
     btn.disabled = false;
     document.getElementById('ia-btn-text').textContent = '📸 Analizar otra foto';
-    
   } catch (err) {
     console.error('IA error:', err);
     const errEl = document.getElementById('ia-error');
@@ -952,9 +1166,215 @@ function iaResizeImage(file, maxDim) {
   });
 }
 
-// Init IA badge
+// ═══════════════════════════════════════
+// ═══  PRO FEATURES                   ═══
+// ═══════════════════════════════════════
+
+// ─── PROGRESS CHARTS ───
+let chartPeriod = 7;
+function setChartPeriod(p){
+  chartPeriod=p;
+  document.querySelectorAll('.chart-period-pill').forEach(b=>b.classList.toggle('on',+b.dataset.period===p));
+  renderCharts();
+}
+
+function renderCharts(){
+  if(!isPro()){document.getElementById('chartContent').innerHTML='<div class="ep"><div class="ei">🔒</div>Activa Pro para ver tus gráficas</div>';return}
+  const h=getHistory();
+  const days=[];
+  const today=new Date();
+  for(let i=chartPeriod-1;i>=0;i--){
+    const d=new Date(today);d.setDate(today.getDate()-i);
+    const k=d.toISOString().slice(0,10);
+    const dn=['D','L','M','X','J','V','S'];
+    days.push({key:k,label:d.getDate()+'',dayName:dn[d.getDay()],data:h[k]?h[k].totals:null});
+  }
+  const g=getGoals();
+  // Calc max for bars
+  const maxK=Math.max(g.k,...days.map(d=>d.data?d.data.k:0));
+  // Averages
+  const withData=days.filter(d=>d.data);
+  const avgK=withData.length?Math.round(withData.reduce((a,d)=>a+d.data.k,0)/withData.length):0;
+  const avgP=withData.length?Math.round(withData.reduce((a,d)=>a+d.data.p,0)/withData.length):0;
+  const avgC=withData.length?Math.round(withData.reduce((a,d)=>a+d.data.c,0)/withData.length):0;
+  const avgF=withData.length?Math.round(withData.reduce((a,d)=>a+d.data.f,0)/withData.length):0;
+
+  let html='<div class="chart-card"><h3>🔥 Calorías diarias</h3><div class="chart-bar-row">';
+  days.forEach(d=>{
+    const val=d.data?Math.round(d.data.k):0;
+    const pct=maxK?Math.round((val/maxK)*130):0;
+    const over=val>g.k;
+    html+='<div class="chart-bar-col"><div class="chart-bar-val">'+(val||'')+'</div><div class="chart-bar" style="height:'+pct+'px;background:'+(over?'var(--fat)':'var(--cal)')+';opacity:'+(val?1:.15)+'"></div><div class="chart-bar-label">'+d.dayName+'</div></div>';
+  });
+  html+='</div>';
+  html+='<div class="chart-avg"><div class="chart-avg-item"><span class="cav" style="color:var(--cal)">'+avgK+'</span><span class="cal2">Kcal/día</span></div><div class="chart-avg-item"><span class="cav" style="color:var(--prot)">'+avgP+'g</span><span class="cal2">Prot/día</span></div><div class="chart-avg-item"><span class="cav" style="color:var(--hc)">'+avgC+'g</span><span class="cal2">HC/día</span></div><div class="chart-avg-item"><span class="cav" style="color:var(--fat)">'+avgF+'g</span><span class="cal2">Grasa/día</span></div></div></div>';
+
+  // Protein chart
+  const maxP2=Math.max(g.p,...days.map(d=>d.data?d.data.p:0));
+  html+='<div class="chart-card"><h3>💪 Proteína diaria</h3><div class="chart-bar-row">';
+  days.forEach(d=>{
+    const val=d.data?Math.round(d.data.p):0;
+    const pct=maxP2?Math.round((val/maxP2)*130):0;
+    html+='<div class="chart-bar-col"><div class="chart-bar-val">'+(val||'')+'</div><div class="chart-bar" style="height:'+pct+'px;background:var(--prot);opacity:'+(val?1:.15)+'"></div><div class="chart-bar-label">'+d.dayName+'</div></div>';
+  });
+  html+='</div></div>';
+
+  // Compliance
+  const compDays=withData.filter(d=>d.data.k>=g.k*0.85&&d.data.k<=g.k*1.15).length;
+  const compPct=withData.length?Math.round((compDays/withData.length)*100):0;
+  html+='<div class="chart-card"><h3>🎯 Adherencia a objetivos</h3><div style="text-align:center;padding:16px 0"><div style="font-family:Syne;font-size:2.5rem;font-weight:800;color:var(--accent)">'+compPct+'%</div><div style="font-size:.78rem;color:var(--tx3);margin-top:4px">de los días dentro del rango (±15%)</div><div style="font-size:.72rem;color:var(--tx2);margin-top:8px">'+compDays+' de '+withData.length+' días registrados</div></div></div>';
+
+  document.getElementById('chartContent').innerHTML=html;
+}
+
+// ─── MEAL PLANNER ───
+const MEAL_TYPES=['Desayuno','Almuerzo','Comida','Merienda','Cena'];
+const PLAN_DAYS=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+
+function getPlan(){try{return JSON.parse(localStorage.getItem('pf_plan'))||{}}catch{return{}}}
+function savePlan(p){localStorage.setItem('pf_plan',JSON.stringify(p))}
+
+function renderPlanner(){
+  if(!isPro()){document.getElementById('plannerArea').innerHTML='<div class="ep"><div class="ei">🔒</div>Activa Pro para usar el planificador</div>';return}
+  const plan=getPlan();
+  let html='';
+  PLAN_DAYS.forEach((day,di)=>{
+    const dayData=plan[di]||{};
+    let dayKcal=0;
+    MEAL_TYPES.forEach(mt=>{const items=dayData[mt]||[];items.forEach(it=>dayKcal+=it.k||0)});
+    html+='<div class="planner-day'+(di===0?' open':'')+'" data-di="'+di+'">';
+    html+='<div class="planner-day-header" onclick="this.closest(\'.planner-day\').classList.toggle(\'open\')"><h3>'+day+'</h3><div style="display:flex;align-items:center;gap:8px"><span class="pd-kcal">'+(dayKcal?dayKcal+' kcal':'—')+'</span><span class="pd-arrow">▾</span></div></div>';
+    html+='<div class="planner-day-body">';
+    MEAL_TYPES.forEach(mt=>{
+      const items=dayData[mt]||[];
+      html+='<div class="planner-meal"><div class="planner-meal-label">'+mt+'</div><div class="planner-meal-items">';
+      items.forEach((it,ii)=>{
+        html+='<div class="planner-meal-item"><span class="pmi-name">'+it.n+'</span><span class="pmi-kcal">'+it.k+' kcal</span><button class="pmi-del" onclick="removePlanItem('+di+',\''+mt+'\','+ii+')">✕</button></div>';
+      });
+      html+='</div><button class="planner-add-btn" onclick="addToPlan('+di+',\''+mt+'\')">＋ Añadir a '+mt+'</button></div>';
+    });
+    // Day totals
+    if(dayKcal){
+      let dp=0,dc=0,df=0;
+      MEAL_TYPES.forEach(mt=>{(dayData[mt]||[]).forEach(it=>{dp+=it.p||0;dc+=it.c||0;df+=it.f||0})});
+      html+='<div class="planner-totals"><span class="mp mc">'+dayKcal+' kcal</span><span class="mp mpr">'+Math.round(dp)+'g P</span><span class="mp mh">'+Math.round(dc)+'g HC</span><span class="mp mf">'+Math.round(df)+'g G</span></div>';
+    }
+    html+='</div></div>';
+  });
+  document.getElementById('plannerArea').innerHTML=html;
+}
+
+function addToPlan(dayIdx,mealType){
+  // Show a simple prompt to pick from existing dishes
+  const options=D.map((d,i)=>(i+1)+'. '+d.n+' ('+d.k+' kcal)').join('\n');
+  const choice=prompt('Elige un plato (número):\n'+options);
+  if(!choice)return;
+  const idx=parseInt(choice)-1;
+  if(idx<0||idx>=D.length){ts('❌ Número inválido');return}
+  const dish=D[idx];
+  const plan=getPlan();
+  if(!plan[dayIdx])plan[dayIdx]={};
+  if(!plan[dayIdx][mealType])plan[dayIdx][mealType]=[];
+  plan[dayIdx][mealType].push({n:dish.n,k:dish.k,p:dish.p,c:dish.c,f:dish.f,fi:dish.fi});
+  savePlan(plan);
+  renderPlanner();
+  ts('✅ '+dish.n+' añadido a '+mealType);
+}
+
+function removePlanItem(dayIdx,mealType,itemIdx){
+  const plan=getPlan();
+  if(plan[dayIdx]&&plan[dayIdx][mealType]){
+    plan[dayIdx][mealType].splice(itemIdx,1);
+    savePlan(plan);
+    renderPlanner();
+  }
+}
+
+// ─── BARCODE SCANNER ───
+async function scanBarcode(){
+  if(!isPro()){openProModal();return}
+  const code=document.getElementById('barcodeInput').value.trim();
+  if(!code){ts('❌ Introduce un código');return}
+  const btn=document.getElementById('barcodeScanBtn');
+  btn.disabled=true;btn.textContent='Buscando...';
+  try{
+    const res=await fetch('https://world.openfoodfacts.org/api/v0/product/'+code+'.json');
+    const data=await res.json();
+    if(data.status===1&&data.product){
+      const p=data.product;
+      const n100=p.nutriments||{};
+      const name=p.product_name||'Producto';
+      const kcal=Math.round(n100['energy-kcal_100g']||0);
+      const prot=Math.round((n100.proteins_100g||0)*10)/10;
+      const carbs=Math.round((n100.carbohydrates_100g||0)*10)/10;
+      const fat=Math.round((n100.fat_100g||0)*10)/10;
+      const fiber=Math.round((n100.fiber_100g||0)*10)/10;
+      const serving=p.serving_quantity||100;
+      const sUnit=p.serving_size||'100g';
+      const m=serving/100;
+      document.getElementById('barcodeResult').innerHTML=
+        '<div class="barcode-result">'+
+        '<div class="br-name">'+name+'</div>'+
+        '<div style="font-size:.72rem;color:var(--tx3);margin-bottom:10px">Código: '+code+' · Ración: '+sUnit+'</div>'+
+        '<div class="mr"><span class="mp mc">'+Math.round(kcal*m)+' kcal</span><span class="mp mpr">'+Math.round(prot*m)+'g P</span><span class="mp mh">'+Math.round(carbs*m)+'g HC</span><span class="mp mf">'+Math.round(fat*m)+'g G</span><span class="mp mfi">'+Math.round(fiber*m)+'g F</span></div>'+
+        '<div style="font-size:.65rem;color:var(--tx3);margin:8px 0">Valores por 100g: '+kcal+' kcal · '+prot+'g P · '+carbs+'g HC · '+fat+'g G</div>'+
+        '<button class="dab" onclick="ap(\''+name.replace(/'/g,"\\'")+'\',\'Código '+code+'\','+Math.round(kcal*m)+','+Math.round(prot*m)+','+Math.round(carbs*m)+','+Math.round(fat*m)+','+Math.round(fiber*m)+')">➕ Añadir al plato de hoy</button>'+
+        '</div>';
+    } else {
+      document.getElementById('barcodeResult').innerHTML='<div class="gn2" style="border-color:rgba(229,91,91,.3);color:var(--fat);background:rgba(229,91,91,.06)">❌ Producto no encontrado. Prueba con otro código.</div>';
+    }
+  } catch(err){
+    document.getElementById('barcodeResult').innerHTML='<div class="gn2" style="border-color:rgba(229,91,91,.3);color:var(--fat);background:rgba(229,91,91,.06)">❌ Error de conexión. Inténtalo de nuevo.</div>';
+  }
+  btn.disabled=false;btn.textContent='🔍 Buscar';
+}
+
+// ═══ PAYPAL INTEGRATION ═══
+function renderPayPalButton(){
+  if(paypalRendered) return;
+  const container=document.getElementById('paypal-button-container-P-2YU010977W121804LNHWJKRQ');
+  if(!container || typeof paypal==='undefined') return;
+  document.getElementById('pro-paypal-loading').style.display='none';
+  paypalRendered=true;
+  paypal.Buttons({
+    style:{
+      shape:'rect',
+      color:'gold',
+      layout:'vertical',
+      label:'subscribe'
+    },
+    createSubscription:function(data,actions){
+      return actions.subscription.create({
+        plan_id:'P-2YU010977W121804LNHWJKRQ'
+      });
+    },
+    onApprove:function(data,actions){
+      activateProAfterPayment(data.subscriptionID);
+    },
+    onError:function(err){
+      console.error('PayPal error:',err);
+      ts('❌ Error en el pago. Inténtalo de nuevo.');
+    }
+  }).render('#paypal-button-container-P-2YU010977W121804LNHWJKRQ');
+}
+
+// Load PayPal SDK dynamically
+function loadPayPalSDK(){
+  if(document.getElementById('paypal-sdk')) return;
+  const s=document.createElement('script');
+  s.id='paypal-sdk';
+  s.src='https://www.paypal.com/sdk/js?client-id=AUljrgXXeEI8Pl8E6QY7igze33RLIMUaN25nWvgR9Tzd5PNGPo4J2NsiGf5aocdQs7UTbAhF7WBA8ob5&vault=true&intent=subscription&enable-funding=card';
+  s.setAttribute('data-sdk-integration-source','button-factory');
+  s.onload=function(){renderPayPalButton()};
+  document.head.appendChild(s);
+}
+
+// ═══ INIT ═══
 iaUpdateBadge();
+updateProUI();
 loadToday();idp();ifp();rd();rds();rfs();rm();
+// Load PayPal SDK after app init
+setTimeout(loadPayPalSDK, 2000);
 </script>
 </body>
 </html>

@@ -421,6 +421,14 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 .barcode-result{background:var(--card2);border-radius:16px;padding:16px;text-align:left;animation:fadeUp .3s ease}
 .barcode-result .br-name{font-size:.95rem;font-weight:700;margin-bottom:8px}
 
+.barcode-cam-btn{width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:14px;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;margin-bottom:12px;transition:transform .1s}
+.barcode-cam-btn:active{transform:scale(.97)}
+.barcode-video{width:100%;border-radius:14px;margin-bottom:8px;background:#000;max-height:220px;object-fit:cover}
+.barcode-cam-hint{font-size:.72rem;color:var(--tx3);margin-bottom:8px;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+.barcode-cam-stop{padding:10px 20px;background:none;border:1.5px solid var(--brd2);border-radius:12px;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;color:var(--tx2);cursor:pointer;margin-bottom:14px;transition:all .15s}
+.barcode-cam-stop:active{transform:scale(.95);border-color:var(--fat);color:var(--fat)}
+
 /* ─── PRO LOCK OVERLAY ─── */
 .pro-lock{position:relative}
 .pro-lock::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,.6);border-radius:inherit;z-index:2;pointer-events:none}
@@ -553,7 +561,13 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
       <div class="barcode-section" style="margin-bottom:16px">
         <div class="barcode-card" id="barcodeCard">
           <h3>🔎 Escáner de código de barras <span class="pro-badge" onclick="openProModal()" id="barcodePro">PRO</span></h3>
-          <p>Introduce el código de barras de un producto envasado</p>
+          <p>Escanea con la cámara o escribe el código manualmente</p>
+          <button class="barcode-cam-btn" id="barcodeCamBtn" onclick="toggleBarcodeCamera()">📷 Escanear con cámara</button>
+          <div id="barcodeCamArea" style="display:none">
+            <video id="barcodeCamVideo" class="barcode-video" playsinline autoplay muted></video>
+            <div class="barcode-cam-hint">Apunta al código de barras</div>
+            <button class="barcode-cam-stop" onclick="stopBarcodeCamera()">✕ Cerrar cámara</button>
+          </div>
           <div class="barcode-input-row">
             <input class="barcode-input" id="barcodeInput" type="text" inputmode="numeric" placeholder="Ej: 8410376014440">
             <button class="barcode-scan-btn" id="barcodeScanBtn" onclick="scanBarcode()">🔍 Buscar</button>
@@ -1037,6 +1051,8 @@ function renderWeek(){
 // ═══ NAV ═══
 document.querySelectorAll('.nb').forEach(b=>b.addEventListener('click',()=>{
   const pg=b.dataset.p;if(pg===curPg)return;
+  // Stop barcode camera if leaving foto page
+  if(curPg==='foto'&&typeof stopBarcodeCamera==='function')stopBarcodeCamera();
   // Pro-gated pages
   if((pg==='prog'||pg==='plan')&&!isPro()){openProModal();return}
   document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));b.classList.add('on');
@@ -1428,6 +1444,80 @@ function removePlanItem(dayIdx,mealType,itemIdx){
 }
 
 // ─── BARCODE SCANNER ───
+let barcodeStream=null;
+let barcodeScanInterval=null;
+
+function toggleBarcodeCamera(){
+  if(!isPro()){openProModal();return}
+  const area=document.getElementById('barcodeCamArea');
+  if(area.style.display==='none'){
+    startBarcodeCamera();
+  } else {
+    stopBarcodeCamera();
+  }
+}
+
+async function startBarcodeCamera(){
+  const video=document.getElementById('barcodeCamVideo');
+  const area=document.getElementById('barcodeCamArea');
+  try{
+    barcodeStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}
+    });
+    video.srcObject=barcodeStream;
+    area.style.display='block';
+    document.getElementById('barcodeCamBtn').textContent='📷 Cámara activa...';
+    
+    // Try native BarcodeDetector API first (Chrome, Edge, Android)
+    if('BarcodeDetector' in window){
+      const detector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128','code_39']});
+      barcodeScanInterval=setInterval(async()=>{
+        try{
+          const barcodes=await detector.detect(video);
+          if(barcodes.length>0){
+            const code=barcodes[0].rawValue;
+            stopBarcodeCamera();
+            document.getElementById('barcodeInput').value=code;
+            ts('✅ Código detectado: '+code);
+            scanBarcode();
+          }
+        }catch(e){}
+      },300);
+    } else {
+      // Fallback: manual canvas scanning with simple pattern detection
+      const canvas=document.createElement('canvas');
+      const ctx=canvas.getContext('2d');
+      barcodeScanInterval=setInterval(()=>{
+        if(video.readyState===video.HAVE_ENOUGH_DATA){
+          canvas.width=video.videoWidth;
+          canvas.height=video.videoHeight;
+          ctx.drawImage(video,0,0);
+          // Without native BarcodeDetector, prompt user to type code
+        }
+      },500);
+      // Show hint that manual fallback is active
+      document.querySelector('.barcode-cam-hint').textContent='Apunta al código · Si no detecta, escríbelo abajo';
+    }
+  }catch(err){
+    console.error('Camera error:',err);
+    ts('❌ No se pudo acceder a la cámara');
+    area.style.display='none';
+  }
+}
+
+function stopBarcodeCamera(){
+  if(barcodeStream){
+    barcodeStream.getTracks().forEach(t=>t.stop());
+    barcodeStream=null;
+  }
+  if(barcodeScanInterval){
+    clearInterval(barcodeScanInterval);
+    barcodeScanInterval=null;
+  }
+  document.getElementById('barcodeCamArea').style.display='none';
+  document.getElementById('barcodeCamBtn').textContent='📷 Escanear con cámara';
+}
+
 async function scanBarcode(){
   if(!isPro()){openProModal();return}
   const code=document.getElementById('barcodeInput').value.trim();

@@ -412,10 +412,11 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 .barcode-card{background:var(--card);border:1px solid var(--brd);border-radius:20px;padding:20px;text-align:center;box-shadow:var(--card-shadow)}
 .barcode-card h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:8px}
 .barcode-card p{font-size:.78rem;color:var(--tx3);font-weight:300;margin-bottom:16px}
-.barcode-input-row{display:flex;gap:8px;margin-bottom:12px}
-.barcode-input{flex:1;padding:13px 14px;border:1.5px solid var(--brd);border-radius:12px;font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--tx);outline:none;background:var(--card2);min-height:48px;transition:border-color .2s}
+.barcode-input-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.barcode-input{flex:1;min-width:0;padding:13px 14px;border:1.5px solid var(--brd);border-radius:12px;font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--tx);outline:none;background:var(--card2);min-height:48px;transition:border-color .2s}
 .barcode-input:focus{border-color:var(--accent)}
-.barcode-scan-btn{padding:12px 18px;background:var(--accent);color:white;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:transform .1s;min-height:48px;white-space:nowrap}
+.barcode-scan-btn{padding:12px 18px;background:var(--accent);color:white;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:transform .1s;min-height:48px;white-space:nowrap;flex-shrink:0}
+@media(max-width:400px){.barcode-input-row{flex-direction:column}.barcode-scan-btn{width:100%}}
 .barcode-scan-btn:active{transform:scale(.95)}
 .barcode-result{background:var(--card2);border-radius:16px;padding:16px;text-align:left;animation:fadeUp .3s ease}
 .barcode-result .br-name{font-size:.95rem;font-weight:700;margin-bottom:8px}
@@ -426,6 +427,15 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 [data-theme="dark"] .pro-lock::after{background:rgba(10,15,10,.6)}
 .pro-lock-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;background:var(--pro-grad);color:white;padding:10px 20px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px var(--pro-glow);white-space:nowrap;transition:transform .1s}
 .pro-lock-badge:active{transform:translate(-50%,-50%) scale(.95)}
+
+/* ─── PRO TRIAL ─── */
+.pro-trial-btn{width:100%;padding:15px;background:var(--accent);color:white;border:none;border-radius:14px;font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;margin-bottom:8px;transition:transform .1s;position:relative;overflow:hidden}
+.pro-trial-btn:active{transform:scale(.97)}
+.pro-trial-btn .pts{font-size:.68rem;font-weight:400;opacity:.8;display:block;margin-top:3px}
+.pro-or{text-align:center;font-size:.72rem;color:var(--tx3);margin:8px 0;font-weight:500}
+.pro-trial-info{background:rgba(62,166,78,.08);border:1px solid rgba(62,166,78,.2);border-radius:14px;padding:12px 16px;margin-bottom:14px;text-align:center}
+.pro-trial-info .pti-t{font-size:.85rem;font-weight:700;color:var(--accent)}
+.pro-trial-info .pti-d{font-size:.72rem;color:var(--tx2);margin-top:3px}
 
 </style>
 </head>
@@ -653,6 +663,11 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
         <span class="amount">2,99 €</span>
         <span class="period">/ mes</span>
       </div>
+      <!-- Trial info (shown dynamically) -->
+      <div id="proTrialInfo" style="display:none"></div>
+      <!-- Trial button -->
+      <button class="pro-trial-btn" id="proTrialBtn" onclick="startTrial()">🎁 Probar 3 días gratis<span class="pts">Sin compromiso · Se desactiva solo</span></button>
+      <div class="pro-or">— o suscríbete —</div>
       <!-- PayPal Button -->
       <div id="paypal-button-container-P-2YU010977W121804LNHWJKRQ" style="margin-bottom:10px"></div>
       <div id="pro-paypal-loading" style="text-align:center;padding:12px;font-size:.82rem;color:var(--tx3)">Cargando métodos de pago...</div>
@@ -695,16 +710,54 @@ setTimeout(()=>{document.getElementById('splash').classList.add('gone');document
 
 // ═══ PRO SYSTEM ═══
 function isPro(){
-  const pro=localStorage.getItem('pf_pro');
-  if(pro!=='true') return false;
-  // Check expiry (35 days from activation)
-  const exp=localStorage.getItem('pf_pro_exp');
-  if(exp && Date.now()>parseInt(exp)){
-    // Expired — keep pro if they have a subscription ID (they might still be subscribed)
-    // In a real system you'd verify with PayPal API here
-    return true; // Be generous, keep active
+  // Check paid subscription
+  if(localStorage.getItem('pf_pro')==='true'){
+    const exp=localStorage.getItem('pf_pro_exp');
+    if(exp && Date.now()>parseInt(exp)){
+      // Expired but has subscription — keep active (PayPal handles recurring)
+      const subId=localStorage.getItem('pf_sub_id');
+      if(subId) return true;
+      // No subscription, was trial — deactivate
+      localStorage.removeItem('pf_pro');
+      localStorage.removeItem('pf_pro_exp');
+      localStorage.removeItem('pf_trial_used');
+      return false;
+    }
+    return true;
   }
-  return true;
+  return false;
+}
+function isTrialActive(){
+  if(localStorage.getItem('pf_pro')!=='true') return false;
+  return !localStorage.getItem('pf_sub_id'); // Pro without subscription = trial
+}
+function hasUsedTrial(){
+  return localStorage.getItem('pf_trial_used')==='true';
+}
+function getTrialTimeLeft(){
+  const exp=localStorage.getItem('pf_pro_exp');
+  if(!exp) return null;
+  const ms=parseInt(exp)-Date.now();
+  if(ms<=0) return null;
+  const hours=Math.floor(ms/(1000*60*60));
+  const days=Math.floor(hours/24);
+  const remHours=hours%24;
+  if(days>0) return days+'d '+remHours+'h';
+  if(hours>0) return hours+'h';
+  return 'menos de 1h';
+}
+function startTrial(){
+  if(hasUsedTrial()){
+    ts('Ya has usado tu prueba gratuita');
+    return;
+  }
+  localStorage.setItem('pf_pro','true');
+  localStorage.setItem('pf_trial_used','true');
+  localStorage.setItem('pf_pro_exp',(Date.now()+3*24*60*60*1000).toString()); // 3 days
+  // Don't set pf_sub_id — this distinguishes trial from paid
+  closeProModal();
+  updateProUI();
+  ts('🎁 ¡Prueba Pro activada! 3 días gratis');
 }
 function activateProAfterPayment(subscriptionID){
   localStorage.setItem('pf_pro','true');
@@ -727,8 +780,27 @@ function restorePro(){
 }
 let paypalRendered=false;
 function openProModal(){
+  if(isPro()&&isTrialActive()){
+    // Show trial info and encourage upgrade
+    const info=document.getElementById('proTrialInfo');
+    const timeLeft=getTrialTimeLeft();
+    if(timeLeft){
+      info.innerHTML='<div class="pro-trial-info"><div class="pti-t">🎁 Prueba activa — '+timeLeft+' restantes</div><div class="pti-d">Suscríbete para no perder el acceso</div></div>';
+      info.style.display='block';
+    }
+  } else {
+    document.getElementById('proTrialInfo').style.display='none';
+  }
+  // Update trial button state
+  const trialBtn=document.getElementById('proTrialBtn');
+  if(hasUsedTrial()||isPro()){
+    trialBtn.style.display='none';
+    const orEl=trialBtn.nextElementSibling;
+    if(orEl&&orEl.classList.contains('pro-or'))orEl.style.display='none';
+  } else {
+    trialBtn.style.display='';
+  }
   document.getElementById('proModal').classList.add('show');
-  // Render PayPal button once the SDK is loaded
   if(!paypalRendered && typeof paypal!=='undefined'){
     renderPayPalButton();
   }
@@ -736,9 +808,13 @@ function openProModal(){
 function closeProModal(){document.getElementById('proModal').classList.remove('show')}
 function updateProUI(){
   const pro=isPro();
+  const trial=isTrialActive();
   const badge=document.getElementById('proBadgeMain');
-  if(pro){
-    badge.textContent='PRO';badge.classList.remove('free');badge.classList.add('pro-badge');
+  if(pro&&!trial){
+    badge.textContent='PRO';badge.classList.remove('free');
+  } else if(pro&&trial){
+    const tl=getTrialTimeLeft();
+    badge.textContent='PRUEBA'+(tl?' · '+tl:'');badge.classList.remove('free');
   } else {
     badge.textContent='FREE';badge.classList.add('free');
   }
@@ -753,6 +829,7 @@ function updateProUI(){
   const pgBadge=document.getElementById('progProBadge');
   const plBadge=document.getElementById('planProBadge');
   if(pro){if(pgBadge)pgBadge.style.display='none';if(plBadge)plBadge.style.display='none'}
+  else{if(pgBadge)pgBadge.style.display='';if(plBadge)plBadge.style.display=''}
 }
 
 // ═══ DATA — DISHES ═══

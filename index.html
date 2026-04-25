@@ -672,7 +672,7 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
       <div id="paypal-button-container-P-2YU010977W121804LNHWJKRQ" style="margin-bottom:10px"></div>
       <div id="pro-paypal-loading" style="text-align:center;padding:12px;font-size:.82rem;color:var(--tx3)">Cargando métodos de pago...</div>
       <button class="pro-close" onclick="closeProModal()">Ahora no</button>
-      <div class="pro-restore">¿Ya eres Pro? <a href="#" onclick="restorePro();return false" style="color:var(--accent);font-weight:600">Restaurar compra</a></div>
+      <div class="pro-restore">¿Ya eres Pro? <a href="#" onclick="restorePro();return false" style="color:var(--accent);font-weight:600">Restaurar compra</a> · <a href="#" onclick="redeemCode();return false" style="color:var(--accent);font-weight:600">Canjear código</a></div>
     </div>
   </div>
 </div>
@@ -776,6 +776,38 @@ function restorePro(){
     ts('👑 Pro restaurado');
   } else {
     ts('No se encontró suscripción previa');
+  }
+}
+// ═══ GIFT CODES ═══
+// Add your codes here. Each code has: days (duration), once (single use or not)
+const PRO_CODES={
+  'PLATOFIT2026':{days:365,label:'1 año'},
+  'PROFRIEND':{days:30,label:'1 mes'},
+  'REGALO90':{days:90,label:'3 meses'},
+  'PROLIFE':{days:36500,label:'de por vida'}
+};
+function redeemCode(){
+  const code=prompt('Introduce tu código Pro:');
+  if(!code) return;
+  const clean=code.trim().toUpperCase();
+  // Check if already used
+  const usedCodes=JSON.parse(localStorage.getItem('pf_used_codes')||'[]');
+  if(usedCodes.includes(clean)){
+    ts('❌ Este código ya ha sido canjeado');
+    return;
+  }
+  const gift=PRO_CODES[clean];
+  if(gift){
+    localStorage.setItem('pf_pro','true');
+    localStorage.setItem('pf_pro_exp',(Date.now()+gift.days*24*60*60*1000).toString());
+    localStorage.setItem('pf_sub_id','GIFT-'+clean); // Mark as gift, not trial
+    usedCodes.push(clean);
+    localStorage.setItem('pf_used_codes',JSON.stringify(usedCodes));
+    closeProModal();
+    updateProUI();
+    ts('🎁 ¡Código canjeado! Pro '+gift.label);
+  } else {
+    ts('❌ Código no válido');
   }
 }
 let paypalRendered=false;

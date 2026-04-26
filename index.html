@@ -35,18 +35,6 @@
 <meta name="twitter:title" content="PlatoFit — Cuenta tus macros fácil">
 <meta name="twitter:description" content="📊 Controla tus calorías y macros al instante. Análisis por foto con IA y +60 platos andaluces.">
 <meta name="twitter:image" content="https://www.platofit.com/og-image.png">
-<!-- ═══ GOOGLE ANALYTICS 4 ═══ -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-WYEHN24JED"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-WYEHN24JED', {
-    page_title: 'PlatoFit',
-    page_location: window.location.href
-  });
-</script>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
@@ -489,6 +477,24 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 .promo-msg.ok{color:var(--accent)}
 .promo-msg.err{color:var(--fat)}
 
+/* ─── PLAN TOGGLE ─── */
+.plan-toggle{display:flex;background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:4px;margin-bottom:14px;gap:4px}
+.plan-opt{flex:1;padding:10px 8px;border:none;border-radius:11px;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;color:var(--tx2);cursor:pointer;text-align:center;transition:all .2s;background:none;line-height:1.3}
+.plan-opt.on{background:var(--pro-grad);color:white;box-shadow:0 2px 8px var(--pro-glow)}
+.plan-opt .plan-save{display:block;font-size:.6rem;font-weight:700;color:rgba(255,255,255,.85);margin-top:2px}
+.plan-opt:not(.on) .plan-save{color:var(--accent);opacity:.7}
+
+/* ─── COMING SOON MODAL ─── */
+.cs-modal-bg{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.cs-modal-bg.show{display:flex}
+.cs-modal{background:var(--bg);border-radius:24px;width:calc(100% - 48px);max-width:340px;padding:32px 24px;text-align:center;animation:fadeUp .3s ease;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.cs-modal .cs-icon{font-size:3rem;margin-bottom:12px}
+.cs-modal h3{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;margin-bottom:8px}
+.cs-modal p{font-size:.82rem;color:var(--tx2);font-weight:300;line-height:1.5;margin-bottom:18px}
+.cs-modal button{width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:14px;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:transform .1s}
+.cs-modal button:active{transform:scale(.96)}
+
+
 </style>
 </head>
 <body>
@@ -704,7 +710,7 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
     <div class="pro-body">
       <div class="pro-feature">
         <div class="pro-feat-icon">📸</div>
-        <div class="pro-feat-text"><b>Análisis IA ilimitados</b><span>Sin límite diario · Analiza todas las fotos que quieras</span></div>
+        <div class="pro-feat-text"><b>15 análisis IA al día</b><span>Hasta 15 fotos diarias · Mucho más que la versión gratuita</span></div>
       </div>
       <div class="pro-feature">
         <div class="pro-feat-icon">📊</div>
@@ -719,15 +725,22 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
         <div class="pro-feat-text"><b>Escáner de código de barras</b><span>Busca productos envasados por su código</span></div>
       </div>
       <div class="pro-price">
-        <span class="amount">2,99 €</span>
-        <span class="period">/ mes</span>
+        <span class="amount" id="proPriceAmount">2,99 €</span>
+        <span class="period" id="proPricePeriod">/ mes</span>
+      </div>
+      <!-- Plan toggle -->
+      <div class="plan-toggle">
+        <button class="plan-opt on" id="planMonthly" onclick="selectPlan('monthly')">2,99 €/mes</button>
+        <button class="plan-opt" id="planYearly" onclick="selectPlan('yearly')">29,99 €/año<span class="plan-save">Ahorra 17%</span></button>
       </div>
       <!-- Trial info (shown dynamically) -->
       <div id="proTrialInfo" style="display:none"></div>
       <!-- Trial button -->
       <button class="pro-trial-btn" id="proTrialBtn" onclick="startTrial()">🎁 Probar 3 días gratis<span class="pts">Sin compromiso · Se desactiva solo</span></button>
       <div class="pro-or">— o suscríbete —</div>
-      <!-- PayPal Button -->
+      <!-- Subscribe button (shows coming soon - only for yearly) -->
+      <button class="pro-cta" id="proCtaComingSoon" onclick="showComingSoon()" style="display:none">👑 Suscribirse — 29,99 €/año</button>
+      <!-- PayPal Button (for monthly) -->
       <div id="paypal-button-container-P-2YU010977W121804LNHWJKRQ" style="margin-bottom:10px"></div>
       <div id="pro-paypal-loading" style="text-align:center;padding:12px;font-size:.82rem;color:var(--tx3)">Cargando métodos de pago...</div>
       <!-- Promo code -->
@@ -740,6 +753,16 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
       <button class="pro-close" onclick="closeProModal()">Ahora no</button>
       <div class="pro-restore">¿Ya eres Pro? <a href="#" onclick="restorePro();return false" style="color:var(--accent);font-weight:600">Restaurar compra</a></div>
     </div>
+  </div>
+</div>
+
+<!-- COMING SOON MODAL -->
+<div class="cs-modal-bg" id="csModal">
+  <div class="cs-modal">
+    <div class="cs-icon">🚧</div>
+    <h3>Próximamente</h3>
+    <p>El plan anual aún no está disponible. Estamos trabajando para tenerlo listo muy pronto. Mientras tanto, puedes suscribirte al plan mensual. ¡Gracias por tu paciencia!</p>
+    <button onclick="document.getElementById('csModal').classList.remove('show')">Entendido</button>
   </div>
 </div>
 
@@ -824,11 +847,6 @@ function startTrial(){
   closeProModal();
   updateProUI();
   ts('🎁 ¡Prueba Pro activada! 3 días gratis');
-  // GA4: Trial iniciado
-  gtag('event', 'pro_trial_start', {
-    event_category: 'Conversion',
-    event_label: 'trial_3_dias'
-  });
 }
 function activateProAfterPayment(subscriptionID){
   localStorage.setItem('pf_pro','true');
@@ -837,18 +855,6 @@ function activateProAfterPayment(subscriptionID){
   closeProModal();
   updateProUI();
   ts('👑 ¡PlatoFit Pro activado!');
-  // GA4: Conversión de pago (evento de compra estándar de GA4)
-  gtag('event', 'purchase', {
-    transaction_id: subscriptionID,
-    value: 2.99,
-    currency: 'EUR',
-    items: [{ item_id: 'platofit_pro', item_name: 'PlatoFit Pro', price: 2.99 }]
-  });
-  gtag('event', 'pro_activated', {
-    event_category: 'Conversion',
-    event_label: 'pago_paypal',
-    value: 2.99
-  });
 }
 function restorePro(){
   const subId=localStorage.getItem('pf_sub_id');
@@ -894,18 +900,12 @@ function redeemCode(){
     msg.className='promo-msg ok';msg.textContent='✅ ¡Pro '+gift.label+' activado!';
     input.value='';
     updateProUI();
-    // GA4: Código regalo canjeado
-    gtag('event', 'pro_code_redeemed', {
-      event_category: 'Conversion',
-      event_label: 'codigo_regalo_' + gift.label
-    });
     setTimeout(()=>{closeProModal();ts('🎁 ¡Código canjeado! Pro '+gift.label)},1200);
   } else {
     msg.className='promo-msg err';msg.textContent='❌ Código no válido';
     input.select();
   }
 }
-let paypalRendered=false;
 function openProModal(){
   if(isPro()&&isTrialActive()){
     // Show trial info and encourage upgrade
@@ -928,12 +928,9 @@ function openProModal(){
     trialBtn.style.display='';
   }
   document.getElementById('proModal').classList.add('show');
-  // GA4: Modal Pro visto
-  gtag('event', 'pro_modal_open', {
-    event_category: 'Conversion',
-    event_label: isPro() && isTrialActive() ? 'desde_trial' : 'desde_free'
-  });
-  // Load PayPal SDK on first open, not at page load
+  // Reset to monthly plan view
+  selectPlan('monthly');
+  // Load PayPal SDK on first open
   loadPayPalSDK();
   if(!paypalRendered && typeof paypal!=='undefined'){
     renderPayPalButton();
@@ -1239,7 +1236,7 @@ let tT;function ts(m){const t=document.getElementById('tt');t.textContent=m;t.cl
 
 // ═══ FOTO IA ═══
 const IA_API_URL = 'https://platofit-api.ejmanosalvas.workers.dev/analyze';
-function getIALimit(){return isPro()?999:2}
+function getIALimit(){return isPro()?15:2}
 
 let iaCurrentResult = null;
 let iaCurrentFile = null;
@@ -1259,8 +1256,8 @@ function iaUpdateBadge() {
   const remEl = document.getElementById('ia-remaining');
   const badgeEl = document.getElementById('ia-limit-badge');
   if(isPro()){
-    if(remEl) remEl.textContent = '∞';
-    if(badgeEl) badgeEl.innerHTML = '👑 Análisis ilimitados';
+    if(remEl) remEl.textContent = rem;
+    if(badgeEl) badgeEl.innerHTML = '👑 ' + rem + '/15 análisis hoy';
   } else {
     if(remEl) remEl.textContent = rem;
     if(badgeEl) badgeEl.innerHTML = '🆓 ' + rem + '/' + limit + ' análisis hoy';
@@ -1298,7 +1295,7 @@ async function iaAnalyze() {
   const u = iaGetUsage();
   const limit = getIALimit();
   if (!isPro() && u.count >= limit) {
-    document.getElementById('ia-error').textContent = 'Has alcanzado el límite diario de ' + limit + ' análisis. ¡Hazte Pro para análisis ilimitados!';
+    document.getElementById('ia-error').textContent = 'Has alcanzado el límite diario de ' + limit + ' análisis.' + (!isPro() ? ' ¡Hazte Pro para tener 15 análisis al día!' : ' Vuelve mañana para más análisis.');
     document.getElementById('ia-error').style.display = 'block';
     return;
   }
@@ -1618,7 +1615,41 @@ async function scanBarcode(){
   btn.disabled=false;btn.textContent='🔍 Buscar';
 }
 
+// ═══ PLAN TOGGLE & COMING SOON ═══
+let selectedPlan='monthly';
+function selectPlan(plan){
+  selectedPlan=plan;
+  const m=document.getElementById('planMonthly');
+  const y=document.getElementById('planYearly');
+  const amount=document.getElementById('proPriceAmount');
+  const period=document.getElementById('proPricePeriod');
+  const paypalContainer=document.getElementById('paypal-button-container-P-2YU010977W121804LNHWJKRQ');
+  const paypalLoading=document.getElementById('pro-paypal-loading');
+  const ctaComingSoon=document.getElementById('proCtaComingSoon');
+  if(plan==='yearly'){
+    m.classList.remove('on');y.classList.add('on');
+    amount.textContent='29,99 €';period.textContent='/ año';
+    // Hide PayPal, show coming soon
+    if(paypalContainer)paypalContainer.style.display='none';
+    if(paypalLoading)paypalLoading.style.display='none';
+    if(ctaComingSoon)ctaComingSoon.style.display='';
+  } else {
+    y.classList.remove('on');m.classList.add('on');
+    amount.textContent='2,99 €';period.textContent='/ mes';
+    // Show PayPal, hide coming soon
+    if(paypalContainer)paypalContainer.style.display='';
+    if(paypalLoading&&!paypalRendered)paypalLoading.style.display='';
+    if(ctaComingSoon)ctaComingSoon.style.display='none';
+  }
+}
+function showComingSoon(){
+  document.getElementById('csModal').classList.add('show');
+}
+// Close coming soon by tapping background
+document.getElementById('csModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show')});
+
 // ═══ PAYPAL INTEGRATION ═══
+let paypalRendered=false;
 function renderPayPalButton(){
   if(paypalRendered) return;
   const container=document.getElementById('paypal-button-container-P-2YU010977W121804LNHWJKRQ');
@@ -1643,11 +1674,6 @@ function renderPayPalButton(){
     onError:function(err){
       console.error('PayPal error:',err);
       ts('❌ Error en el pago. Inténtalo de nuevo.');
-      // GA4: Error en el pago
-      gtag('event', 'pro_payment_error', {
-        event_category: 'Conversion',
-        event_label: 'error_paypal'
-      });
     }
   }).render('#paypal-button-container-P-2YU010977W121804LNHWJKRQ');
 }
@@ -1662,42 +1688,6 @@ function loadPayPalSDK(){
   s.onload=function(){renderPayPalButton()};
   document.head.appendChild(s);
 }
-
-// ═══ GOOGLE ANALYTICS — EVENTOS PWA ═══
-
-// 1. Detecta si el usuario abre la app como PWA instalada (no desde el navegador)
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  gtag('event', 'pwa_session', {
-    event_category: 'PWA',
-    event_label: 'Abre como app instalada'
-  });
-}
-
-// 2. Registra cuando el navegador muestra el prompt de instalación
-window.addEventListener('beforeinstallprompt', () => {
-  gtag('event', 'pwa_install_prompt', {
-    event_category: 'PWA',
-    event_label: 'Prompt de instalación mostrado'
-  });
-});
-
-// 3. Registra cuando el usuario instala la PWA
-window.addEventListener('appinstalled', () => {
-  gtag('event', 'pwa_installed', {
-    event_category: 'PWA',
-    event_label: 'App instalada'
-  });
-});
-
-// 4. Detecta el dispositivo del usuario
-(function(){
-  const ua = navigator.userAgent;
-  const device = /iPhone|iPad/i.test(ua) ? 'iOS' : /Android/i.test(ua) ? 'Android' : 'Desktop';
-  gtag('event', 'device_type', {
-    event_category: 'Dispositivo',
-    event_label: device
-  });
-})();
 
 // ═══ INIT ═══
 iaUpdateBadge();

@@ -15,6 +15,24 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
 <title>PlatoFit — Cuenta tus macros fácil</title>
+<!-- Firebase SDK (compat for simplicity) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={
+  apiKey:"AIzaSyABQGSmnAsMK4DDXZjGpACqASbIEJKMls",
+  authDomain:"platofit-9020d.firebaseapp.com",
+  projectId:"platofit-9020d",
+  storageBucket:"platofit-9020d.firebasestorage.app",
+  messagingSenderId:"478521566013",
+  appId:"1:478521566013:web:4e7c796f82f8f1e70999dc",
+  measurementId:"G-GX4K4Q3FMK"
+};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+const db=firebase.firestore();
+</script>
 <meta name="description" content="Cuenta tus macros y calorías con PlatoFit. Base de datos de platos andaluces, análisis por foto con IA, planificador semanal y escáner de código de barras.">
 <meta name="keywords" content="macros, calorías, nutrición, fitness, dieta, platos andaluces, contador calorías, app nutrición">
 <meta name="author" content="PlatoFit">
@@ -477,6 +495,32 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 .promo-msg.ok{color:var(--accent)}
 .promo-msg.err{color:var(--fat)}
 
+/* ─── AUTH SCREEN ─── */
+.auth-screen{position:fixed;inset:0;z-index:500;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;transition:opacity .4s,visibility .4s}
+.auth-screen.gone{opacity:0;visibility:hidden;pointer-events:none}
+.auth-logo{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:var(--accent2);margin-bottom:4px}
+.auth-logo span{color:var(--accent)}
+.auth-sub{font-size:.72rem;color:var(--tx3);letter-spacing:2px;text-transform:uppercase;margin-bottom:32px}
+.auth-card{width:100%;max-width:360px;background:var(--card);border:1px solid var(--brd);border-radius:24px;padding:28px 24px;box-shadow:var(--card-shadow)}
+.auth-card h2{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;margin-bottom:18px;text-align:center}
+.auth-input{width:100%;padding:14px 16px;border:1.5px solid var(--brd);border-radius:14px;font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--tx);outline:none;background:var(--card2);margin-bottom:10px;min-height:48px;transition:border-color .2s}
+.auth-input:focus{border-color:var(--accent)}
+.auth-btn{width:100%;padding:15px;background:var(--accent);color:white;border:none;border-radius:14px;font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;margin-top:6px;transition:transform .1s;min-height:50px}
+.auth-btn:active{transform:scale(.97)}
+.auth-btn:disabled{opacity:.5;cursor:default}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:16px 0;font-size:.72rem;color:var(--tx3)}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--brd)}
+.auth-google{width:100%;padding:14px;background:var(--bg);border:1.5px solid var(--brd);border-radius:14px;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;color:var(--tx);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .15s;min-height:50px}
+.auth-google:active{transform:scale(.97);border-color:var(--accent)}
+.auth-google img{width:20px;height:20px}
+.auth-toggle{text-align:center;margin-top:16px;font-size:.78rem;color:var(--tx3)}
+.auth-toggle a{color:var(--accent);font-weight:600;cursor:pointer;text-decoration:none}
+.auth-error{background:rgba(229,91,91,.08);border:1px solid rgba(229,91,91,.2);border-radius:12px;padding:10px 14px;font-size:.78rem;color:var(--fat);margin-bottom:10px;display:none;text-align:center}
+.auth-user-bar{display:flex;align-items:center;gap:8px;font-size:.72rem;color:var(--tx3);margin-top:4px}
+.auth-user-bar button{background:none;border:none;color:var(--accent);font-family:'Outfit',sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;padding:2px 6px}
+.auth-forgot{text-align:right;margin:-4px 0 6px;font-size:.72rem}
+.auth-forgot a{color:var(--accent);cursor:pointer;text-decoration:none}
+
 /* ─── PLAN TOGGLE ─── */
 .plan-toggle{display:flex;background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:4px;margin-bottom:14px;gap:4px}
 .plan-opt{flex:1;padding:10px 8px;border:none;border-radius:11px;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;color:var(--tx2);cursor:pointer;text-align:center;transition:all .2s;background:none;line-height:1.3}
@@ -508,6 +552,26 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 
 <div class="app" id="app" style="opacity:0">
 
+  <!-- ═══ AUTH SCREEN ═══ -->
+  <div class="auth-screen" id="authScreen">
+    <div class="auth-logo">Plato<span>Fit</span></div>
+    <div class="auth-sub">cuenta tus macros</div>
+    <div class="auth-card">
+      <h2 id="authTitle">Iniciar sesión</h2>
+      <div class="auth-error" id="authError"></div>
+      <input class="auth-input" id="authEmail" type="email" placeholder="Correo electrónico" autocomplete="email">
+      <input class="auth-input" id="authPass" type="password" placeholder="Contraseña" autocomplete="current-password">
+      <div class="auth-forgot" id="authForgot"><a onclick="resetPassword()">¿Olvidaste tu contraseña?</a></div>
+      <button class="auth-btn" id="authBtn" onclick="authSubmit()">Entrar</button>
+      <div class="auth-divider">o continúa con</div>
+      <button class="auth-google" onclick="authGoogle()">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#34A853" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 019.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.93 23.93 0 000 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#EA4335" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Google
+      </button>
+      <div class="auth-toggle" id="authToggle">¿No tienes cuenta? <a onclick="toggleAuthMode()">Regístrate</a></div>
+    </div>
+  </div>
+
   <!-- ═══ DASHBOARD ═══ -->
   <div class="pg on" id="pg-dash">
     <div class="dh">
@@ -515,6 +579,7 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
       <div class="app-name">Plato<span>Fit</span> <span class="pro-badge free" id="proBadgeMain" onclick="openProModal()">FREE</span></div>
       <h1>Tu plato de hoy<span>.</span></h1>
       <div class="ds" id="dd"></div>
+      <div class="auth-user-bar" id="userBar" style="display:none"><span id="userEmail"></span><button onclick="authLogout()">Cerrar sesión</button></div>
     </div>
     <div class="usb"><div class="sb"><span class="si">🔍</span><input id="usi" placeholder="Buscar plato o alimento..."></div></div>
     <div id="usr" class="usr" style="display:none"></div>
@@ -797,16 +862,159 @@ function toggleTheme(){applyTheme(getTheme()==='dark'?'light':'dark')}
 // ═══ SPLASH ═══
 setTimeout(()=>{document.getElementById('splash').classList.add('gone');document.getElementById('app').style.opacity='1';document.getElementById('nav').style.opacity='1';applyTheme(getTheme())},1500);
 
-// ═══ PRO SYSTEM ═══
+// ═══ AUTH SYSTEM (Firebase) ═══
+let currentUser=null;
+let authMode='login'; // 'login' or 'register'
+let firestoreReady=false;
+
+function toggleAuthMode(){
+  authMode=authMode==='login'?'register':'login';
+  document.getElementById('authTitle').textContent=authMode==='login'?'Iniciar sesión':'Crear cuenta';
+  document.getElementById('authBtn').textContent=authMode==='login'?'Entrar':'Crear cuenta';
+  document.getElementById('authToggle').innerHTML=authMode==='login'
+    ?'¿No tienes cuenta? <a onclick="toggleAuthMode()">Regístrate</a>'
+    :'¿Ya tienes cuenta? <a onclick="toggleAuthMode()">Inicia sesión</a>';
+  document.getElementById('authForgot').style.display=authMode==='login'?'':'none';
+  document.getElementById('authPass').autocomplete=authMode==='login'?'current-password':'new-password';
+  hideAuthError();
+}
+function showAuthError(msg){const e=document.getElementById('authError');e.textContent=msg;e.style.display='block'}
+function hideAuthError(){document.getElementById('authError').style.display='none'}
+
+function authSubmit(){
+  const email=document.getElementById('authEmail').value.trim();
+  const pass=document.getElementById('authPass').value;
+  if(!email||!pass){showAuthError('Rellena todos los campos');return}
+  if(pass.length<6){showAuthError('La contraseña debe tener al menos 6 caracteres');return}
+  const btn=document.getElementById('authBtn');
+  btn.disabled=true;btn.textContent='Cargando...';
+  hideAuthError();
+  const fn=authMode==='login'
+    ?auth.signInWithEmailAndPassword(email,pass)
+    :auth.createUserWithEmailAndPassword(email,pass);
+  fn.then(()=>{btn.disabled=false})
+    .catch(err=>{
+      btn.disabled=false;
+      btn.textContent=authMode==='login'?'Entrar':'Crear cuenta';
+      const msgs={
+        'auth/invalid-email':'Email no válido',
+        'auth/user-not-found':'No existe una cuenta con este email',
+        'auth/wrong-password':'Contraseña incorrecta',
+        'auth/email-already-in-use':'Ya existe una cuenta con este email',
+        'auth/weak-password':'Contraseña demasiado débil (mínimo 6 caracteres)',
+        'auth/too-many-requests':'Demasiados intentos. Espera unos minutos',
+        'auth/invalid-credential':'Email o contraseña incorrectos'
+      };
+      showAuthError(msgs[err.code]||'Error: '+err.message);
+    });
+}
+function authGoogle(){
+  const provider=new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(err=>{
+    if(err.code!=='auth/popup-closed-by-user')showAuthError('Error con Google: '+err.message);
+  });
+}
+function resetPassword(){
+  const email=document.getElementById('authEmail').value.trim();
+  if(!email){showAuthError('Escribe tu email primero');return}
+  auth.sendPasswordResetEmail(email).then(()=>{
+    showAuthError('✅ Email de recuperación enviado');
+    document.getElementById('authError').style.color='var(--accent)';
+  }).catch(err=>{showAuthError('No se pudo enviar: '+err.message)});
+}
+function authLogout(){
+  if(confirm('¿Cerrar sesión?'))auth.signOut();
+}
+
+// ═══ FIRESTORE SYNC ═══
+function userDoc(){return db.collection('users').doc(currentUser.uid)}
+
+async function loadUserData(){
+  if(!currentUser)return;
+  try{
+    const doc=await userDoc().get();
+    if(doc.exists){
+      const d=doc.data();
+      if(d.goals)localStorage.setItem('pf_goals',JSON.stringify(d.goals));
+      if(d.history)localStorage.setItem('pf_hist',JSON.stringify(d.history));
+      if(d.customDishes)localStorage.setItem('ms3',JSON.stringify(d.customDishes));
+      if(d.plan)localStorage.setItem('pf_plan',JSON.stringify(d.plan));
+      if(d.iaUsage)localStorage.setItem('pf_ia_usage',JSON.stringify(d.iaUsage));
+      // Pro status from server
+      if(d.pro){
+        localStorage.setItem('pf_pro',d.pro.active?'true':'false');
+        if(d.pro.exp)localStorage.setItem('pf_pro_exp',d.pro.exp.toString());
+        if(d.pro.subId)localStorage.setItem('pf_sub_id',d.pro.subId);
+        if(d.pro.trialUsed)localStorage.setItem('pf_trial_used','true');
+      }
+    } else {
+      // First time — create doc with existing localStorage data (migration)
+      await saveAllToFirestore();
+    }
+    firestoreReady=true;
+  }catch(e){console.error('Load error:',e);firestoreReady=true}
+}
+
+async function saveAllToFirestore(){
+  if(!currentUser||!firestoreReady)return;
+  try{
+    const data={
+      email:currentUser.email,
+      goals:getGoals(),
+      history:getHistory(),
+      customDishes:lm(),
+      plan:getPlan(),
+      iaUsage:iaGetUsage(),
+      pro:{
+        active:isPro(),
+        exp:parseInt(localStorage.getItem('pf_pro_exp'))||null,
+        subId:localStorage.getItem('pf_sub_id')||null,
+        trialUsed:localStorage.getItem('pf_trial_used')==='true'
+      },
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    };
+    await userDoc().set(data,{merge:true});
+  }catch(e){console.error('Save error:',e)}
+}
+
+// Debounced save
+let saveTimer=null;
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>saveAllToFirestore(),2000);
+}
+
+// Override localStorage saves to also sync to Firestore
+const origSaveToday=function(){const h=getHistory();const t={k:0,p:0,c:0,f:0,fi:0};plate.forEach(x=>{t.k+=x.k;t.p+=x.p;t.c+=x.c;t.f+=x.f;t.fi+=x.fi});h[todayKey()]={totals:t,items:plate.map(x=>({...x}))};const maxDays=isPro()?30:7;const keys=Object.keys(h).sort().reverse().slice(0,maxDays);const nh={};keys.forEach(k=>nh[k]=h[k]);saveHistory(nh);scheduleSave()};
+
+// Auth state listener
+auth.onAuthStateChanged(async user=>{
+  currentUser=user;
+  const authScreen=document.getElementById('authScreen');
+  const userBar=document.getElementById('userBar');
+  if(user){
+    // Logged in
+    authScreen.classList.add('gone');
+    userBar.style.display='flex';
+    document.getElementById('userEmail').textContent=user.email||user.displayName||'';
+    await loadUserData();
+    // Refresh UI
+    loadToday();rd();rds();rfs();rm();updateProUI();iaUpdateBadge();
+  } else {
+    // Not logged in
+    authScreen.classList.remove('gone');
+    userBar.style.display='none';
+    firestoreReady=false;
+  }
+});
+
+// ═══ PRO SYSTEM (now backed by Firestore) ═══
 function isPro(){
-  // Check paid subscription
   if(localStorage.getItem('pf_pro')==='true'){
     const exp=localStorage.getItem('pf_pro_exp');
     if(exp && Date.now()>parseInt(exp)){
-      // Expired but has subscription — keep active (PayPal handles recurring)
       const subId=localStorage.getItem('pf_sub_id');
       if(subId) return true;
-      // No subscription, was trial — deactivate
       localStorage.removeItem('pf_pro');
       localStorage.removeItem('pf_pro_exp');
       localStorage.removeItem('pf_trial_used');
@@ -818,7 +1026,7 @@ function isPro(){
 }
 function isTrialActive(){
   if(localStorage.getItem('pf_pro')!=='true') return false;
-  return !localStorage.getItem('pf_sub_id'); // Pro without subscription = trial
+  return !localStorage.getItem('pf_sub_id');
 }
 function hasUsedTrial(){
   return localStorage.getItem('pf_trial_used')==='true';
@@ -836,75 +1044,77 @@ function getTrialTimeLeft(){
   return 'menos de 1h';
 }
 function startTrial(){
-  if(hasUsedTrial()){
-    ts('Ya has usado tu prueba gratuita');
-    return;
-  }
+  if(hasUsedTrial()){ts('Ya has usado tu prueba gratuita');return}
   localStorage.setItem('pf_pro','true');
   localStorage.setItem('pf_trial_used','true');
-  localStorage.setItem('pf_pro_exp',(Date.now()+3*24*60*60*1000).toString()); // 3 days
-  // Don't set pf_sub_id — this distinguishes trial from paid
-  closeProModal();
-  updateProUI();
+  localStorage.setItem('pf_pro_exp',(Date.now()+3*24*60*60*1000).toString());
+  closeProModal();updateProUI();scheduleSave();
   ts('🎁 ¡Prueba Pro activada! 3 días gratis');
 }
 function activateProAfterPayment(subscriptionID){
   localStorage.setItem('pf_pro','true');
   localStorage.setItem('pf_sub_id', subscriptionID);
   localStorage.setItem('pf_pro_exp', (Date.now() + 35*24*60*60*1000).toString());
-  closeProModal();
-  updateProUI();
+  closeProModal();updateProUI();scheduleSave();
   ts('👑 ¡PlatoFit Pro activado!');
 }
 function restorePro(){
   const subId=localStorage.getItem('pf_sub_id');
   if(subId){
     localStorage.setItem('pf_pro','true');
-    updateProUI();
-    closeProModal();
+    updateProUI();closeProModal();scheduleSave();
     ts('👑 Pro restaurado');
   } else {
     ts('No se encontró suscripción previa');
   }
 }
-// ═══ GIFT CODES ═══
-// Add your codes here. Each code has: days (duration), once (single use or not)
-const PRO_CODES={
-  'PLATOFIT2026':{days:365,label:'1 año'},
-  'PROFRIEND':{days:30,label:'1 mes'},
-  'REGALO90':{days:90,label:'3 meses'},
-  'PROLIFE':{days:36500,label:'de por vida'}
-};
-function redeemCode(){
+
+// ═══ GIFT CODES (Firestore-backed, single use per user) ═══
+async function redeemCode(){
   const input=document.getElementById('promoInput');
   const msg=document.getElementById('promoMsg');
   const code=input.value.trim().toUpperCase();
-  if(!code){
-    msg.className='promo-msg err';msg.textContent='Escribe un código';
-    input.focus();
-    return;
-  }
-  // Check if already used
-  const usedCodes=JSON.parse(localStorage.getItem('pf_used_codes')||'[]');
-  if(usedCodes.includes(code)){
-    msg.className='promo-msg err';msg.textContent='❌ Este código ya ha sido canjeado';
-    return;
-  }
-  const gift=PRO_CODES[code];
-  if(gift){
+  if(!code){msg.className='promo-msg err';msg.textContent='Escribe un código';input.focus();return}
+  if(!currentUser){msg.className='promo-msg err';msg.textContent='Inicia sesión primero';return}
+  const btn=document.getElementById('promoBtn');
+  btn.disabled=true;btn.textContent='Validando...';
+  try{
+    // Check if code exists in Firestore
+    const codeDoc=await db.collection('codes').doc(code).get();
+    if(!codeDoc.exists){
+      msg.className='promo-msg err';msg.textContent='❌ Código no válido';
+      btn.disabled=false;btn.textContent='Canjear';input.select();return;
+    }
+    const codeData=codeDoc.data();
+    // Check if already used by this user
+    if(codeData.usedBy && codeData.usedBy.includes(currentUser.uid)){
+      msg.className='promo-msg err';msg.textContent='❌ Ya has canjeado este código';
+      btn.disabled=false;btn.textContent='Canjear';return;
+    }
+    // Check if single-use and already used by anyone
+    if(codeData.singleUse && codeData.usedBy && codeData.usedBy.length>0){
+      msg.className='promo-msg err';msg.textContent='❌ Este código ya ha sido usado';
+      btn.disabled=false;btn.textContent='Canjear';return;
+    }
+    // Activate Pro
+    const days=codeData.days||30;
+    const label=codeData.label||days+' días';
     localStorage.setItem('pf_pro','true');
-    localStorage.setItem('pf_pro_exp',(Date.now()+gift.days*24*60*60*1000).toString());
+    localStorage.setItem('pf_pro_exp',(Date.now()+days*24*60*60*1000).toString());
     localStorage.setItem('pf_sub_id','GIFT-'+code);
-    usedCodes.push(code);
-    localStorage.setItem('pf_used_codes',JSON.stringify(usedCodes));
-    msg.className='promo-msg ok';msg.textContent='✅ ¡Pro '+gift.label+' activado!';
+    // Mark code as used in Firestore
+    await db.collection('codes').doc(code).update({
+      usedBy:firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
+    });
+    msg.className='promo-msg ok';msg.textContent='✅ ¡Pro '+label+' activado!';
     input.value='';
-    updateProUI();
-    setTimeout(()=>{closeProModal();ts('🎁 ¡Código canjeado! Pro '+gift.label)},1200);
-  } else {
-    msg.className='promo-msg err';msg.textContent='❌ Código no válido';
-    input.select();
+    updateProUI();scheduleSave();
+    setTimeout(()=>{closeProModal();ts('🎁 ¡Código canjeado! Pro '+label)},1200);
+  }catch(e){
+    console.error('Redeem error:',e);
+    msg.className='promo-msg err';msg.textContent='❌ Error al validar el código';
   }
+  btn.disabled=false;btn.textContent='Canjear';
 }
 function openProModal(){
   if(isPro()&&isTrialActive()){
@@ -1091,13 +1301,13 @@ const DEF_GOALS={k:2200,p:150,c:250,f:70,fi:30};
 function getGoals(){try{return JSON.parse(localStorage.getItem('pf_goals'))||DEF_GOALS}catch{return DEF_GOALS}}
 function openGoals(){const g=getGoals();document.getElementById('gk').value=g.k;document.getElementById('gp').value=g.p;document.getElementById('gc').value=g.c;document.getElementById('gf').value=g.f;document.getElementById('gfi').value=g.fi;document.getElementById('goalModal').classList.add('show')}
 function closeGoals(){document.getElementById('goalModal').classList.remove('show')}
-function saveGoals(){const g={k:+document.getElementById('gk').value||2200,p:+document.getElementById('gp').value||150,c:+document.getElementById('gc').value||250,f:+document.getElementById('gf').value||70,fi:+document.getElementById('gfi').value||30};localStorage.setItem('pf_goals',JSON.stringify(g));closeGoals();rd();ts('✅ Objetivos guardados')}
+function saveGoals(){const g={k:+document.getElementById('gk').value||2200,p:+document.getElementById('gp').value||150,c:+document.getElementById('gc').value||250,f:+document.getElementById('gf').value||70,fi:+document.getElementById('gfi').value||30};localStorage.setItem('pf_goals',JSON.stringify(g));closeGoals();rd();scheduleSave();ts('✅ Objetivos guardados')}
 
 // ═══ HISTORY (30 days for pro) ═══
 function todayKey(){return new Date().toISOString().slice(0,10)}
 function getHistory(){try{return JSON.parse(localStorage.getItem('pf_hist'))||{}}catch{return{}}}
 function saveHistory(h){localStorage.setItem('pf_hist',JSON.stringify(h))}
-function saveToday(){const h=getHistory();const t={k:0,p:0,c:0,f:0,fi:0};plate.forEach(x=>{t.k+=x.k;t.p+=x.p;t.c+=x.c;t.f+=x.f;t.fi+=x.fi});h[todayKey()]={totals:t,items:plate.map(x=>({...x}))};const maxDays=isPro()?30:7;const keys=Object.keys(h).sort().reverse().slice(0,maxDays);const nh={};keys.forEach(k=>nh[k]=h[k]);saveHistory(nh)}
+function saveToday(){const h=getHistory();const t={k:0,p:0,c:0,f:0,fi:0};plate.forEach(x=>{t.k+=x.k;t.p+=x.p;t.c+=x.c;t.f+=x.f;t.fi+=x.fi});h[todayKey()]={totals:t,items:plate.map(x=>({...x}))};const maxDays=isPro()?30:7;const keys=Object.keys(h).sort().reverse().slice(0,maxDays);const nh={};keys.forEach(k=>nh[k]=h[k]);saveHistory(nh);scheduleSave()}
 function loadToday(){const h=getHistory();const d=h[todayKey()];if(d&&d.items)plate=d.items.map(x=>({...x}));else plate=[]}
 function renderWeek(){
   const h=getHistory();const days=[];const dn=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
@@ -1214,7 +1424,7 @@ function cwAdd(btn){const id=parseInt(btn.dataset.fi);const x=FF.find(z=>z.id===
 
 // ═══ MIS PLATOS ═══
 function lm(){try{return JSON.parse(localStorage.getItem('ms3')||'[]')}catch{return[]}}
-function smm(d){try{localStorage.setItem('ms3',JSON.stringify(d))}catch{}}
+function smm(d){try{localStorage.setItem('ms3',JSON.stringify(d));scheduleSave()}catch{}}
 function svm(){
   const n=document.getElementById('cn').value.trim();if(!n){alert('Escribe un nombre');return}
   const k=+document.getElementById('cc').value||0,p=+document.getElementById('cp').value||0,c=+document.getElementById('cch').value||0,f=+document.getElementById('cff').value||0,fi=+document.getElementById('cfi').value||0;
@@ -1248,7 +1458,7 @@ function iaGetUsage() {
     return d;
   } catch { return { date: todayKey(), count: 0 }; }
 }
-function iaSaveUsage(u) { localStorage.setItem('pf_ia_usage', JSON.stringify(u)); }
+function iaSaveUsage(u) { localStorage.setItem('pf_ia_usage', JSON.stringify(u)); scheduleSave(); }
 function iaUpdateBadge() {
   const u = iaGetUsage();
   const limit = getIALimit();
@@ -1444,7 +1654,7 @@ const MEAL_TYPES=['Desayuno','Almuerzo','Comida','Merienda','Cena'];
 const PLAN_DAYS=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
 
 function getPlan(){try{return JSON.parse(localStorage.getItem('pf_plan'))||{}}catch{return{}}}
-function savePlan(p){localStorage.setItem('pf_plan',JSON.stringify(p))}
+function savePlan(p){localStorage.setItem('pf_plan',JSON.stringify(p));scheduleSave()}
 
 function renderPlanner(){
   if(!isPro()){document.getElementById('plannerArea').innerHTML='<div class="ep"><div class="ei">🔒</div>Activa Pro para usar el planificador</div>';return}
@@ -1690,6 +1900,10 @@ function loadPayPalSDK(){
 }
 
 // ═══ INIT ═══
+// Auth Enter key
+document.getElementById('authPass').addEventListener('keydown',e=>{if(e.key==='Enter')authSubmit()});
+document.getElementById('authEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('authPass').focus()});
+// Initial UI (Firebase onAuthStateChanged will handle data loading)
 iaUpdateBadge();
 updateProUI();
 loadToday();idp();ifp();rd();rds();rfs();rm();

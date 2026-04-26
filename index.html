@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -533,23 +534,25 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
 
 <div class="app" id="app" style="opacity:0">
 
-  <!-- ═══ AUTH SCREEN ═══ -->
-  <div class="auth-screen" id="authScreen">
+  <!-- ═══ AUTH SCREEN (hidden by default — only shown when user clicks "login" or tries photo feature) ═══ -->
+  <div class="auth-screen gone" id="authScreen">
     <div class="auth-logo">Plato<span>Fit</span></div>
     <div class="auth-sub">cuenta tus macros</div>
     <div class="auth-card">
-      <h2 id="authTitle">Iniciar sesión</h2>
+      <h2 id="authTitle">Crear cuenta</h2>
+      <p id="authReason" style="font-size:.78rem;color:var(--tx2);text-align:center;margin-bottom:14px;line-height:1.4;display:none"></p>
       <div class="auth-error" id="authError"></div>
       <input class="auth-input" id="authEmail" type="email" placeholder="Correo electrónico" autocomplete="email">
-      <input class="auth-input" id="authPass" type="password" placeholder="Contraseña" autocomplete="current-password">
-      <div class="auth-forgot" id="authForgot"><a onclick="resetPassword()">¿Olvidaste tu contraseña?</a></div>
-      <button class="auth-btn" id="authBtn" onclick="authSubmit()">Entrar</button>
+      <input class="auth-input" id="authPass" type="password" placeholder="Contraseña" autocomplete="new-password">
+      <div class="auth-forgot" id="authForgot" style="display:none"><a onclick="resetPassword()">¿Olvidaste tu contraseña?</a></div>
+      <button class="auth-btn" id="authBtn" onclick="authSubmit()">Crear cuenta</button>
       <div class="auth-divider">o continúa con</div>
       <button class="auth-google" onclick="authGoogle()">
         <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#34A853" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 019.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.93 23.93 0 000 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#EA4335" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
         Google
       </button>
-      <div class="auth-toggle" id="authToggle">¿No tienes cuenta? <a onclick="toggleAuthMode()">Regístrate</a></div>
+      <div class="auth-toggle" id="authToggle">¿Ya tienes cuenta? <a onclick="toggleAuthMode()">Inicia sesión</a></div>
+      <button class="auth-skip" onclick="closeAuthScreen()" style="width:100%;padding:12px;background:none;border:none;color:var(--tx3);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;margin-top:10px">Seguir sin cuenta</button>
     </div>
   </div>
 
@@ -561,6 +564,7 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
       <h1>Tu plato de hoy<span>.</span></h1>
       <div class="ds" id="dd"></div>
       <div class="auth-user-bar" id="userBar" style="display:none"><span id="userEmail"></span><button onclick="authLogout()">Cerrar sesión</button></div>
+      <div class="auth-user-bar" id="loginBar" style="display:none"><span style="color:var(--tx3)">Sin cuenta</span><button onclick="showAuthScreen('Inicia sesión para sincronizar tus datos y usar Foto IA')">Iniciar sesión</button></div>
     </div>
     <div class="usb"><div class="sb"><span class="si">🔍</span><input id="usi" placeholder="Buscar plato o alimento..."></div></div>
     <div id="usr" class="usr" style="display:none"></div>
@@ -669,8 +673,8 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-famil
       </div>
 
       <div class="ia-btns-row">
-        <button class="ia-pick-btn" onclick="document.getElementById('ia-file-cam').click()">📷 Hacer foto</button>
-        <button class="ia-pick-btn" onclick="document.getElementById('ia-file-gal').click()">🖼️ Galería</button>
+        <button class="ia-pick-btn" onclick="if(!currentUser){showAuthScreen('📸 Crea una cuenta gratuita para analizar fotos con IA. ¡Es gratis!')}else{document.getElementById('ia-file-cam').click()}">📷 Hacer foto</button>
+        <button class="ia-pick-btn" onclick="if(!currentUser){showAuthScreen('📸 Crea una cuenta gratuita para analizar fotos con IA. ¡Es gratis!')}else{document.getElementById('ia-file-gal').click()}">🖼️ Galería</button>
       </div>
 
       <button class="gl2" id="ia-analyze-btn" onclick="iaAnalyze()" disabled>
@@ -883,6 +887,22 @@ function toggleAuthMode(){
   document.getElementById('authPass').autocomplete=authMode==='login'?'current-password':'new-password';
   hideAuthError();
 }
+function showAuthScreen(reason){
+  authMode='register';
+  document.getElementById('authTitle').textContent='Crear cuenta';
+  document.getElementById('authBtn').textContent='Crear cuenta';
+  document.getElementById('authToggle').innerHTML='¿Ya tienes cuenta? <a onclick="toggleAuthMode()">Inicia sesión</a>';
+  document.getElementById('authForgot').style.display='none';
+  document.getElementById('authPass').autocomplete='new-password';
+  const reasonEl=document.getElementById('authReason');
+  if(reason){reasonEl.textContent=reason;reasonEl.style.display='block'}
+  else{reasonEl.style.display='none'}
+  hideAuthError();
+  document.getElementById('authScreen').classList.remove('gone');
+}
+function closeAuthScreen(){
+  document.getElementById('authScreen').classList.add('gone');
+}
 function showAuthError(msg){const e=document.getElementById('authError');e.textContent=msg;e.style.display='block'}
 function hideAuthError(){document.getElementById('authError').style.display='none'}
 
@@ -898,7 +918,7 @@ function authSubmit(){
   const fn=authMode==='login'
     ?auth.signInWithEmailAndPassword(email,pass)
     :auth.createUserWithEmailAndPassword(email,pass);
-  fn.then(()=>{btn.disabled=false})
+  fn.then(()=>{btn.disabled=false;closeAuthScreen()})
     .catch(err=>{
       btn.disabled=false;
       btn.textContent=authMode==='login'?'Entrar':'Crear cuenta';
@@ -1004,12 +1024,15 @@ if(auth){
     if(user){
       authScreen.classList.add('gone');
       userBar.style.display='flex';
+      document.getElementById('loginBar').style.display='none';
       document.getElementById('userEmail').textContent=user.email||user.displayName||'';
       await loadUserData();
       loadToday();rd();rds();rfs();rm();updateProUI();iaUpdateBadge();
     } else {
-      authScreen.classList.remove('gone');
+      // Don't block the app — just hide the user bar and let them use it freely
+      authScreen.classList.add('gone');
       userBar.style.display='none';
+      document.getElementById('loginBar').style.display='flex';
       firestoreReady=false;
     }
   });
@@ -1054,6 +1077,7 @@ function getTrialTimeLeft(){
   return 'menos de 1h';
 }
 function startTrial(){
+  if(!currentUser){showAuthScreen('Crea una cuenta gratuita para activar tu prueba Pro');return}
   if(hasUsedTrial()){ts('Ya has usado tu prueba gratuita');return}
   localStorage.setItem('pf_pro','true');
   localStorage.setItem('pf_trial_used','true');
@@ -1476,7 +1500,9 @@ function iaUpdateBadge() {
   const rem = Math.max(0, limit - u.count);
   const remEl = document.getElementById('ia-remaining');
   const badgeEl = document.getElementById('ia-limit-badge');
-  if(isPro()){
+  if(!currentUser){
+    if(badgeEl) badgeEl.innerHTML = '🔑 Crea cuenta gratis para usar';
+  } else if(isPro()){
     if(remEl) remEl.textContent = rem;
     if(badgeEl) badgeEl.innerHTML = '👑 ' + rem + '/15 análisis hoy';
   } else {
@@ -1488,6 +1514,12 @@ function iaUpdateBadge() {
 function iaPreview(input) {
   const file = input.files[0];
   if (!file) return;
+  // Require account for photo feature
+  if(!currentUser){
+    showAuthScreen('📸 Crea una cuenta gratuita para analizar fotos con IA. ¡Es gratis!');
+    input.value='';
+    return;
+  }
   iaCurrentFile = file;
   const reader = new FileReader();
   reader.onload = function(e) {
@@ -1513,6 +1545,11 @@ function iaPreview(input) {
 
 async function iaAnalyze() {
   if (!iaCurrentFile) return;
+  // Require account for photo analysis
+  if(!currentUser){
+    showAuthScreen('📸 Crea una cuenta gratuita para analizar fotos con IA. ¡Es gratis!');
+    return;
+  }
   const u = iaGetUsage();
   const limit = getIALimit();
   if (!isPro() && u.count >= limit) {

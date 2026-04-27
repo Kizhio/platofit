@@ -3649,6 +3649,7 @@
           if (d.customDishes) localStorage.setItem('ms3', JSON.stringify(d.customDishes));
           if (d.plan) localStorage.setItem('pf_plan', JSON.stringify(d.plan));
           if (d.iaUsage) localStorage.setItem('pf_ia_usage', JSON.stringify(d.iaUsage));
+          if (d.dishNotes) localStorage.setItem('pf_dish_notes', JSON.stringify(d.dishNotes));
           // Pro status from server
           if (d.pro) {
             localStorage.setItem('pf_pro', d.pro.active ? 'true' : 'false');
@@ -3674,6 +3675,7 @@
           customDishes: lm(),
           plan: getPlan(),
           iaUsage: iaGetUsage(),
+          dishNotes: getDishNotes(),
           pro: {
             active: isPro(),
             exp: parseInt(localStorage.getItem('pf_pro_exp')) || null,
@@ -3934,10 +3936,32 @@
       { id: 'd60', ct: 'pasta', e: '🍝', n: 'Espagueti con champiñones', d: 'Espagueti, champiñones, ajo', k: 390, p: 14, c: 60, f: 8, fi: 4, i: [{ n: 'Espagueti 200g', k: 260 }, { n: 'Champiñones', k: 22 }, { n: 'Aceite', k: 90 }] },
       { id: 'd61', ct: 'pasta', e: '🍝', n: 'Fideos con atún', d: 'Fideos, atún, tomate', k: 260, p: 18, c: 35, f: 5, fi: 3, i: [{ n: 'Fideos 150g', k: 158 }, { n: 'Atún 60g', k: 66 }, { n: 'Sofrito', k: 40 }] },
       { id: 'd62', ct: 'pasta', e: '🍝', n: 'Macarrones con tomate y pavo', d: 'Macarrones, tomate, pavo picado', k: 350, p: 24, c: 48, f: 6, fi: 3, i: [{ n: 'Macarrones 180g', k: 235 }, { n: 'Pavo 100g', k: 108 }, { n: 'Tomate', k: 30 }] },
-      { id: 'd70', ct: 'desayuno', e: '☕', n: 'Tostada + café con leche', d: 'Pan integral, aceite, leche', k: 280, p: 8, c: 22, f: 12, fi: 3, i: [{ n: 'Pan 30g', k: 70 }, { n: 'Aceite 10g', k: 90 }, { n: 'Leche 200ml', k: 68 }] },
+      { id: 'd70', ct: 'desayuno', e: '☕', n: 'Café solo', d: 'Café espresso o largo', k: 4, p: 0.2, c: 0, f: 0, fi: 0, i: [{ n: 'Café 100ml', k: 4 }] },
+      { id: 'd70b', ct: 'desayuno', e: '☕', n: 'Café con leche', d: 'Café + leche semidesnatada 150ml', k: 75, p: 5, c: 7, f: 2.5, fi: 0, i: [{ n: 'Café', k: 4 }, { n: 'Leche 150ml', k: 69 }, { n: 'Azúcar 1 sobre', k: 32 }] },
+      { id: 'd70c', ct: 'desayuno', e: '☕', n: 'Café con leche sin azúcar', d: 'Café + leche semidesnatada', k: 43, p: 5, c: 7, f: 2.5, fi: 0, i: [{ n: 'Café', k: 4 }, { n: 'Leche 150ml', k: 69 }] },
+      { id: 'd70d', ct: 'desayuno', e: '☕', n: 'Cortado', d: 'Café + poca leche', k: 25, p: 1.5, c: 2, f: 1, fi: 0, i: [{ n: 'Café', k: 4 }, { n: 'Leche 50ml', k: 23 }] },
+      { id: 'd70e', ct: 'desayuno', e: '🍵', n: 'Colacao con leche', d: 'Leche + cacao soluble 2 cucharadas', k: 165, p: 7, c: 25, f: 3.5, fi: 1, i: [{ n: 'Leche 200ml', k: 92 }, { n: 'Colacao 20g', k: 73 }] },
       { id: 'd71', ct: 'desayuno', e: '🥣', n: 'Avena con leche y fruta', d: 'Avena 40g, leche, fruta', k: 250, p: 12, c: 38, f: 5, fi: 5, i: [{ n: 'Avena 40g', k: 152 }, { n: 'Leche 150ml', k: 51 }, { n: 'Fruta', k: 50 }] },
-      { id: 'd72', ct: 'desayuno', e: '☕', n: 'Tostada con tomate', d: 'Pan integral, tomate, aceite', k: 200, p: 6, c: 28, f: 8, fi: 4, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Tomate', k: 12 }, { n: 'Aceite 10g', k: 90 }] },
+      { id: 'd71b', ct: 'desayuno', e: '🥣', n: 'Avena con yogur y frutos rojos', d: 'Avena 40g, yogur, fresas', k: 230, p: 13, c: 34, f: 6, fi: 5, i: [{ n: 'Avena 40g', k: 152 }, { n: 'Yogur 125g', k: 76 }, { n: 'Frutos rojos', k: 20 }] },
+      { id: 'd71c', ct: 'desayuno', e: '🥣', n: 'Avena overnight', d: 'Avena remojada con leche y chía', k: 280, p: 12, c: 38, f: 8, fi: 7, i: [{ n: 'Avena 40g', k: 152 }, { n: 'Leche 150ml', k: 69 }, { n: 'Chía 10g', k: 49 }] },
+      { id: 'd72', ct: 'desayuno', e: '🍞', n: 'Tostada con tomate', d: 'Pan integral, tomate rallado, AOVE', k: 200, p: 6, c: 28, f: 8, fi: 4, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Tomate', k: 12 }, { n: 'Aceite 10g', k: 90 }] },
+      { id: 'd72b', ct: 'desayuno', e: '🍞', n: 'Tostada con tomate y jamón', d: 'Pan, tomate, AOVE, jamón serrano', k: 280, p: 14, c: 28, f: 12, fi: 4, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Tomate', k: 12 }, { n: 'Aceite 10g', k: 90 }, { n: 'Jamón 20g', k: 79 }] },
+      { id: 'd72c', ct: 'desayuno', e: '🍞', n: 'Tostada con mantequilla y mermelada', d: 'Pan, mantequilla, mermelada', k: 260, p: 5, c: 35, f: 11, fi: 2, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Mantequilla 10g', k: 72 }, { n: 'Mermelada 20g', k: 50 }] },
+      { id: 'd72d', ct: 'desayuno', e: '🍞', n: 'Tostada con aceite y sal', d: 'Pan integral con AOVE', k: 190, p: 5, c: 20, f: 10, fi: 3, i: [{ n: 'Pan 30g', k: 70 }, { n: 'Aceite 12g', k: 108 }] },
+      { id: 'd72e', ct: 'desayuno', e: '🍞', n: 'Tostada con pavo y queso', d: 'Pan integral, pavo fiambre, queso fresco', k: 210, p: 16, c: 22, f: 6, fi: 3, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Pavo 40g', k: 42 }, { n: 'Queso fresco 30g', k: 53 }] },
       { id: 'd73', ct: 'desayuno', e: '🥚', n: 'Tostada con huevo y aguacate', d: 'Pan, huevo, medio aguacate', k: 350, p: 14, c: 22, f: 22, fi: 5, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Huevo', k: 86 }, { n: 'Aguacate 40g', k: 64 }, { n: 'Aceite', k: 45 }] },
+      { id: 'd73b', ct: 'desayuno', e: '🥚', n: 'Huevos revueltos', d: '2 huevos revueltos con aceite', k: 215, p: 13, c: 1, f: 17, fi: 0, i: [{ n: '2 Huevos', k: 172 }, { n: 'Aceite', k: 45 }] },
+      { id: 'd73c', ct: 'desayuno', e: '🥞', n: 'Tortitas de avena', d: 'Avena, huevo, plátano', k: 280, p: 14, c: 38, f: 7, fi: 4, i: [{ n: 'Avena 40g', k: 152 }, { n: 'Huevo', k: 86 }, { n: 'Plátano medio', k: 54 }] },
+      { id: 'd73d', ct: 'desayuno', e: '🥞', n: 'Tortitas de avena con proteína', d: 'Avena, claras, whey, plátano', k: 320, p: 30, c: 38, f: 4, fi: 4, i: [{ n: 'Avena 30g', k: 114 }, { n: 'Claras 2', k: 34 }, { n: 'Whey 15g', k: 60 }, { n: 'Plátano', k: 54 }] },
+      { id: 'd74', ct: 'desayuno', e: '🥐', n: 'Croissant', d: 'Croissant de mantequilla', k: 280, p: 5, c: 30, f: 15, fi: 1, i: [{ n: 'Croissant 60g', k: 280 }] },
+      { id: 'd75', ct: 'desayuno', e: '🍌', n: 'Batido de plátano y avena', d: 'Plátano, avena, leche', k: 280, p: 10, c: 45, f: 5, fi: 4, i: [{ n: 'Plátano 120g', k: 108 }, { n: 'Avena 30g', k: 114 }, { n: 'Leche 200ml', k: 69 }] },
+      { id: 'd76', ct: 'desayuno', e: '🥛', n: 'Yogur con fruta y granola', d: 'Yogur, plátano, granola', k: 260, p: 10, c: 38, f: 8, fi: 3, i: [{ n: 'Yogur 125g', k: 76 }, { n: 'Fruta', k: 50 }, { n: 'Granola 30g', k: 130 }] },
+      { id: 'd76b', ct: 'desayuno', e: '🥛', n: 'Yogur natural con miel', d: 'Yogur natural, miel', k: 130, p: 5, c: 18, f: 4, fi: 0, i: [{ n: 'Yogur 125g', k: 76 }, { n: 'Miel 1 cuch.', k: 55 }] },
+      { id: 'd77', ct: 'desayuno', e: '🥖', n: 'Mollete con aceite y jamón', d: 'Mollete, AOVE, jamón serrano', k: 320, p: 14, c: 32, f: 14, fi: 2, i: [{ n: 'Mollete 80g', k: 200 }, { n: 'Aceite 8g', k: 72 }, { n: 'Jamón 15g', k: 59 }] },
+      { id: 'd77b', ct: 'desayuno', e: '🥖', n: 'Mollete con tomate y aceite', d: 'Mollete andaluz clásico', k: 250, p: 7, c: 35, f: 10, fi: 3, i: [{ n: 'Mollete 80g', k: 200 }, { n: 'Tomate', k: 12 }, { n: 'Aceite 8g', k: 72 }] },
+      { id: 'd79', ct: 'desayuno', e: '🥜', n: 'Tostada con crema de cacahuete', d: 'Pan integral, crema cacahuete, plátano', k: 330, p: 12, c: 34, f: 16, fi: 5, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Crema cacahuete 20g', k: 118 }, { n: 'Plátano medio', k: 54 }] },
+      { id: 'd79b', ct: 'desayuno', e: '🥣', n: 'Cereales con leche', d: 'Cereales desayuno con leche', k: 250, p: 8, c: 40, f: 4, fi: 2, i: [{ n: 'Cereales 40g', k: 152 }, { n: 'Leche 200ml', k: 92 }] },
+      { id: 'd79c', ct: 'desayuno', e: '🍫', n: 'Galletas con café con leche', d: 'Galletas María + café con leche', k: 210, p: 5, c: 30, f: 8, fi: 1, i: [{ n: 'Galletas 4 uds 28g', k: 122 }, { n: 'Café con leche', k: 75 }] },
       { id: 'd80', ct: 'snacks', e: '🥜', n: 'Yogur con frutos secos', d: 'Yogur natural + almendras 15g', k: 165, p: 8, c: 8, f: 10, fi: 2, i: [{ n: 'Yogur 125g', k: 76 }, { n: 'Almendras 15g', k: 98 }] },
       { id: 'd81', ct: 'snacks', e: '🍌', n: 'Batido proteico casero', d: 'Leche, plátano, whey', k: 300, p: 32, c: 30, f: 4, fi: 2, i: [{ n: 'Leche 200ml', k: 68 }, { n: 'Plátano', k: 108 }, { n: 'Whey 30g', k: 120 }] },
       { id: 'd82', ct: 'snacks', e: '🍎', n: 'Fruta de temporada', d: 'Manzana o naranja', k: 80, p: 0.5, c: 18, f: 0.2, fi: 3, i: [{ n: 'Fruta 200g', k: 80 }] },
@@ -4195,7 +4219,7 @@
       const dR = D.filter(x => x.n.toLowerCase().includes(q) || x.d.toLowerCase().includes(q)).slice(0, 5);
       const fR = FF.filter(x => x.n.toLowerCase().includes(q)).slice(0, 5);
       let h = '';
-      if (dR.length) { h += '<div class="usr-cat">🍽️ Platos</div>'; dR.forEach(x => { h += '<div class="dc"><div class="dch" onclick="this.closest(\'.dc\').classList.toggle(\'op\')"><div class="de">' + x.e + '</div><div class="di"><div class="dn">' + x.n + '</div><div class="dd2">' + x.d + '</div></div><div class="db"><span class="dk">' + x.k + ' kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">' + x.k + ' kcal</span><span class="mp mpr">' + x.p + 'g P</span><span class="mp mh">' + x.c + 'g HC</span><span class="mp mf">' + x.f + 'g G</span><span class="mp mfi">' + x.fi + 'g F</span></div><button class="dab" onclick="ap(\'' + x.n.replace(/'/g, "\\'") + '\',\'Plato completo\',' + x.k + ',' + x.p + ',' + x.c + ',' + x.f + ',' + x.fi + ');document.getElementById(\'usi\').value=\'\';document.getElementById(\'usr\').style.display=\'none\'">➕ Añadir al plato</button></div></div>' }) }
+      if (dR.length) { h += '<div class="usr-cat">🍽️ Platos</div>'; dR.forEach(x => { const dn = getDishNote(x.id); h += '<div class="dc"><div class="dch" onclick="this.closest(\'.dc\').classList.toggle(\'op\')"><div class="de">' + x.e + '</div><div class="di"><div class="dn">' + x.n + (dn ? ' 📝' : '') + '</div><div class="dd2">' + x.d + '</div></div><div class="db"><span class="dk">' + x.k + ' kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">' + x.k + ' kcal</span><span class="mp mpr">' + x.p + 'g P</span><span class="mp mh">' + x.c + 'g HC</span><span class="mp mf">' + x.f + 'g G</span><span class="mp mfi">' + x.fi + 'g F</span></div>' + (dn ? '<div class="dish-note"><span class="note-icon">📝</span><span class="note-text">' + dn.replace(/</g,'&lt;') + '</span></div>' : '') + '<button class="dab" onclick="ap(\'' + x.n.replace(/'/g, "\\'") + '\',\'Plato completo\',' + x.k + ',' + x.p + ',' + x.c + ',' + x.f + ',' + x.fi + ');document.getElementById(\'usi\').value=\'\';document.getElementById(\'usr\').style.display=\'none\'">➕ Añadir al plato</button></div></div>' }) }
       if (fR.length) { h += '<div class="usr-cat">🥩 Alimentos</div>'; fR.forEach(x => { const po = x.o[0]; const m = po.g / 100; h += '<div class="pi" style="cursor:pointer" onclick="ap(\'' + x.n.replace(/'/g, "\\'") + '\',\'' + po.n + '\',' + Math.round(x.v.k * m) + ',' + +(x.v.p * m).toFixed(1) + ',' + +(x.v.c * m).toFixed(1) + ',' + +(x.v.f * m).toFixed(1) + ',' + +(x.v.fi * m).toFixed(1) + ');document.getElementById(\'usi\').value=\'\';document.getElementById(\'usr\').style.display=\'none\'"><div class="pin"><div class="pn">' + x.n + '</div><div class="pp">' + po.n + ' · ' + Math.round(x.v.k * m) + ' kcal</div></div><div class="pk" style="font-size:.75rem;color:var(--accent)">+ Añadir</div></div>' }) }
       if (!h) h = '<div class="nr2">😕 Sin resultados</div>';
       ur.innerHTML = h;
@@ -4219,7 +4243,33 @@
       el.querySelectorAll('.dch').forEach(h2 => h2.addEventListener('click', () => h2.closest('.dc').classList.toggle('op')));
       el.querySelectorAll('.dab').forEach(b => b.addEventListener('click', ev => { ev.stopPropagation(); const x = D.find(z => z.id === b.dataset.id); if (x) ap(x.n, 'Plato completo', x.k, x.p, x.c, x.f, x.fi) }));
     }
-    function dh(x) { return '<div class="dc"><div class="dch"><div class="de">' + x.e + '</div><div class="di"><div class="dn">' + x.n + '</div><div class="dd2">' + x.d + '</div></div><div class="db"><span class="dk">' + x.k + ' kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">' + x.k + ' kcal</span><span class="mp mpr">' + x.p + 'g P</span><span class="mp mh">' + x.c + 'g HC</span><span class="mp mf">' + x.f + 'g G</span><span class="mp mfi">' + x.fi + 'g F</span></div><ul class="il">' + x.i.map(i2 => '<li><span class="iln">' + i2.n + '</span><span class="ilk">' + i2.k + ' kcal</span></li>').join('') + '</ul><button class="dab" data-id="' + x.id + '">➕ Añadir al plato</button></div></div>' }
+    function dh(x) {
+      const note = getDishNote(x.id);
+      let noteHtml = '';
+      if (note) {
+        noteHtml = '<div class="dish-note"><span class="note-icon">📝</span><span class="note-text">' + note.replace(/</g,'&lt;') + '</span><button class="dish-note-edit" onclick="event.stopPropagation();editDishNoteById(\'' + x.id + '\')">Editar</button></div>';
+      } else {
+        noteHtml = '<button class="dish-note-edit" onclick="event.stopPropagation();editDishNoteById(\'' + x.id + '\')" style="margin-top:6px;font-size:.65rem">📝 Añadir nota</button>';
+      }
+      return '<div class="dc"><div class="dch"><div class="de">' + x.e + '</div><div class="di"><div class="dn">' + x.n + '</div><div class="dd2">' + x.d + '</div></div><div class="db"><span class="dk">' + x.k + ' kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">' + x.k + ' kcal</span><span class="mp mpr">' + x.p + 'g P</span><span class="mp mh">' + x.c + 'g HC</span><span class="mp mf">' + x.f + 'g G</span><span class="mp mfi">' + x.fi + 'g F</span></div><ul class="il">' + x.i.map(i2 => '<li><span class="iln">' + i2.n + '</span><span class="ilk">' + i2.k + ' kcal</span></li>').join('') + '</ul>' + noteHtml + '<button class="dab" data-id="' + x.id + '">➕ Añadir al plato</button></div></div>';
+    }
+
+    // ═══ DISH NOTES (for all dishes in D array) ═══
+    function getDishNotes() { try { return JSON.parse(localStorage.getItem('pf_dish_notes') || '{}') } catch { return {} } }
+    function saveDishNotes(n) { localStorage.setItem('pf_dish_notes', JSON.stringify(n)); scheduleSave() }
+    function getDishNote(dishId) { return getDishNotes()[dishId] || '' }
+    function editDishNoteById(dishId) {
+      const dish = D.find(x => x.id === dishId);
+      const name = dish ? dish.n : 'Plato';
+      const current = getDishNote(dishId);
+      const nota = prompt('📝 Nota mental para "' + name + '":', current);
+      if (nota === null) return;
+      const notes = getDishNotes();
+      if (nota) { notes[dishId] = nota } else { delete notes[dishId] }
+      saveDishNotes(notes);
+      rds(); // re-render dishes
+      ts(nota ? '📝 Nota guardada' : '📝 Nota eliminada');
+    }
 
     // ═══ FOODS ═══
     function ifp() {

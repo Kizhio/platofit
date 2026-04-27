@@ -3055,6 +3055,24 @@
       border-radius: 14px; font-family: 'Outfit', sans-serif; font-size: .85rem;
       font-weight: 700; color: white; cursor: pointer
     }
+
+    /* ─── NOTES ─── */
+    .dish-note {
+      display: flex; align-items: flex-start; gap: 6px; margin-top: 6px;
+      padding: 8px 10px; background: rgba(255, 193, 7, .08); border: 1px solid rgba(255, 193, 7, .18);
+      border-radius: 10px; font-size: .68rem; color: var(--tx2); line-height: 1.4
+    }
+    [data-theme="dark"] .dish-note {
+      background: rgba(255, 193, 7, .06); border-color: rgba(255, 193, 7, .12)
+    }
+    .dish-note .note-icon { flex-shrink: 0; font-size: .8rem }
+    .dish-note .note-text { flex: 1; word-break: break-word }
+    .dish-note-edit {
+      background: none; border: none; color: var(--accent); font-family: 'Outfit', sans-serif;
+      font-size: .65rem; font-weight: 600; cursor: pointer; padding: 2px 4px; flex-shrink: 0
+    }
+    .pmi-portion { font-size: .62rem; color: var(--tx3); display: block; margin-top: 1px }
+    .pmi-note { font-size: .6rem; color: var(--cal); font-style: italic; display: block; margin-top: 2px }
   </style>
 </head>
 
@@ -3188,6 +3206,8 @@
         <label class="ml2">Nombre</label><input class="mi2" id="cn" placeholder="Ej: Pollo + arroz del gym">
         <label class="ml2">Descripción</label><input class="mi2" id="cds"
           placeholder="Ej: Pechuga 200g + arroz basmati 150g">
+        <label class="ml2">📝 Nota mental</label><input class="mi2" id="cnota"
+          placeholder="Ej: Queda mejor con más sal, usar el arroz integral...">
         <label class="ml2" style="font-size:.65rem;color:var(--tx3);margin-top:6px">💡 Introduce los macros de la porción que comes normalmente</label>
         <div class="mg3">
           <div><label class="ml2">Kcal</label><input class="mi2" id="cc" type="number" inputmode="numeric"
@@ -3440,6 +3460,7 @@
         <div class="plan-manual">
           <h4>✏️ Entrada manual</h4>
           <input id="pmName" placeholder="Nombre (ej: Tostada con aguacate)">
+          <input id="pmPortion" placeholder="Porción (ej: 200g, 1 plato...)">
           <div class="pm-row">
             <div><label>Kcal</label><input id="pmK" type="number" inputmode="numeric" placeholder="0"></div>
             <div><label>Prot (g)</label><input id="pmP" type="number" inputmode="numeric" placeholder="0"></div>
@@ -3449,6 +3470,7 @@
             <div><label>Grasa (g)</label><input id="pmF" type="number" inputmode="numeric" placeholder="0"></div>
             <div><label>Fibra (g)</label><input id="pmFi" type="number" inputmode="numeric" placeholder="0"></div>
           </div>
+          <input id="pmNota" placeholder="📝 Nota mental (opcional)">
           <button onclick="planAddManual()">➕ Añadir</button>
         </div>
       </div>
@@ -4232,16 +4254,37 @@
       const n = document.getElementById('cn').value.trim(); if (!n) { alert('Escribe un nombre'); return }
       const k = +document.getElementById('cc').value || 0, p = +document.getElementById('cp').value || 0, c = +document.getElementById('cch').value || 0, f = +document.getElementById('cff').value || 0, fi = +document.getElementById('cfi').value || 0;
       const ds2 = document.getElementById('cds').value.trim();
+      const nota = document.getElementById('cnota').value.trim();
       if (!k && !p) { alert('Indica al menos kcal o proteínas'); return }
-      const dd2 = lm(); dd2.unshift({ id: Date.now(), n, ds: ds2, k, p, c, f, fi }); smm(dd2);
-      ['cn', 'cds', 'cc', 'cp', 'cch', 'cff', 'cfi'].forEach(x => document.getElementById(x).value = '');
+      const dd2 = lm(); dd2.unshift({ id: Date.now(), n, ds: ds2, nota, k, p, c, f, fi }); smm(dd2);
+      ['cn', 'cds', 'cnota', 'cc', 'cp', 'cch', 'cff', 'cfi'].forEach(x => document.getElementById(x).value = '');
       rm(); ts('💾 Guardado');
     }
     function dm(id) { smm(lm().filter(x => x.id !== id)); rm() }
     function rm() {
       const dd2 = lm(), el = document.getElementById('myl');
       if (!dd2.length) { el.innerHTML = '<div class="cde2">Aún no tienes platos guardados</div>'; return }
-      el.innerHTML = dd2.map(x => '<div class="cd3"><div class="ci3"><div class="cn3">' + x.n + '</div><div class="cd4">' + (x.ds || '') + ' · ' + x.p + 'g P · ' + x.c + 'g HC · ' + x.f + 'g G · ' + x.k + ' kcal</div></div><div class="ck3">' + x.k + '</div><button class="ca3" onclick="openCustomPortionModal(' + x.id + ')">⚖️</button><button class="ca3" onclick="ap(\'' + x.n.replace(/'/g, "\\'") + '\',\'Mis platos\',' + x.k + ',' + x.p + ',' + x.c + ',' + x.f + ',' + x.fi + ')" title="Añadir porción completa">＋</button><button class="cx3" onclick="dm(' + x.id + ')">✕</button></div>').join('');
+      el.innerHTML = dd2.map(x => {
+        let noteHtml = '';
+        if (x.nota) {
+          noteHtml = '<div class="dish-note"><span class="note-icon">📝</span><span class="note-text">' + x.nota.replace(/</g,'&lt;') + '</span><button class="dish-note-edit" onclick="editDishNote(' + x.id + ')">Editar</button></div>';
+        } else {
+          noteHtml = '<div style="margin-top:4px"><button class="dish-note-edit" onclick="editDishNote(' + x.id + ')" style="font-size:.65rem">📝 Añadir nota</button></div>';
+        }
+        return '<div class="cd3" style="flex-wrap:wrap"><div class="ci3"><div class="cn3">' + x.n + '</div><div class="cd4">' + (x.ds || '') + ' · ' + x.p + 'g P · ' + x.c + 'g HC · ' + x.f + 'g G · ' + x.k + ' kcal</div>' + noteHtml + '</div><div class="ck3">' + x.k + '</div><button class="ca3" onclick="openCustomPortionModal(' + x.id + ')">⚖️</button><button class="ca3" onclick="ap(\'' + x.n.replace(/'/g, "\\'") + '\',\'Mis platos\',' + x.k + ',' + x.p + ',' + x.c + ',' + x.f + ',' + x.fi + ')" title="Añadir porción completa">＋</button><button class="cx3" onclick="dm(' + x.id + ')">✕</button></div>';
+      }).join('');
+    }
+
+    function editDishNote(id) {
+      const dishes = lm();
+      const dish = dishes.find(x => x.id === id);
+      if (!dish) return;
+      const nota = prompt('📝 Nota mental para "' + dish.n + '":', dish.nota || '');
+      if (nota === null) return; // cancelled
+      dish.nota = nota;
+      smm(dishes);
+      rm();
+      ts(nota ? '📝 Nota guardada' : '📝 Nota eliminada');
     }
 
     function openCustomPortionModal(id) {
@@ -4507,7 +4550,10 @@
           const items = dayData[mt] || [];
           html += '<div class="planner-meal"><div class="planner-meal-label">' + mt + '</div><div class="planner-meal-items">';
           items.forEach((it, ii) => {
-            html += '<div class="planner-meal-item"><span class="pmi-name">' + it.n + '</span><span class="pmi-kcal">' + it.k + ' kcal</span><button class="pmi-del" onclick="removePlanItem(' + di + ',\'' + mt + '\',' + ii + ')">✕</button></div>';
+            let extraInfo = '';
+            if (it.po) extraInfo += '<span class="pmi-portion">' + it.po + '</span>';
+            if (it.nota) extraInfo += '<span class="pmi-note">📝 ' + it.nota.replace(/</g,'&lt;') + '</span>';
+            html += '<div class="planner-meal-item"><div style="flex:1;min-width:0"><span class="pmi-name">' + it.n + '</span>' + extraInfo + '</div><span class="pmi-kcal">' + it.k + ' kcal</span><button class="pmi-del" onclick="editPlanNote(' + di + ',\'' + mt + '\',' + ii + ')" style="color:var(--cal);font-size:.8rem" title="Nota">📝</button><button class="pmi-del" onclick="removePlanItem(' + di + ',\'' + mt + '\',' + ii + ')">✕</button></div>';
           });
           html += '</div><button class="planner-add-btn" onclick="addToPlan(' + di + ',\'' + mt + '\')">＋ Añadir a ' + mt + '</button></div>';
         });
@@ -4590,10 +4636,32 @@
         el.addEventListener('click', () => {
           const it = items[i];
           const t = window._planTarget;
+
+          // For food items (per-100g), open portion modal
+          if (it.type === 'food' && it.foodId) {
+            const food = FF.find(z => z.id === it.foodId);
+            if (food) {
+              closePlanModal();
+              openPortionModal(food.n, food.v, food.o.map(o => ({ n: o.n, g: o.g })),
+                function(g, k, p, c, f, fi) {
+                  const plan = getPlan();
+                  if (!plan[t.dayIdx]) plan[t.dayIdx] = {};
+                  if (!plan[t.dayIdx][t.mealType]) plan[t.dayIdx][t.mealType] = [];
+                  plan[t.dayIdx][t.mealType].push({ n: food.n, po: g + 'g', k, p, c, f, fi, nota: '' });
+                  savePlan(plan);
+                  renderPlanner();
+                  ts('✅ ' + food.n + ' añadido');
+                }
+              );
+              return;
+            }
+          }
+
+          // For dishes and custom: add directly, note can be edited after via 📝 button
           const plan = getPlan();
           if (!plan[t.dayIdx]) plan[t.dayIdx] = {};
           if (!plan[t.dayIdx][t.mealType]) plan[t.dayIdx][t.mealType] = [];
-          plan[t.dayIdx][t.mealType].push({ n: it.name, k: it.k, p: it.p, c: it.c, f: it.f, fi: it.fi });
+          plan[t.dayIdx][t.mealType].push({ n: it.name, k: it.k, p: it.p, c: it.c, f: it.f, fi: it.fi, nota: '' });
           savePlan(plan);
           closePlanModal();
           renderPlanner();
@@ -4610,14 +4678,16 @@
       const c = +document.getElementById('pmC').value || 0;
       const f = +document.getElementById('pmF').value || 0;
       const fi = +document.getElementById('pmFi').value || 0;
+      const po = document.getElementById('pmPortion').value.trim() || '';
+      const nota = document.getElementById('pmNota').value.trim() || '';
       if (!k && !p) { ts('❌ Indica al menos kcal o proteínas'); return }
       const t = window._planTarget;
       const plan = getPlan();
       if (!plan[t.dayIdx]) plan[t.dayIdx] = {};
       if (!plan[t.dayIdx][t.mealType]) plan[t.dayIdx][t.mealType] = [];
-      plan[t.dayIdx][t.mealType].push({ n: name, k, p, c, f, fi });
+      plan[t.dayIdx][t.mealType].push({ n: name, po, k, p, c, f, fi, nota });
       savePlan(plan);
-      ['pmName', 'pmK', 'pmP', 'pmC', 'pmF', 'pmFi'].forEach(id => document.getElementById(id).value = '');
+      ['pmName', 'pmPortion', 'pmK', 'pmP', 'pmC', 'pmF', 'pmFi', 'pmNota'].forEach(id => document.getElementById(id).value = '');
       closePlanModal();
       renderPlanner();
       ts('✅ ' + name + ' añadido');
@@ -4685,6 +4755,18 @@
         savePlan(plan);
         renderPlanner();
       }
+    }
+
+    function editPlanNote(dayIdx, mealType, itemIdx) {
+      const plan = getPlan();
+      if (!plan[dayIdx] || !plan[dayIdx][mealType] || !plan[dayIdx][mealType][itemIdx]) return;
+      const item = plan[dayIdx][mealType][itemIdx];
+      const nota = prompt('📝 Nota para "' + item.n + '":', item.nota || '');
+      if (nota === null) return;
+      item.nota = nota;
+      savePlan(plan);
+      renderPlanner();
+      ts(nota ? '📝 Nota guardada' : '📝 Nota eliminada');
     }
 
     // ─── BARCODE SCANNER ───

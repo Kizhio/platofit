@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -2956,6 +2957,123 @@
     .cs-modal button:active {
       transform: scale(.96)
     }
+
+    /* ─── PLANNER MODAL ─── */
+    .plan-modal-bg {
+      position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,.55);
+      display: none; align-items: flex-end; justify-content: center;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px)
+    }
+    .plan-modal-bg.show { display: flex }
+    .plan-modal {
+      background: var(--bg); border-radius: 24px 24px 0 0; width: 100%; max-width: 500px;
+      max-height: 85vh; display: flex; flex-direction: column;
+      animation: slideUp .3s ease; box-shadow: 0 -10px 40px rgba(0,0,0,.15);
+      padding-bottom: var(--sab)
+    }
+    @keyframes slideUp { from { transform: translateY(100%) } to { transform: translateY(0) } }
+    .plan-modal-head {
+      padding: 18px 20px 12px; border-bottom: 1px solid var(--brd);
+      display: flex; justify-content: space-between; align-items: center; flex-shrink: 0
+    }
+    .plan-modal-head h3 { font-size: 1rem; font-weight: 700 }
+    .plan-modal-head button { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--tx3); padding: 4px }
+    .plan-modal-body { overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 20px 20px; flex: 1 }
+    .plan-modal-tabs { display: flex; gap: 4px; margin-bottom: 12px; overflow-x: auto; scrollbar-width: none }
+    .plan-modal-tabs::-webkit-scrollbar { display: none }
+    .plan-modal-tab {
+      flex-shrink: 0; padding: 8px 14px; border-radius: 20px; border: 1px solid var(--brd);
+      background: var(--card); font-family: 'Outfit', sans-serif; font-size: .72rem;
+      font-weight: 500; color: var(--tx2); cursor: pointer; white-space: nowrap; transition: all .15s
+    }
+    .plan-modal-tab.on { background: var(--accent); border-color: var(--accent); color: white; font-weight: 700 }
+    .plan-modal-search {
+      width: 100%; padding: 12px 14px; background: var(--card); border: 1.5px solid var(--brd);
+      border-radius: 14px; font-family: 'Outfit', sans-serif; font-size: .88rem;
+      color: var(--tx); outline: none; margin-bottom: 10px; min-height: 44px
+    }
+    .plan-modal-search:focus { border-color: var(--accent) }
+    .plan-modal-search::placeholder { color: var(--tx3) }
+    .plan-modal-list { max-height: 40vh }
+    .pml-item {
+      display: flex; align-items: center; gap: 10px; padding: 11px 12px;
+      border: 1px solid var(--brd); border-radius: 14px; margin-bottom: 6px;
+      background: var(--card); cursor: pointer; transition: border-color .15s
+    }
+    .pml-item:active { border-color: var(--accent) }
+    .pml-item .pml-emoji { font-size: 1.3rem; flex-shrink: 0 }
+    .pml-item .pml-info { flex: 1; min-width: 0 }
+    .pml-item .pml-name { font-size: .82rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+    .pml-item .pml-desc { font-size: .65rem; color: var(--tx3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+    .pml-item .pml-kcal { font-size: .75rem; font-weight: 700; color: var(--cal); flex-shrink: 0 }
+    /* Manual entry inside planner */
+    .plan-manual { margin-top: 12px; padding: 14px; background: var(--card); border: 1px solid var(--brd); border-radius: 16px }
+    .plan-manual h4 { font-size: .78rem; font-weight: 700; margin-bottom: 10px }
+    .plan-manual input { width: 100%; padding: 10px 12px; background: var(--bg); border: 1px solid var(--brd); border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: .82rem; color: var(--tx); margin-bottom: 6px; min-height: 40px }
+    .plan-manual .pm-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px }
+    .plan-manual .pm-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px }
+    .plan-manual label { font-size: .62rem; color: var(--tx3); text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 2px }
+    .plan-manual button { width: 100%; margin-top: 8px; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: .82rem; font-weight: 700; cursor: pointer }
+
+    /* ─── PORTION MODAL (for barcode + custom dishes) ─── */
+    .portion-modal-bg {
+      position: fixed; inset: 0; z-index: 310; background: rgba(0,0,0,.5);
+      display: none; align-items: center; justify-content: center;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px)
+    }
+    .portion-modal-bg.show { display: flex }
+    .portion-modal {
+      background: var(--bg); border-radius: 24px; width: calc(100% - 40px); max-width: 360px;
+      padding: 24px 20px; animation: fadeUp .25s ease; box-shadow: 0 20px 60px rgba(0,0,0,.2)
+    }
+    .portion-modal h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; text-align: center }
+    .portion-modal .pm-sub { font-size: .72rem; color: var(--tx3); text-align: center; margin-bottom: 14px }
+    .portion-modal .pm-macros { text-align: center; margin-bottom: 14px }
+    .portion-modal .pm-gram-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 14px; justify-content: center
+    }
+    .portion-modal .pm-gram-input {
+      width: 100px; padding: 12px; text-align: center; background: var(--card);
+      border: 2px solid var(--accent); border-radius: 14px; font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem; font-weight: 700; color: var(--tx); outline: none
+    }
+    .portion-modal .pm-gram-label { font-size: .82rem; color: var(--tx2); font-weight: 500 }
+    .portion-modal .pm-presets { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 14px }
+    .portion-modal .pm-preset {
+      padding: 8px 14px; border-radius: 20px; border: 1px solid var(--brd);
+      background: var(--card); font-family: 'Outfit', sans-serif; font-size: .72rem;
+      font-weight: 500; color: var(--tx2); cursor: pointer; transition: all .15s
+    }
+    .portion-modal .pm-preset:active, .portion-modal .pm-preset.on { background: var(--accent); border-color: var(--accent); color: white }
+    .portion-modal .pm-actions { display: flex; gap: 8px }
+    .portion-modal .pm-cancel {
+      flex: 1; padding: 14px; background: var(--card); border: 1px solid var(--brd);
+      border-radius: 14px; font-family: 'Outfit', sans-serif; font-size: .85rem;
+      font-weight: 600; color: var(--tx2); cursor: pointer
+    }
+    .portion-modal .pm-add {
+      flex: 2; padding: 14px; background: var(--accent); border: none;
+      border-radius: 14px; font-family: 'Outfit', sans-serif; font-size: .85rem;
+      font-weight: 700; color: white; cursor: pointer
+    }
+
+    /* ─── NOTES ─── */
+    .dish-note {
+      display: flex; align-items: flex-start; gap: 6px; margin-top: 6px;
+      padding: 8px 10px; background: rgba(255, 193, 7, .08); border: 1px solid rgba(255, 193, 7, .18);
+      border-radius: 10px; font-size: .68rem; color: var(--tx2); line-height: 1.4
+    }
+    [data-theme="dark"] .dish-note {
+      background: rgba(255, 193, 7, .06); border-color: rgba(255, 193, 7, .12)
+    }
+    .dish-note .note-icon { flex-shrink: 0; font-size: .8rem }
+    .dish-note .note-text { flex: 1; word-break: break-word }
+    .dish-note-edit {
+      background: none; border: none; color: var(--accent); font-family: 'Outfit', sans-serif;
+      font-size: .65rem; font-weight: 600; cursor: pointer; padding: 2px 4px; flex-shrink: 0
+    }
+    .pmi-portion { font-size: .62rem; color: var(--tx3); display: block; margin-top: 1px }
+    .pmi-note { font-size: .6rem; color: var(--cal); font-style: italic; display: block; margin-top: 2px }
   </style>
 </head>
 
@@ -3089,6 +3207,9 @@
         <label class="ml2">Nombre</label><input class="mi2" id="cn" placeholder="Ej: Pollo + arroz del gym">
         <label class="ml2">Descripción</label><input class="mi2" id="cds"
           placeholder="Ej: Pechuga 200g + arroz basmati 150g">
+        <label class="ml2">📝 Nota mental</label><input class="mi2" id="cnota"
+          placeholder="Ej: Queda mejor con más sal, usar el arroz integral...">
+        <label class="ml2" style="font-size:.65rem;color:var(--tx3);margin-top:6px">💡 Introduce los macros de la porción que comes normalmente</label>
         <div class="mg3">
           <div><label class="ml2">Kcal</label><input class="mi2" id="cc" type="number" inputmode="numeric"
               placeholder="350"></div>
@@ -3325,6 +3446,57 @@
     </div>
   </div>
 
+  <!-- PLANNER ADD MODAL -->
+  <div class="plan-modal-bg" id="planAddModal">
+    <div class="plan-modal">
+      <div class="plan-modal-head">
+        <h3 id="planAddTitle">Añadir a Desayuno</h3>
+        <button onclick="closePlanModal()">✕</button>
+      </div>
+      <div class="plan-modal-body">
+        <div class="plan-modal-tabs" id="planAddTabs"></div>
+        <input class="plan-modal-search" id="planAddSearch" placeholder="Buscar plato o alimento..." autocomplete="off">
+        <div class="plan-modal-list" id="planAddList"></div>
+        <div class="plan-manual">
+          <h4>✏️ Entrada manual</h4>
+          <input id="pmName" placeholder="Nombre (ej: Tostada con aguacate)">
+          <input id="pmPortion" placeholder="Porción (ej: 200g, 1 plato...)">
+          <div class="pm-row">
+            <div><label>Kcal</label><input id="pmK" type="number" inputmode="numeric" placeholder="0"></div>
+            <div><label>Prot (g)</label><input id="pmP" type="number" inputmode="numeric" placeholder="0"></div>
+            <div><label>HC (g)</label><input id="pmC" type="number" inputmode="numeric" placeholder="0"></div>
+          </div>
+          <div class="pm-row2">
+            <div><label>Grasa (g)</label><input id="pmF" type="number" inputmode="numeric" placeholder="0"></div>
+            <div><label>Fibra (g)</label><input id="pmFi" type="number" inputmode="numeric" placeholder="0"></div>
+          </div>
+          <input id="pmNota" placeholder="📝 Nota mental (opcional)">
+          <button onclick="planAddManual()">➕ Añadir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PORTION MODAL -->
+  <div class="portion-modal-bg" id="portionModal">
+    <div class="portion-modal">
+      <h3 id="portionName">Producto</h3>
+      <div class="pm-sub" id="portionSub">Valores por 100g</div>
+      <div class="pm-gram-row">
+        <input class="pm-gram-input" id="portionGrams" type="number" inputmode="numeric" value="100" min="1">
+        <span class="pm-gram-label">gramos</span>
+      </div>
+      <div class="pm-presets" id="portionPresets"></div>
+      <div class="pm-macros">
+        <div class="mr" id="portionMacros" style="justify-content:center"></div>
+      </div>
+      <div class="pm-actions">
+        <button class="pm-cancel" onclick="closePortionModal()">Cancelar</button>
+        <button class="pm-add" id="portionAddBtn" onclick="confirmPortion()">➕ Añadir</button>
+      </div>
+    </div>
+  </div>
+
   <!-- BOTTOM NAV (7 tabs now) -->
   <div class="nav" id="nav" style="opacity:0">
     <div class="nav-in">
@@ -3477,6 +3649,7 @@
           if (d.customDishes) localStorage.setItem('ms3', JSON.stringify(d.customDishes));
           if (d.plan) localStorage.setItem('pf_plan', JSON.stringify(d.plan));
           if (d.iaUsage) localStorage.setItem('pf_ia_usage', JSON.stringify(d.iaUsage));
+          if (d.dishNotes) localStorage.setItem('pf_dish_notes', JSON.stringify(d.dishNotes));
           // Pro status from server
           if (d.pro) {
             localStorage.setItem('pf_pro', d.pro.active ? 'true' : 'false');
@@ -3502,6 +3675,7 @@
           customDishes: lm(),
           plan: getPlan(),
           iaUsage: iaGetUsage(),
+          dishNotes: getDishNotes(),
           pro: {
             active: isPro(),
             exp: parseInt(localStorage.getItem('pf_pro_exp')) || null,
@@ -3762,10 +3936,32 @@
       { id: 'd60', ct: 'pasta', e: '🍝', n: 'Espagueti con champiñones', d: 'Espagueti, champiñones, ajo', k: 390, p: 14, c: 60, f: 8, fi: 4, i: [{ n: 'Espagueti 200g', k: 260 }, { n: 'Champiñones', k: 22 }, { n: 'Aceite', k: 90 }] },
       { id: 'd61', ct: 'pasta', e: '🍝', n: 'Fideos con atún', d: 'Fideos, atún, tomate', k: 260, p: 18, c: 35, f: 5, fi: 3, i: [{ n: 'Fideos 150g', k: 158 }, { n: 'Atún 60g', k: 66 }, { n: 'Sofrito', k: 40 }] },
       { id: 'd62', ct: 'pasta', e: '🍝', n: 'Macarrones con tomate y pavo', d: 'Macarrones, tomate, pavo picado', k: 350, p: 24, c: 48, f: 6, fi: 3, i: [{ n: 'Macarrones 180g', k: 235 }, { n: 'Pavo 100g', k: 108 }, { n: 'Tomate', k: 30 }] },
-      { id: 'd70', ct: 'desayuno', e: '☕', n: 'Tostada + café con leche', d: 'Pan integral, aceite, leche', k: 280, p: 8, c: 22, f: 12, fi: 3, i: [{ n: 'Pan 30g', k: 70 }, { n: 'Aceite 10g', k: 90 }, { n: 'Leche 200ml', k: 68 }] },
+      { id: 'd70', ct: 'desayuno', e: '☕', n: 'Café solo', d: 'Café espresso o largo', k: 4, p: 0.2, c: 0, f: 0, fi: 0, i: [{ n: 'Café 100ml', k: 4 }] },
+      { id: 'd70b', ct: 'desayuno', e: '☕', n: 'Café con leche', d: 'Café + leche semidesnatada 150ml', k: 75, p: 5, c: 7, f: 2.5, fi: 0, i: [{ n: 'Café', k: 4 }, { n: 'Leche 150ml', k: 69 }, { n: 'Azúcar 1 sobre', k: 32 }] },
+      { id: 'd70c', ct: 'desayuno', e: '☕', n: 'Café con leche sin azúcar', d: 'Café + leche semidesnatada', k: 43, p: 5, c: 7, f: 2.5, fi: 0, i: [{ n: 'Café', k: 4 }, { n: 'Leche 150ml', k: 69 }] },
+      { id: 'd70d', ct: 'desayuno', e: '☕', n: 'Cortado', d: 'Café + poca leche', k: 25, p: 1.5, c: 2, f: 1, fi: 0, i: [{ n: 'Café', k: 4 }, { n: 'Leche 50ml', k: 23 }] },
+      { id: 'd70e', ct: 'desayuno', e: '🍵', n: 'Colacao con leche', d: 'Leche + cacao soluble 2 cucharadas', k: 165, p: 7, c: 25, f: 3.5, fi: 1, i: [{ n: 'Leche 200ml', k: 92 }, { n: 'Colacao 20g', k: 73 }] },
       { id: 'd71', ct: 'desayuno', e: '🥣', n: 'Avena con leche y fruta', d: 'Avena 40g, leche, fruta', k: 250, p: 12, c: 38, f: 5, fi: 5, i: [{ n: 'Avena 40g', k: 152 }, { n: 'Leche 150ml', k: 51 }, { n: 'Fruta', k: 50 }] },
-      { id: 'd72', ct: 'desayuno', e: '☕', n: 'Tostada con tomate', d: 'Pan integral, tomate, aceite', k: 200, p: 6, c: 28, f: 8, fi: 4, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Tomate', k: 12 }, { n: 'Aceite 10g', k: 90 }] },
+      { id: 'd71b', ct: 'desayuno', e: '🥣', n: 'Avena con yogur y frutos rojos', d: 'Avena 40g, yogur, fresas', k: 230, p: 13, c: 34, f: 6, fi: 5, i: [{ n: 'Avena 40g', k: 152 }, { n: 'Yogur 125g', k: 76 }, { n: 'Frutos rojos', k: 20 }] },
+      { id: 'd71c', ct: 'desayuno', e: '🥣', n: 'Avena overnight', d: 'Avena remojada con leche y chía', k: 280, p: 12, c: 38, f: 8, fi: 7, i: [{ n: 'Avena 40g', k: 152 }, { n: 'Leche 150ml', k: 69 }, { n: 'Chía 10g', k: 49 }] },
+      { id: 'd72', ct: 'desayuno', e: '🍞', n: 'Tostada con tomate', d: 'Pan integral, tomate rallado, AOVE', k: 200, p: 6, c: 28, f: 8, fi: 4, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Tomate', k: 12 }, { n: 'Aceite 10g', k: 90 }] },
+      { id: 'd72b', ct: 'desayuno', e: '🍞', n: 'Tostada con tomate y jamón', d: 'Pan, tomate, AOVE, jamón serrano', k: 280, p: 14, c: 28, f: 12, fi: 4, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Tomate', k: 12 }, { n: 'Aceite 10g', k: 90 }, { n: 'Jamón 20g', k: 79 }] },
+      { id: 'd72c', ct: 'desayuno', e: '🍞', n: 'Tostada con mantequilla y mermelada', d: 'Pan, mantequilla, mermelada', k: 260, p: 5, c: 35, f: 11, fi: 2, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Mantequilla 10g', k: 72 }, { n: 'Mermelada 20g', k: 50 }] },
+      { id: 'd72d', ct: 'desayuno', e: '🍞', n: 'Tostada con aceite y sal', d: 'Pan integral con AOVE', k: 190, p: 5, c: 20, f: 10, fi: 3, i: [{ n: 'Pan 30g', k: 70 }, { n: 'Aceite 12g', k: 108 }] },
+      { id: 'd72e', ct: 'desayuno', e: '🍞', n: 'Tostada con pavo y queso', d: 'Pan integral, pavo fiambre, queso fresco', k: 210, p: 16, c: 22, f: 6, fi: 3, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Pavo 40g', k: 42 }, { n: 'Queso fresco 30g', k: 53 }] },
       { id: 'd73', ct: 'desayuno', e: '🥚', n: 'Tostada con huevo y aguacate', d: 'Pan, huevo, medio aguacate', k: 350, p: 14, c: 22, f: 22, fi: 5, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Huevo', k: 86 }, { n: 'Aguacate 40g', k: 64 }, { n: 'Aceite', k: 45 }] },
+      { id: 'd73b', ct: 'desayuno', e: '🥚', n: 'Huevos revueltos', d: '2 huevos revueltos con aceite', k: 215, p: 13, c: 1, f: 17, fi: 0, i: [{ n: '2 Huevos', k: 172 }, { n: 'Aceite', k: 45 }] },
+      { id: 'd73c', ct: 'desayuno', e: '🥞', n: 'Tortitas de avena', d: 'Avena, huevo, plátano', k: 280, p: 14, c: 38, f: 7, fi: 4, i: [{ n: 'Avena 40g', k: 152 }, { n: 'Huevo', k: 86 }, { n: 'Plátano medio', k: 54 }] },
+      { id: 'd73d', ct: 'desayuno', e: '🥞', n: 'Tortitas de avena con proteína', d: 'Avena, claras, whey, plátano', k: 320, p: 30, c: 38, f: 4, fi: 4, i: [{ n: 'Avena 30g', k: 114 }, { n: 'Claras 2', k: 34 }, { n: 'Whey 15g', k: 60 }, { n: 'Plátano', k: 54 }] },
+      { id: 'd74', ct: 'desayuno', e: '🥐', n: 'Croissant', d: 'Croissant de mantequilla', k: 280, p: 5, c: 30, f: 15, fi: 1, i: [{ n: 'Croissant 60g', k: 280 }] },
+      { id: 'd75', ct: 'desayuno', e: '🍌', n: 'Batido de plátano y avena', d: 'Plátano, avena, leche', k: 280, p: 10, c: 45, f: 5, fi: 4, i: [{ n: 'Plátano 120g', k: 108 }, { n: 'Avena 30g', k: 114 }, { n: 'Leche 200ml', k: 69 }] },
+      { id: 'd76', ct: 'desayuno', e: '🥛', n: 'Yogur con fruta y granola', d: 'Yogur, plátano, granola', k: 260, p: 10, c: 38, f: 8, fi: 3, i: [{ n: 'Yogur 125g', k: 76 }, { n: 'Fruta', k: 50 }, { n: 'Granola 30g', k: 130 }] },
+      { id: 'd76b', ct: 'desayuno', e: '🥛', n: 'Yogur natural con miel', d: 'Yogur natural, miel', k: 130, p: 5, c: 18, f: 4, fi: 0, i: [{ n: 'Yogur 125g', k: 76 }, { n: 'Miel 1 cuch.', k: 55 }] },
+      { id: 'd77', ct: 'desayuno', e: '🥖', n: 'Mollete con aceite y jamón', d: 'Mollete, AOVE, jamón serrano', k: 320, p: 14, c: 32, f: 14, fi: 2, i: [{ n: 'Mollete 80g', k: 200 }, { n: 'Aceite 8g', k: 72 }, { n: 'Jamón 15g', k: 59 }] },
+      { id: 'd77b', ct: 'desayuno', e: '🥖', n: 'Mollete con tomate y aceite', d: 'Mollete andaluz clásico', k: 250, p: 7, c: 35, f: 10, fi: 3, i: [{ n: 'Mollete 80g', k: 200 }, { n: 'Tomate', k: 12 }, { n: 'Aceite 8g', k: 72 }] },
+      { id: 'd79', ct: 'desayuno', e: '🥜', n: 'Tostada con crema de cacahuete', d: 'Pan integral, crema cacahuete, plátano', k: 330, p: 12, c: 34, f: 16, fi: 5, i: [{ n: 'Pan 40g', k: 93 }, { n: 'Crema cacahuete 20g', k: 118 }, { n: 'Plátano medio', k: 54 }] },
+      { id: 'd79b', ct: 'desayuno', e: '🥣', n: 'Cereales con leche', d: 'Cereales desayuno con leche', k: 250, p: 8, c: 40, f: 4, fi: 2, i: [{ n: 'Cereales 40g', k: 152 }, { n: 'Leche 200ml', k: 92 }] },
+      { id: 'd79c', ct: 'desayuno', e: '🍫', n: 'Galletas con café con leche', d: 'Galletas María + café con leche', k: 210, p: 5, c: 30, f: 8, fi: 1, i: [{ n: 'Galletas 4 uds 28g', k: 122 }, { n: 'Café con leche', k: 75 }] },
       { id: 'd80', ct: 'snacks', e: '🥜', n: 'Yogur con frutos secos', d: 'Yogur natural + almendras 15g', k: 165, p: 8, c: 8, f: 10, fi: 2, i: [{ n: 'Yogur 125g', k: 76 }, { n: 'Almendras 15g', k: 98 }] },
       { id: 'd81', ct: 'snacks', e: '🍌', n: 'Batido proteico casero', d: 'Leche, plátano, whey', k: 300, p: 32, c: 30, f: 4, fi: 2, i: [{ n: 'Leche 200ml', k: 68 }, { n: 'Plátano', k: 108 }, { n: 'Whey 30g', k: 120 }] },
       { id: 'd82', ct: 'snacks', e: '🍎', n: 'Fruta de temporada', d: 'Manzana o naranja', k: 80, p: 0.5, c: 18, f: 0.2, fi: 3, i: [{ n: 'Fruta 200g', k: 80 }] },
@@ -3774,48 +3970,102 @@
 
     // ═══ DATA — FOODS ═══
     const FF = [
-      { id: 1, ct: 'proteinas', n: 'Pechuga pollo', v: { k: 110, p: 23, c: 0, f: 1.2, fi: 0 }, o: [{ n: '1 filete 150g', g: 150 }, { n: '2 filetes 200g', g: 200 }] },
+      { id: 1, ct: 'proteinas', n: 'Pechuga pollo', v: { k: 110, p: 23, c: 0, f: 1.2, fi: 0 }, o: [{ n: '1 filete 150g', g: 150 }, { n: '2 filetes 200g', g: 200 }, { n: '100g', g: 100 }] },
       { id: 2, ct: 'proteinas', n: 'Pavo pechuga', v: { k: 108, p: 22, c: 0, f: 2, fi: 0 }, o: [{ n: '200g', g: 200 }, { n: '100g', g: 100 }] },
-      { id: 3, ct: 'proteinas', n: 'Ternera magra', v: { k: 142, p: 21, c: 0, f: 5, fi: 0 }, o: [{ n: 'Filete 150g', g: 150 }] },
+      { id: 3, ct: 'proteinas', n: 'Ternera magra', v: { k: 142, p: 21, c: 0, f: 5, fi: 0 }, o: [{ n: 'Filete 150g', g: 150 }, { n: '100g', g: 100 }] },
       { id: 4, ct: 'proteinas', n: 'Conejo', v: { k: 87, p: 18, c: 0, f: 1.5, fi: 0 }, o: [{ n: '150g', g: 150 }, { n: '250g', g: 250 }] },
       { id: 5, ct: 'proteinas', n: 'Merluza', v: { k: 77, p: 17, c: 0, f: 0.5, fi: 0 }, o: [{ n: '2 filetes 200g', g: 200 }, { n: '1 filete 100g', g: 100 }] },
       { id: 6, ct: 'proteinas', n: 'Atún fresco', v: { k: 108, p: 23, c: 0, f: 1, fi: 0 }, o: [{ n: 'Rodaja 150g', g: 150 }] },
       { id: 7, ct: 'proteinas', n: 'Atún lata natural', v: { k: 110, p: 25, c: 0, f: 1, fi: 0 }, o: [{ n: 'Lata 52g', g: 52 }, { n: 'Lata 80g', g: 80 }] },
-      { id: 8, ct: 'proteinas', n: 'Salmón', v: { k: 208, p: 20, c: 0, f: 13, fi: 0 }, o: [{ n: '125g', g: 125 }] },
+      { id: 8, ct: 'proteinas', n: 'Salmón', v: { k: 208, p: 20, c: 0, f: 13, fi: 0 }, o: [{ n: '125g', g: 125 }, { n: '150g', g: 150 }] },
       { id: 9, ct: 'proteinas', n: 'Gambas', v: { k: 96, p: 18, c: 0, f: 1, fi: 0 }, o: [{ n: '80g', g: 80 }, { n: '150g', g: 150 }] },
       { id: 10, ct: 'proteinas', n: 'Huevo entero', v: { k: 143, p: 12.5, c: 0.7, f: 10, fi: 0 }, o: [{ n: '1 huevo 60g', g: 60 }, { n: '2 huevos 120g', g: 120 }] },
       { id: 11, ct: 'proteinas', n: 'Clara huevo', v: { k: 49, p: 10.6, c: 0.6, f: 0, fi: 0 }, o: [{ n: '2 claras 70g', g: 70 }] },
       { id: 12, ct: 'proteinas', n: 'Jamón serrano', v: { k: 395, p: 31, c: 0, f: 24, fi: 0 }, o: [{ n: '2 lonchas 20g', g: 20 }, { n: '50g', g: 50 }] },
-      { id: 13, ct: 'proteinas', n: 'Bacalao', v: { k: 80, p: 18, c: 0, f: 0.5, fi: 0 }, o: [{ n: '200g', g: 200 }] },
+      { id: 13, ct: 'proteinas', n: 'Bacalao', v: { k: 80, p: 18, c: 0, f: 0.5, fi: 0 }, o: [{ n: '200g', g: 200 }, { n: '100g', g: 100 }] },
       { id: 14, ct: 'proteinas', n: 'Hígado', v: { k: 150, p: 20, c: 2, f: 5, fi: 0 }, o: [{ n: '120g', g: 120 }] },
       { id: 15, ct: 'proteinas', n: 'Solomillo cerdo', v: { k: 127, p: 20, c: 0, f: 5, fi: 0 }, o: [{ n: '150g', g: 150 }] },
       { id: 16, ct: 'proteinas', n: 'Sardinas', v: { k: 115, p: 18, c: 0, f: 4.5, fi: 0 }, o: [{ n: '200g', g: 200 }] },
       { id: 17, ct: 'proteinas', n: 'Pechuga pavo fiambre', v: { k: 105, p: 18, c: 2, f: 2, fi: 0 }, o: [{ n: '3 lonchas 60g', g: 60 }] },
+      { id: 100, ct: 'proteinas', n: 'Carne rebozada', v: { k: 225, p: 16, c: 10, f: 14, fi: 0.5 }, o: [{ n: 'Filete 100g', g: 100 }, { n: '150g', g: 150 }] },
+      { id: 101, ct: 'proteinas', n: 'Seitan', v: { k: 121, p: 24, c: 4, f: 1, fi: 0.5 }, o: [{ n: '100g', g: 100 }, { n: '150g', g: 150 }] },
+      { id: 102, ct: 'proteinas', n: 'Tofu', v: { k: 76, p: 8, c: 1.9, f: 4.8, fi: 0.3 }, o: [{ n: '100g', g: 100 }, { n: '150g', g: 150 }] },
+      { id: 103, ct: 'proteinas', n: 'Surimi (palitos cangrejo)', v: { k: 95, p: 8, c: 12, f: 0.5, fi: 0 }, o: [{ n: 'Barrita 20g', g: 20 }, { n: '100g', g: 100 }] },
+      { id: 104, ct: 'proteinas', n: 'Mejillones', v: { k: 86, p: 12, c: 3.7, f: 2, fi: 0 }, o: [{ n: '100g', g: 100 }, { n: '200g', g: 200 }] },
+      { id: 105, ct: 'proteinas', n: 'Calamar', v: { k: 79, p: 15.6, c: 1.7, f: 1.1, fi: 0 }, o: [{ n: '100g', g: 100 }, { n: '150g', g: 150 }] },
+
       { id: 20, ct: 'lacteos', n: 'Leche desnatada', v: { k: 34, p: 3.3, c: 4.8, f: 0.2, fi: 0 }, o: [{ n: 'Vaso 200ml', g: 200 }] },
       { id: 21, ct: 'lacteos', n: 'Yogur natural', v: { k: 61, p: 4, c: 4.4, f: 3.2, fi: 0 }, o: [{ n: '125g', g: 125 }] },
       { id: 22, ct: 'lacteos', n: 'Yogur griego', v: { k: 120, p: 4.8, c: 3.2, f: 9.6, fi: 0 }, o: [{ n: '125g', g: 125 }] },
       { id: 23, ct: 'lacteos', n: 'Queso Burgos', v: { k: 200, p: 12, c: 3, f: 15, fi: 0 }, o: [{ n: '60g', g: 60 }] },
       { id: 24, ct: 'lacteos', n: 'Leche semidesnatada', v: { k: 46, p: 3.2, c: 4.7, f: 1.6, fi: 0 }, o: [{ n: 'Vaso 200ml', g: 200 }] },
       { id: 25, ct: 'lacteos', n: 'Queso fresco batido 0%', v: { k: 48, p: 8, c: 3.5, f: 0.2, fi: 0 }, o: [{ n: 'Tarrina 250g', g: 250 }] },
-      { id: 30, ct: 'cereales', n: 'Arroz cocido', v: { k: 130, p: 2.5, c: 28, f: 0.3, fi: 0.4 }, o: [{ n: '1 cazo 100g', g: 100 }, { n: '2 cazos 200g', g: 200 }] },
-      { id: 31, ct: 'cereales', n: 'Pasta cocida', v: { k: 131, p: 5, c: 25, f: 0.9, fi: 1.4 }, o: [{ n: '2 cazos 180g', g: 180 }] },
+      { id: 110, ct: 'lacteos', n: 'Leche entera', v: { k: 63, p: 3.1, c: 4.7, f: 3.5, fi: 0 }, o: [{ n: 'Vaso 200ml', g: 200 }] },
+      { id: 111, ct: 'lacteos', n: 'Cuajada', v: { k: 89, p: 5, c: 4, f: 5.5, fi: 0 }, o: [{ n: 'Unidad 125ml', g: 125 }] },
+      { id: 112, ct: 'lacteos', n: 'Flan', v: { k: 126, p: 4, c: 20, f: 3.5, fi: 0 }, o: [{ n: 'Unidad 110g', g: 110 }] },
+      { id: 113, ct: 'lacteos', n: 'Helado', v: { k: 200, p: 3.5, c: 24, f: 11, fi: 0 }, o: [{ n: 'Bola 100g', g: 100 }] },
+      { id: 114, ct: 'lacteos', n: 'Yogur desnatado sabores', v: { k: 48, p: 4.2, c: 6.5, f: 0.3, fi: 0 }, o: [{ n: '125ml', g: 125 }] },
+      { id: 115, ct: 'lacteos', n: 'Queso tipo Petit Suisse', v: { k: 160, p: 7, c: 13, f: 9, fi: 0 }, o: [{ n: 'Unidad 50g', g: 50 }] },
+      { id: 116, ct: 'lacteos', n: 'Nata líquida', v: { k: 310, p: 2.2, c: 3.5, f: 32, fi: 0 }, o: [{ n: '50ml', g: 50 }, { n: '100ml', g: 100 }] },
+      { id: 117, ct: 'lacteos', n: 'Leche condensada', v: { k: 321, p: 8, c: 54, f: 8, fi: 0 }, o: [{ n: '1 cuch. 20g', g: 20 }] },
+      { id: 118, ct: 'lacteos', n: 'Kéfir', v: { k: 50, p: 3.3, c: 4, f: 2, fi: 0 }, o: [{ n: 'Vaso 200ml', g: 200 }, { n: '125ml', g: 125 }] },
+      { id: 119, ct: 'lacteos', n: 'Yogur líquido', v: { k: 68, p: 2.8, c: 12, f: 1, fi: 0 }, o: [{ n: 'Botella 200ml', g: 200 }] },
+      { id: 120, ct: 'lacteos', n: 'Queso fresco', v: { k: 175, p: 13, c: 2, f: 13, fi: 0 }, o: [{ n: 'Tarrina 70g', g: 70 }, { n: '100g', g: 100 }] },
+      { id: 121, ct: 'lacteos', n: 'Requesón', v: { k: 98, p: 11, c: 3.3, f: 4.3, fi: 0 }, o: [{ n: '100g', g: 100 }] },
+      { id: 122, ct: 'lacteos', n: 'Bebida de soja', v: { k: 40, p: 3.3, c: 2.5, f: 1.8, fi: 0.5 }, o: [{ n: 'Vaso 200ml', g: 200 }] },
+      { id: 123, ct: 'lacteos', n: 'Bebida de avena', v: { k: 45, p: 0.5, c: 8, f: 1, fi: 0.8 }, o: [{ n: 'Vaso 200ml', g: 200 }] },
+      { id: 124, ct: 'lacteos', n: 'Bebida de almendra', v: { k: 22, p: 0.5, c: 3, f: 1, fi: 0 }, o: [{ n: 'Vaso 200ml', g: 200 }] },
+
+      { id: 30, ct: 'cereales', n: 'Arroz blanco cocido', v: { k: 130, p: 2.5, c: 28, f: 0.3, fi: 0.4 }, o: [{ n: '1 cazo 100g', g: 100 }, { n: '2 cazos 200g', g: 200 }, { n: 'Plato 300g', g: 300 }] },
+      { id: 31, ct: 'cereales', n: 'Pasta cocida', v: { k: 131, p: 5, c: 25, f: 0.9, fi: 1.4 }, o: [{ n: '2 cazos 180g', g: 180 }, { n: 'Plato 270g', g: 270 }, { n: 'Guarnición 90g', g: 90 }] },
       { id: 32, ct: 'cereales', n: 'Pan integral', v: { k: 233, p: 10, c: 43, f: 3.3, fi: 8 }, o: [{ n: 'Rebanada 30g', g: 30 }, { n: 'Pieza 60g', g: 60 }] },
-      { id: 33, ct: 'cereales', n: 'Patata hervida', v: { k: 77, p: 2, c: 17, f: 0.1, fi: 1.4 }, o: [{ n: '2 cazos 200g', g: 200 }, { n: '1 cazo 100g', g: 100 }] },
+      { id: 33, ct: 'cereales', n: 'Patata hervida', v: { k: 77, p: 2, c: 17, f: 0.1, fi: 1.4 }, o: [{ n: '2 cazos 200g', g: 200 }, { n: '1 cazo 100g', g: 100 }, { n: 'Plato 300g', g: 300 }] },
       { id: 34, ct: 'cereales', n: 'Avena copos', v: { k: 380, p: 13.3, c: 65, f: 7, fi: 10 }, o: [{ n: '40g', g: 40 }, { n: '60g', g: 60 }] },
-      { id: 35, ct: 'cereales', n: 'Lentejas cocidas', v: { k: 116, p: 9, c: 20, f: 0.4, fi: 7.9 }, o: [{ n: '3 cazos 200g', g: 200 }] },
-      { id: 36, ct: 'cereales', n: 'Garbanzos cocidos', v: { k: 164, p: 8.9, c: 27, f: 2.6, fi: 7.6 }, o: [{ n: '3 cazos 200g', g: 200 }] },
-      { id: 37, ct: 'cereales', n: 'Pan blanco', v: { k: 265, p: 8, c: 52, f: 1.5, fi: 3 }, o: [{ n: 'Rebanada 30g', g: 30 }, { n: 'Pieza 60g', g: 60 }] },
-      { id: 38, ct: 'cereales', n: 'Boniato', v: { k: 86, p: 1.6, c: 20, f: 0.1, fi: 3 }, o: [{ n: '1 ud 200g', g: 200 }] },
+      { id: 35, ct: 'cereales', n: 'Lentejas cocidas', v: { k: 116, p: 9, c: 20, f: 0.4, fi: 7.9 }, o: [{ n: '3 cazos 200g', g: 200 }, { n: 'Plato 300g', g: 300 }] },
+      { id: 36, ct: 'cereales', n: 'Garbanzos cocidos', v: { k: 164, p: 8.9, c: 27, f: 2.6, fi: 7.6 }, o: [{ n: '3 cazos 200g', g: 200 }, { n: 'Plato 300g', g: 300 }] },
+      { id: 37, ct: 'cereales', n: 'Pan blanco', v: { k: 265, p: 8, c: 52, f: 1.5, fi: 3 }, o: [{ n: 'Rebanada 30g', g: 30 }, { n: 'Pieza 60g', g: 60 }, { n: 'Barra 180g', g: 180 }] },
+      { id: 38, ct: 'cereales', n: 'Boniato', v: { k: 86, p: 1.6, c: 20, f: 0.1, fi: 3 }, o: [{ n: '1 ud 200g', g: 200 }, { n: 'Medio 100g', g: 100 }] },
+      { id: 130, ct: 'cereales', n: 'Arroz integral cocido', v: { k: 123, p: 2.6, c: 25, f: 1, fi: 1.8 }, o: [{ n: '1 cazo 100g', g: 100 }, { n: '2 cazos 200g', g: 200 }] },
+      { id: 131, ct: 'cereales', n: 'Pasta integral cocida', v: { k: 124, p: 5.3, c: 23, f: 0.5, fi: 3.5 }, o: [{ n: '2 cazos 180g', g: 180 }, { n: 'Guarnición 90g', g: 90 }] },
+      { id: 132, ct: 'cereales', n: 'Pan de centeno', v: { k: 258, p: 8.5, c: 48, f: 3.3, fi: 5.8 }, o: [{ n: 'Rebanada 30g', g: 30 }, { n: '60g', g: 60 }] },
+      { id: 133, ct: 'cereales', n: 'Pan de molde', v: { k: 260, p: 8, c: 49, f: 3.5, fi: 2.5 }, o: [{ n: 'Rebanada 25g', g: 25 }, { n: '2 rebanadas 50g', g: 50 }] },
+      { id: 134, ct: 'cereales', n: 'Quinoa cocida', v: { k: 120, p: 4.4, c: 21, f: 1.9, fi: 2.8 }, o: [{ n: '100g', g: 100 }, { n: '200g', g: 200 }] },
+      { id: 135, ct: 'cereales', n: 'Cuscús cocido', v: { k: 112, p: 3.8, c: 23, f: 0.2, fi: 1.4 }, o: [{ n: '100g', g: 100 }, { n: '200g', g: 200 }] },
+      { id: 136, ct: 'cereales', n: 'Judías blancas cocidas', v: { k: 119, p: 8, c: 17, f: 0.5, fi: 6 }, o: [{ n: '200g', g: 200 }, { n: '100g', g: 100 }] },
+      { id: 137, ct: 'cereales', n: 'Patatas fritas', v: { k: 312, p: 3.4, c: 36, f: 15, fi: 3 }, o: [{ n: 'Porción 100g', g: 100 }, { n: 'Porción 150g', g: 150 }] },
+      { id: 138, ct: 'cereales', n: 'Patata al horno', v: { k: 93, p: 2.5, c: 21, f: 0.1, fi: 2.2 }, o: [{ n: '200g', g: 200 }, { n: '150g', g: 150 }] },
+      { id: 139, ct: 'cereales', n: 'Maíz en lata', v: { k: 100, p: 3, c: 18, f: 1.2, fi: 2 }, o: [{ n: 'Lata 150g', g: 150 }, { n: '100g', g: 100 }] },
+      { id: 140, ct: 'cereales', n: 'Guisantes congelados', v: { k: 81, p: 5.4, c: 11, f: 0.4, fi: 5.1 }, o: [{ n: '150g', g: 150 }, { n: '100g', g: 100 }] },
+      { id: 141, ct: 'cereales', n: 'Harina de avena', v: { k: 367, p: 12.5, c: 63, f: 7, fi: 6 }, o: [{ n: '30g', g: 30 }, { n: '50g', g: 50 }] },
+      { id: 142, ct: 'cereales', n: 'Hummus', v: { k: 166, p: 7.9, c: 14, f: 9.6, fi: 6 }, o: [{ n: '2 cuch. 50g', g: 50 }, { n: '100g', g: 100 }] },
+      { id: 143, ct: 'cereales', n: 'Tortitas de arroz', v: { k: 387, p: 7.3, c: 84, f: 2.8, fi: 1.8 }, o: [{ n: '2 tortitas 20g', g: 20 }] },
+      { id: 144, ct: 'cereales', n: 'Cereales desayuno', v: { k: 380, p: 7, c: 82, f: 1.5, fi: 3 }, o: [{ n: '30g', g: 30 }, { n: '50g', g: 50 }] },
+      { id: 145, ct: 'cereales', n: 'Muesli', v: { k: 367, p: 10, c: 63, f: 7.5, fi: 7 }, o: [{ n: '40g', g: 40 }, { n: '60g', g: 60 }] },
+
       { id: 40, ct: 'verduras_i', n: 'Tomate', v: { k: 19, p: 0.9, c: 3.5, f: 0.2, fi: 1.2 }, o: [{ n: '1 ud 150g', g: 150 }] },
       { id: 41, ct: 'verduras_i', n: 'Espinacas', v: { k: 23, p: 2.9, c: 1.3, f: 0.4, fi: 2.2 }, o: [{ n: 'Plato 200g', g: 200 }] },
-      { id: 42, ct: 'verduras_i', n: 'Brócoli', v: { k: 34, p: 3.3, c: 2, f: 0.4, fi: 3 }, o: [{ n: '250g', g: 250 }] },
+      { id: 42, ct: 'verduras_i', n: 'Brócoli', v: { k: 34, p: 3.3, c: 2, f: 0.4, fi: 3 }, o: [{ n: '250g', g: 250 }, { n: '150g', g: 150 }] },
       { id: 43, ct: 'verduras_i', n: 'Champiñón', v: { k: 22, p: 3.1, c: 0.5, f: 0.3, fi: 1 }, o: [{ n: '150g', g: 150 }] },
       { id: 44, ct: 'verduras_i', n: 'Calabacín', v: { k: 17, p: 1.2, c: 2, f: 0.3, fi: 1 }, o: [{ n: '200g', g: 200 }] },
       { id: 45, ct: 'verduras_i', n: 'Judías verdes', v: { k: 20, p: 1.8, c: 3, f: 0.1, fi: 3 }, o: [{ n: '250g', g: 250 }] },
       { id: 46, ct: 'verduras_i', n: 'Guisantes', v: { k: 93, p: 7, c: 10, f: 0.5, fi: 5 }, o: [{ n: '2 cazos 150g', g: 150 }] },
-      { id: 47, ct: 'verduras_i', n: 'Aguacate', v: { k: 160, p: 2, c: 1.8, f: 15, fi: 6.7 }, o: [{ n: 'Medio 80g', g: 80 }] },
+      { id: 47, ct: 'verduras_i', n: 'Aguacate', v: { k: 160, p: 2, c: 1.8, f: 15, fi: 6.7 }, o: [{ n: 'Medio 80g', g: 80 }, { n: 'Entero 160g', g: 160 }] },
       { id: 48, ct: 'verduras_i', n: 'Zanahoria', v: { k: 41, p: 0.9, c: 7, f: 0.2, fi: 2.8 }, o: [{ n: '1 ud 100g', g: 100 }] },
       { id: 49, ct: 'verduras_i', n: 'Pimiento rojo', v: { k: 31, p: 1, c: 6, f: 0.3, fi: 1.6 }, o: [{ n: '1 ud 150g', g: 150 }] },
+      { id: 150, ct: 'verduras_i', n: 'Berenjena', v: { k: 25, p: 1.2, c: 3.4, f: 0.2, fi: 3.4 }, o: [{ n: '200g', g: 200 }, { n: '1 ud 300g', g: 300 }] },
+      { id: 151, ct: 'verduras_i', n: 'Calabaza', v: { k: 26, p: 1, c: 5.4, f: 0.1, fi: 0.5 }, o: [{ n: '200g', g: 200 }, { n: '300g', g: 300 }] },
+      { id: 152, ct: 'verduras_i', n: 'Cebolla', v: { k: 40, p: 1.1, c: 8.6, f: 0.1, fi: 1.7 }, o: [{ n: '1 ud 150g', g: 150 }, { n: 'Media 75g', g: 75 }] },
+      { id: 153, ct: 'verduras_i', n: 'Lechuga', v: { k: 14, p: 1.3, c: 1.4, f: 0.2, fi: 1.3 }, o: [{ n: 'Ración 70g', g: 70 }, { n: 'Plato grande 150g', g: 150 }] },
+      { id: 154, ct: 'verduras_i', n: 'Pepino', v: { k: 15, p: 0.7, c: 2, f: 0.1, fi: 0.5 }, o: [{ n: '1 ud 200g', g: 200 }, { n: '100g', g: 100 }] },
+      { id: 155, ct: 'verduras_i', n: 'Apio', v: { k: 16, p: 0.7, c: 3, f: 0.2, fi: 1.6 }, o: [{ n: '100g', g: 100 }] },
+      { id: 156, ct: 'verduras_i', n: 'Remolacha', v: { k: 43, p: 1.6, c: 7.6, f: 0.2, fi: 2.8 }, o: [{ n: '100g', g: 100 }, { n: '150g', g: 150 }] },
+      { id: 157, ct: 'verduras_i', n: 'Coliflor', v: { k: 25, p: 1.9, c: 3, f: 0.3, fi: 2 }, o: [{ n: '200g', g: 200 }, { n: '300g', g: 300 }] },
+      { id: 158, ct: 'verduras_i', n: 'Alcachofa', v: { k: 47, p: 3.3, c: 5.1, f: 0.2, fi: 5.4 }, o: [{ n: '1 ud 150g', g: 150 }, { n: '2 uds 300g', g: 300 }] },
+      { id: 159, ct: 'verduras_i', n: 'Espárrago verde', v: { k: 20, p: 2.2, c: 1.8, f: 0.1, fi: 2.1 }, o: [{ n: 'Manojo 200g', g: 200 }] },
+      { id: 160, ct: 'verduras_i', n: 'Puerro', v: { k: 61, p: 1.5, c: 12, f: 0.3, fi: 1.8 }, o: [{ n: '1 ud 75g', g: 75 }] },
+      { id: 161, ct: 'verduras_i', n: 'Setas', v: { k: 28, p: 2.5, c: 3, f: 0.5, fi: 2.5 }, o: [{ n: '150g', g: 150 }, { n: '200g', g: 200 }] },
+      { id: 162, ct: 'verduras_i', n: 'Edamame', v: { k: 122, p: 11, c: 8, f: 5, fi: 5.2 }, o: [{ n: '100g', g: 100 }, { n: '150g', g: 150 }] },
+
       { id: 50, ct: 'frutas', n: 'Manzana', v: { k: 52, p: 0.3, c: 12, f: 0.2, fi: 2.4 }, o: [{ n: '1 ud 180g', g: 180 }] },
       { id: 51, ct: 'frutas', n: 'Plátano', v: { k: 90, p: 1.1, c: 20, f: 0.3, fi: 2.6 }, o: [{ n: '1 ud 120g', g: 120 }] },
       { id: 52, ct: 'frutas', n: 'Naranja', v: { k: 36, p: 0.7, c: 8.5, f: 0.1, fi: 1.8 }, o: [{ n: '1 ud 200g', g: 200 }] },
@@ -3823,20 +4073,74 @@
       { id: 54, ct: 'frutas', n: 'Kiwi', v: { k: 61, p: 1.1, c: 10.6, f: 0.5, fi: 3 }, o: [{ n: '1 ud 100g', g: 100 }] },
       { id: 55, ct: 'frutas', n: 'Sandía', v: { k: 30, p: 0.6, c: 7, f: 0.2, fi: 0.4 }, o: [{ n: 'Rodaja 250g', g: 250 }] },
       { id: 56, ct: 'frutas', n: 'Uvas', v: { k: 69, p: 0.7, c: 16, f: 0.2, fi: 0.9 }, o: [{ n: 'Racimo 150g', g: 150 }] },
+      { id: 170, ct: 'frutas', n: 'Melocotón', v: { k: 39, p: 0.9, c: 8.7, f: 0.3, fi: 1.5 }, o: [{ n: '1 ud 200g', g: 200 }] },
+      { id: 171, ct: 'frutas', n: 'Pera', v: { k: 57, p: 0.4, c: 12.5, f: 0.1, fi: 3.1 }, o: [{ n: '1 ud 200g', g: 200 }] },
+      { id: 172, ct: 'frutas', n: 'Piña', v: { k: 50, p: 0.5, c: 11, f: 0.1, fi: 1.4 }, o: [{ n: '2 rodajas 100g', g: 100 }, { n: '200g', g: 200 }] },
+      { id: 173, ct: 'frutas', n: 'Mango', v: { k: 60, p: 0.8, c: 13, f: 0.4, fi: 1.6 }, o: [{ n: '1 ud 200g', g: 200 }] },
+      { id: 174, ct: 'frutas', n: 'Melón', v: { k: 34, p: 0.8, c: 7.3, f: 0.2, fi: 0.9 }, o: [{ n: 'Tajada 200g', g: 200 }] },
+      { id: 175, ct: 'frutas', n: 'Cerezas', v: { k: 50, p: 0.8, c: 12, f: 0.3, fi: 2.1 }, o: [{ n: '12 uds 100g', g: 100 }] },
+      { id: 176, ct: 'frutas', n: 'Mandarina', v: { k: 53, p: 0.8, c: 11.5, f: 0.3, fi: 1.8 }, o: [{ n: '1 ud 100g', g: 100 }] },
+      { id: 177, ct: 'frutas', n: 'Ciruela', v: { k: 46, p: 0.7, c: 10, f: 0.3, fi: 1.4 }, o: [{ n: '2 uds 100g', g: 100 }] },
+      { id: 178, ct: 'frutas', n: 'Higos', v: { k: 74, p: 0.8, c: 16, f: 0.3, fi: 2.9 }, o: [{ n: '2 uds 100g', g: 100 }] },
+      { id: 179, ct: 'frutas', n: 'Granada', v: { k: 68, p: 1.7, c: 13, f: 1.2, fi: 4 }, o: [{ n: '1 ud 175g', g: 175 }] },
+      { id: 180, ct: 'frutas', n: 'Papaya', v: { k: 43, p: 0.5, c: 9.8, f: 0.3, fi: 1.7 }, o: [{ n: 'Tajada 250g', g: 250 }] },
+      { id: 181, ct: 'frutas', n: 'Frambuesas', v: { k: 52, p: 1.2, c: 8, f: 0.7, fi: 6.5 }, o: [{ n: '1 puñado 100g', g: 100 }] },
+      { id: 182, ct: 'frutas', n: 'Arándanos', v: { k: 57, p: 0.7, c: 12, f: 0.3, fi: 2.4 }, o: [{ n: '1 puñado 100g', g: 100 }] },
+      { id: 183, ct: 'frutas', n: 'Coco fresco', v: { k: 354, p: 3.3, c: 6, f: 33, fi: 9 }, o: [{ n: 'Tajada 35g', g: 35 }] },
+      { id: 184, ct: 'frutas', n: 'Dátil', v: { k: 282, p: 2.5, c: 63, f: 0.4, fi: 8 }, o: [{ n: '1 ud 12g', g: 12 }, { n: '3 uds 36g', g: 36 }] },
+
       { id: 60, ct: 'secos', n: 'Almendras', v: { k: 651, p: 21, c: 4, f: 55, fi: 12 }, o: [{ n: '20g', g: 20 }, { n: '30g', g: 30 }] },
-      { id: 61, ct: 'secos', n: 'Nueces', v: { k: 654, p: 15, c: 7, f: 63, fi: 7 }, o: [{ n: '20g', g: 20 }] },
+      { id: 61, ct: 'secos', n: 'Nueces', v: { k: 654, p: 15, c: 7, f: 63, fi: 7 }, o: [{ n: '20g', g: 20 }, { n: '30g', g: 30 }] },
       { id: 62, ct: 'secos', n: 'Cacahuetes', v: { k: 599, p: 26, c: 7, f: 49, fi: 8 }, o: [{ n: '20g', g: 20 }] },
+      { id: 190, ct: 'secos', n: 'Pistachos', v: { k: 560, p: 20, c: 17, f: 45, fi: 10 }, o: [{ n: '20g', g: 20 }, { n: '30g', g: 30 }] },
+      { id: 191, ct: 'secos', n: 'Anacardos', v: { k: 553, p: 18, c: 26, f: 44, fi: 3.3 }, o: [{ n: '20g', g: 20 }] },
+      { id: 192, ct: 'secos', n: 'Avellanas', v: { k: 628, p: 15, c: 7, f: 61, fi: 10 }, o: [{ n: '20g', g: 20 }] },
+      { id: 193, ct: 'secos', n: 'Pipas de girasol', v: { k: 584, p: 21, c: 11, f: 51, fi: 8.6 }, o: [{ n: '20g', g: 20 }] },
+      { id: 194, ct: 'secos', n: 'Piñones', v: { k: 673, p: 14, c: 4, f: 68, fi: 3.7 }, o: [{ n: '20g', g: 20 }] },
+      { id: 195, ct: 'secos', n: 'Pasas', v: { k: 299, p: 3.1, c: 68, f: 0.5, fi: 3.7 }, o: [{ n: '20g', g: 20 }, { n: '30g', g: 30 }] },
+      { id: 196, ct: 'secos', n: 'Orejones (albaricoque)', v: { k: 241, p: 3.4, c: 53, f: 0.5, fi: 7.3 }, o: [{ n: '30g', g: 30 }] },
+      { id: 197, ct: 'secos', n: 'Higo seco', v: { k: 249, p: 3.3, c: 53, f: 1.3, fi: 10 }, o: [{ n: '1 ud 8g', g: 8 }, { n: '30g', g: 30 }] },
+      { id: 198, ct: 'secos', n: 'Castaña', v: { k: 196, p: 2.4, c: 40, f: 1.3, fi: 8.1 }, o: [{ n: '3 uds 30g', g: 30 }, { n: '100g', g: 100 }] },
+
       { id: 70, ct: 'grasas', n: 'Aceite oliva', v: { k: 900, p: 0, c: 0, f: 100, fi: 0 }, o: [{ n: '1 cuch 10g', g: 10 }, { n: '2 cuch 20g', g: 20 }] },
-      { id: 71, ct: 'grasas', n: 'Mantequilla', v: { k: 717, p: 0.9, c: 0.1, f: 81, fi: 0 }, o: [{ n: '10g', g: 10 }] },
+      { id: 71, ct: 'grasas', n: 'Mantequilla', v: { k: 717, p: 0.9, c: 0.1, f: 81, fi: 0 }, o: [{ n: '10g', g: 10 }, { n: '20g', g: 20 }] },
+      { id: 200, ct: 'grasas', n: 'Aceite de coco', v: { k: 862, p: 0, c: 0, f: 99, fi: 0 }, o: [{ n: '1 cuch 10g', g: 10 }] },
+      { id: 201, ct: 'grasas', n: 'Crema de cacahuete', v: { k: 588, p: 25, c: 12, f: 50, fi: 6 }, o: [{ n: '1 cuch 20g', g: 20 }, { n: '2 cuch 40g', g: 40 }] },
+      { id: 202, ct: 'grasas', n: 'Aceitunas', v: { k: 115, p: 0.8, c: 1, f: 11, fi: 3.3 }, o: [{ n: '10 uds 30g', g: 30 }, { n: '50g', g: 50 }] },
+
       { id: 80, ct: 'suplementos', n: 'Whey protein', v: { k: 400, p: 80, c: 7, f: 5, fi: 0 }, o: [{ n: '1 cazo 30g', g: 30 }] },
       { id: 81, ct: 'suplementos', n: 'Creatina', v: { k: 0, p: 0, c: 0, f: 0, fi: 0 }, o: [{ n: '5g', g: 5 }] },
+      { id: 210, ct: 'suplementos', n: 'Proteína caseína', v: { k: 370, p: 75, c: 8, f: 3, fi: 0 }, o: [{ n: '1 cazo 30g', g: 30 }] },
+      { id: 211, ct: 'suplementos', n: 'Barrita proteica', v: { k: 350, p: 30, c: 30, f: 10, fi: 3 }, o: [{ n: '1 barrita 60g', g: 60 }] },
+
       { id: 90, ct: 'bebidas', n: 'Café solo', v: { k: 2, p: 0.1, c: 0, f: 0, fi: 0 }, o: [{ n: '1 taza', g: 100 }] },
       { id: 91, ct: 'bebidas', n: 'Café con leche', v: { k: 22, p: 1.6, c: 2.4, f: 0.8, fi: 0 }, o: [{ n: '1 taza 200ml', g: 200 }] },
       { id: 92, ct: 'bebidas', n: 'Zumo naranja natural', v: { k: 42, p: 0.7, c: 9, f: 0.2, fi: 0.4 }, o: [{ n: 'Vaso 200ml', g: 200 }] },
+      { id: 220, ct: 'bebidas', n: 'Cerveza', v: { k: 43, p: 0.5, c: 3.6, f: 0, fi: 0 }, o: [{ n: 'Caña 200ml', g: 200 }, { n: 'Tercio 330ml', g: 330 }] },
+      { id: 221, ct: 'bebidas', n: 'Vino tinto', v: { k: 85, p: 0.1, c: 2.6, f: 0, fi: 0 }, o: [{ n: 'Copa 150ml', g: 150 }] },
+      { id: 222, ct: 'bebidas', n: 'Coca-Cola', v: { k: 42, p: 0, c: 10.6, f: 0, fi: 0 }, o: [{ n: 'Lata 330ml', g: 330 }, { n: 'Vaso 200ml', g: 200 }] },
+      { id: 223, ct: 'bebidas', n: 'Bebida isotónica', v: { k: 26, p: 0, c: 6.4, f: 0, fi: 0 }, o: [{ n: 'Botella 500ml', g: 500 }] },
+      { id: 224, ct: 'bebidas', n: 'Horchata', v: { k: 60, p: 0.5, c: 10, f: 2, fi: 0.5 }, o: [{ n: 'Vaso 200ml', g: 200 }] },
+
+      { id: 230, ct: 'otros', n: 'Miel', v: { k: 304, p: 0.3, c: 76, f: 0, fi: 0 }, o: [{ n: '1 cuch. 18g', g: 18 }] },
+      { id: 231, ct: 'otros', n: 'Mermelada', v: { k: 250, p: 0.5, c: 60, f: 0.1, fi: 0.5 }, o: [{ n: '1 cuch. 25g', g: 25 }] },
+      { id: 232, ct: 'otros', n: 'Chocolate negro >70%', v: { k: 530, p: 7.8, c: 33, f: 40, fi: 11 }, o: [{ n: '20g', g: 20 }, { n: '30g', g: 30 }] },
+      { id: 233, ct: 'otros', n: 'Chocolate con leche', v: { k: 535, p: 7.6, c: 56, f: 31, fi: 2.3 }, o: [{ n: '20g', g: 20 }, { n: '30g', g: 30 }] },
+      { id: 234, ct: 'otros', n: 'Azúcar blanco', v: { k: 400, p: 0, c: 100, f: 0, fi: 0 }, o: [{ n: '1 sobre 8g', g: 8 }, { n: '1 cuch. 10g', g: 10 }] },
+      { id: 235, ct: 'otros', n: 'Ketchup', v: { k: 105, p: 1.2, c: 23, f: 0.5, fi: 0.3 }, o: [{ n: 'Sobre 9g', g: 9 }] },
+      { id: 236, ct: 'otros', n: 'Mayonesa', v: { k: 680, p: 1, c: 1.5, f: 75, fi: 0 }, o: [{ n: '1 cuch. 15g', g: 15 }] },
+      { id: 237, ct: 'otros', n: 'Salsa tomate frito', v: { k: 80, p: 1.3, c: 9, f: 4.2, fi: 1.2 }, o: [{ n: '3 cuch. 50g', g: 50 }, { n: '100g', g: 100 }] },
+      { id: 238, ct: 'otros', n: 'Churros', v: { k: 360, p: 4.6, c: 40, f: 20, fi: 1 }, o: [{ n: '2 uds 50g', g: 50 }, { n: '100g', g: 100 }] },
+      { id: 239, ct: 'otros', n: 'Galletas María', v: { k: 436, p: 7, c: 72, f: 13, fi: 2.5 }, o: [{ n: '3 uds 21g', g: 21 }, { n: '6 uds 42g', g: 42 }] },
+      { id: 240, ct: 'otros', n: 'Galletas tipo Digestive', v: { k: 466, p: 7, c: 62, f: 20, fi: 3 }, o: [{ n: '2 uds 30g', g: 30 }] },
+      { id: 241, ct: 'otros', n: 'Tostada o biscote', v: { k: 380, p: 11, c: 72, f: 5, fi: 3.5 }, o: [{ n: '2 uds 20g', g: 20 }, { n: '1 ud 10g', g: 10 }] },
+      { id: 242, ct: 'otros', n: 'Cacao en polvo', v: { k: 355, p: 20, c: 12, f: 23, fi: 33 }, o: [{ n: '1 cuch. 8g', g: 8 }, { n: '2 cuch. 16g', g: 16 }] },
+      { id: 243, ct: 'otros', n: 'Pizza (porción)', v: { k: 266, p: 11, c: 33, f: 10, fi: 2 }, o: [{ n: 'Triángulo 100g', g: 100 }, { n: 'Porción 200g', g: 200 }] },
+      { id: 244, ct: 'otros', n: 'Tortilla de patatas', v: { k: 150, p: 6, c: 12, f: 8, fi: 1 }, o: [{ n: 'Porción 150g', g: 150 }, { n: '100g', g: 100 }] },
     ];
 
     const DC = { legumbres: '🫘 Legumbres', arroces: '🍚 Arroces', carnes: '🍗 Carnes', pescados: '🐟 Pescados', verduras: '🥗 Verduras', huevos: '🥚 Huevos', pasta: '🍝 Pasta', desayuno: '☕ Desayuno', snacks: '🥜 Snacks' };
-    const FC2 = { proteinas: '🥩 Proteínas', lacteos: '🥛 Lácteos', cereales: '🌾 Cereales', verduras_i: '🥦 Verduras', frutas: '🍎 Frutas', secos: '🥜 F.secos', grasas: '🫒 Grasas', suplementos: '💪 Suplem.', bebidas: '☕ Bebidas' };
+    const FC2 = { proteinas: '🥩 Proteínas', lacteos: '🥛 Lácteos', cereales: '🌾 Cereales', verduras_i: '🥦 Verduras', frutas: '🍎 Frutas', secos: '🥜 F.secos', grasas: '🫒 Grasas', suplementos: '💪 Suplem.', bebidas: '☕ Bebidas', otros: '🍫 Otros' };
 
     let plate = [], dCat = 'all', dQ = '', fCat = 'all', fQ = '', curPg = 'dash';
 
@@ -3915,7 +4219,7 @@
       const dR = D.filter(x => x.n.toLowerCase().includes(q) || x.d.toLowerCase().includes(q)).slice(0, 5);
       const fR = FF.filter(x => x.n.toLowerCase().includes(q)).slice(0, 5);
       let h = '';
-      if (dR.length) { h += '<div class="usr-cat">🍽️ Platos</div>'; dR.forEach(x => { h += '<div class="dc"><div class="dch" onclick="this.closest(\'.dc\').classList.toggle(\'op\')"><div class="de">' + x.e + '</div><div class="di"><div class="dn">' + x.n + '</div><div class="dd2">' + x.d + '</div></div><div class="db"><span class="dk">' + x.k + ' kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">' + x.k + ' kcal</span><span class="mp mpr">' + x.p + 'g P</span><span class="mp mh">' + x.c + 'g HC</span><span class="mp mf">' + x.f + 'g G</span><span class="mp mfi">' + x.fi + 'g F</span></div><button class="dab" onclick="ap(\'' + x.n.replace(/'/g, "\\'") + '\',\'Plato completo\',' + x.k + ',' + x.p + ',' + x.c + ',' + x.f + ',' + x.fi + ');document.getElementById(\'usi\').value=\'\';document.getElementById(\'usr\').style.display=\'none\'">➕ Añadir al plato</button></div></div>' }) }
+      if (dR.length) { h += '<div class="usr-cat">🍽️ Platos</div>'; dR.forEach(x => { const dn = getDishNote(x.id); h += '<div class="dc"><div class="dch" onclick="this.closest(\'.dc\').classList.toggle(\'op\')"><div class="de">' + x.e + '</div><div class="di"><div class="dn">' + x.n + (dn ? ' 📝' : '') + '</div><div class="dd2">' + x.d + '</div></div><div class="db"><span class="dk">' + x.k + ' kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">' + x.k + ' kcal</span><span class="mp mpr">' + x.p + 'g P</span><span class="mp mh">' + x.c + 'g HC</span><span class="mp mf">' + x.f + 'g G</span><span class="mp mfi">' + x.fi + 'g F</span></div>' + (dn ? '<div class="dish-note"><span class="note-icon">📝</span><span class="note-text">' + dn.replace(/</g,'&lt;') + '</span></div>' : '') + '<button class="dab" onclick="ap(\'' + x.n.replace(/'/g, "\\'") + '\',\'Plato completo\',' + x.k + ',' + x.p + ',' + x.c + ',' + x.f + ',' + x.fi + ');document.getElementById(\'usi\').value=\'\';document.getElementById(\'usr\').style.display=\'none\'">➕ Añadir al plato</button></div></div>' }) }
       if (fR.length) { h += '<div class="usr-cat">🥩 Alimentos</div>'; fR.forEach(x => { const po = x.o[0]; const m = po.g / 100; h += '<div class="pi" style="cursor:pointer" onclick="ap(\'' + x.n.replace(/'/g, "\\'") + '\',\'' + po.n + '\',' + Math.round(x.v.k * m) + ',' + +(x.v.p * m).toFixed(1) + ',' + +(x.v.c * m).toFixed(1) + ',' + +(x.v.f * m).toFixed(1) + ',' + +(x.v.fi * m).toFixed(1) + ');document.getElementById(\'usi\').value=\'\';document.getElementById(\'usr\').style.display=\'none\'"><div class="pin"><div class="pn">' + x.n + '</div><div class="pp">' + po.n + ' · ' + Math.round(x.v.k * m) + ' kcal</div></div><div class="pk" style="font-size:.75rem;color:var(--accent)">+ Añadir</div></div>' }) }
       if (!h) h = '<div class="nr2">😕 Sin resultados</div>';
       ur.innerHTML = h;
@@ -3939,7 +4243,33 @@
       el.querySelectorAll('.dch').forEach(h2 => h2.addEventListener('click', () => h2.closest('.dc').classList.toggle('op')));
       el.querySelectorAll('.dab').forEach(b => b.addEventListener('click', ev => { ev.stopPropagation(); const x = D.find(z => z.id === b.dataset.id); if (x) ap(x.n, 'Plato completo', x.k, x.p, x.c, x.f, x.fi) }));
     }
-    function dh(x) { return '<div class="dc"><div class="dch"><div class="de">' + x.e + '</div><div class="di"><div class="dn">' + x.n + '</div><div class="dd2">' + x.d + '</div></div><div class="db"><span class="dk">' + x.k + ' kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">' + x.k + ' kcal</span><span class="mp mpr">' + x.p + 'g P</span><span class="mp mh">' + x.c + 'g HC</span><span class="mp mf">' + x.f + 'g G</span><span class="mp mfi">' + x.fi + 'g F</span></div><ul class="il">' + x.i.map(i2 => '<li><span class="iln">' + i2.n + '</span><span class="ilk">' + i2.k + ' kcal</span></li>').join('') + '</ul><button class="dab" data-id="' + x.id + '">➕ Añadir al plato</button></div></div>' }
+    function dh(x) {
+      const note = getDishNote(x.id);
+      let noteHtml = '';
+      if (note) {
+        noteHtml = '<div class="dish-note"><span class="note-icon">📝</span><span class="note-text">' + note.replace(/</g,'&lt;') + '</span><button class="dish-note-edit" onclick="event.stopPropagation();editDishNoteById(\'' + x.id + '\')">Editar</button></div>';
+      } else {
+        noteHtml = '<button class="dish-note-edit" onclick="event.stopPropagation();editDishNoteById(\'' + x.id + '\')" style="margin-top:6px;font-size:.65rem">📝 Añadir nota</button>';
+      }
+      return '<div class="dc"><div class="dch"><div class="de">' + x.e + '</div><div class="di"><div class="dn">' + x.n + '</div><div class="dd2">' + x.d + '</div></div><div class="db"><span class="dk">' + x.k + ' kcal</span><span class="da">▾</span></div></div><div class="dbd"><div class="mr"><span class="mp mc">' + x.k + ' kcal</span><span class="mp mpr">' + x.p + 'g P</span><span class="mp mh">' + x.c + 'g HC</span><span class="mp mf">' + x.f + 'g G</span><span class="mp mfi">' + x.fi + 'g F</span></div><ul class="il">' + x.i.map(i2 => '<li><span class="iln">' + i2.n + '</span><span class="ilk">' + i2.k + ' kcal</span></li>').join('') + '</ul>' + noteHtml + '<button class="dab" data-id="' + x.id + '">➕ Añadir al plato</button></div></div>';
+    }
+
+    // ═══ DISH NOTES (for all dishes in D array) ═══
+    function getDishNotes() { try { return JSON.parse(localStorage.getItem('pf_dish_notes') || '{}') } catch { return {} } }
+    function saveDishNotes(n) { localStorage.setItem('pf_dish_notes', JSON.stringify(n)); scheduleSave() }
+    function getDishNote(dishId) { return getDishNotes()[dishId] || '' }
+    function editDishNoteById(dishId) {
+      const dish = D.find(x => x.id === dishId);
+      const name = dish ? dish.n : 'Plato';
+      const current = getDishNote(dishId);
+      const nota = prompt('📝 Nota mental para "' + name + '":', current);
+      if (nota === null) return;
+      const notes = getDishNotes();
+      if (nota) { notes[dishId] = nota } else { delete notes[dishId] }
+      saveDishNotes(notes);
+      rds(); // re-render dishes
+      ts(nota ? '📝 Nota guardada' : '📝 Nota eliminada');
+    }
 
     // ═══ FOODS ═══
     function ifp() {
@@ -3974,16 +4304,57 @@
       const n = document.getElementById('cn').value.trim(); if (!n) { alert('Escribe un nombre'); return }
       const k = +document.getElementById('cc').value || 0, p = +document.getElementById('cp').value || 0, c = +document.getElementById('cch').value || 0, f = +document.getElementById('cff').value || 0, fi = +document.getElementById('cfi').value || 0;
       const ds2 = document.getElementById('cds').value.trim();
+      const nota = document.getElementById('cnota').value.trim();
       if (!k && !p) { alert('Indica al menos kcal o proteínas'); return }
-      const dd2 = lm(); dd2.unshift({ id: Date.now(), n, ds: ds2, k, p, c, f, fi }); smm(dd2);
-      ['cn', 'cds', 'cc', 'cp', 'cch', 'cff', 'cfi'].forEach(x => document.getElementById(x).value = '');
+      const dd2 = lm(); dd2.unshift({ id: Date.now(), n, ds: ds2, nota, k, p, c, f, fi }); smm(dd2);
+      ['cn', 'cds', 'cnota', 'cc', 'cp', 'cch', 'cff', 'cfi'].forEach(x => document.getElementById(x).value = '');
       rm(); ts('💾 Guardado');
     }
     function dm(id) { smm(lm().filter(x => x.id !== id)); rm() }
     function rm() {
       const dd2 = lm(), el = document.getElementById('myl');
       if (!dd2.length) { el.innerHTML = '<div class="cde2">Aún no tienes platos guardados</div>'; return }
-      el.innerHTML = dd2.map(x => '<div class="cd3"><div class="ci3"><div class="cn3">' + x.n + '</div><div class="cd4">' + (x.ds || '') + ' · ' + x.p + 'g P · ' + x.c + 'g HC · ' + x.f + 'g G</div></div><div class="ck3">' + x.k + '</div><button class="ca3" onclick="ap(\'' + x.n.replace(/'/g, "\\'") + '\',\'Mis platos\',' + x.k + ',' + x.p + ',' + x.c + ',' + x.f + ',' + x.fi + ')">＋</button><button class="cx3" onclick="dm(' + x.id + ')">✕</button></div>').join('');
+      el.innerHTML = dd2.map(x => {
+        let noteHtml = '';
+        if (x.nota) {
+          noteHtml = '<div class="dish-note"><span class="note-icon">📝</span><span class="note-text">' + x.nota.replace(/</g,'&lt;') + '</span><button class="dish-note-edit" onclick="editDishNote(' + x.id + ')">Editar</button></div>';
+        } else {
+          noteHtml = '<div style="margin-top:4px"><button class="dish-note-edit" onclick="editDishNote(' + x.id + ')" style="font-size:.65rem">📝 Añadir nota</button></div>';
+        }
+        return '<div class="cd3" style="flex-wrap:wrap"><div class="ci3"><div class="cn3">' + x.n + '</div><div class="cd4">' + (x.ds || '') + ' · ' + x.p + 'g P · ' + x.c + 'g HC · ' + x.f + 'g G · ' + x.k + ' kcal</div>' + noteHtml + '</div><div class="ck3">' + x.k + '</div><button class="ca3" onclick="openCustomPortionModal(' + x.id + ')">⚖️</button><button class="ca3" onclick="ap(\'' + x.n.replace(/'/g, "\\'") + '\',\'Mis platos\',' + x.k + ',' + x.p + ',' + x.c + ',' + x.f + ',' + x.fi + ')" title="Añadir porción completa">＋</button><button class="cx3" onclick="dm(' + x.id + ')">✕</button></div>';
+      }).join('');
+    }
+
+    function editDishNote(id) {
+      const dishes = lm();
+      const dish = dishes.find(x => x.id === id);
+      if (!dish) return;
+      const nota = prompt('📝 Nota mental para "' + dish.n + '":', dish.nota || '');
+      if (nota === null) return; // cancelled
+      dish.nota = nota;
+      smm(dishes);
+      rm();
+      ts(nota ? '📝 Nota guardada' : '📝 Nota eliminada');
+    }
+
+    function openCustomPortionModal(id) {
+      const dish = lm().find(x => x.id === id);
+      if (!dish) return;
+      // For custom dishes, we treat the saved values as a "base portion"
+      // User can scale by percentage
+      const baseName = dish.n;
+      const baseK = dish.k || 0, baseP = dish.p || 0, baseC = dish.c || 0, baseF = dish.f || 0, baseFi = dish.fi || 0;
+      // We use 100 as "full portion" and let them type grams as a percentage
+      openPortionModal(baseName + ' (ajustar porción)', { k: baseK, p: baseP, c: baseC, f: baseF, fi: baseFi },
+        [{ n: 'Porción completa', g: 100 }, { n: '¾ porción', g: 75 }, { n: '½ porción', g: 50 }, { n: '¼ porción', g: 25 }],
+        function(g, k, p, c, f, fi) {
+          ap(baseName, (g === 100 ? 'Porción completa' : g + '% porción'), k, p, c, f, fi);
+        }
+      );
+      // Update label
+      document.getElementById('portionSub').textContent = 'Porción completa = 100 · Introduce el % que comes';
+      document.getElementById('portionGrams').value = 100;
+      updatePortionMacros();
     }
 
     // ═══ TOAST ═══
@@ -4229,7 +4600,10 @@
           const items = dayData[mt] || [];
           html += '<div class="planner-meal"><div class="planner-meal-label">' + mt + '</div><div class="planner-meal-items">';
           items.forEach((it, ii) => {
-            html += '<div class="planner-meal-item"><span class="pmi-name">' + it.n + '</span><span class="pmi-kcal">' + it.k + ' kcal</span><button class="pmi-del" onclick="removePlanItem(' + di + ',\'' + mt + '\',' + ii + ')">✕</button></div>';
+            let extraInfo = '';
+            if (it.po) extraInfo += '<span class="pmi-portion">' + it.po + '</span>';
+            if (it.nota) extraInfo += '<span class="pmi-note">📝 ' + it.nota.replace(/</g,'&lt;') + '</span>';
+            html += '<div class="planner-meal-item"><div style="flex:1;min-width:0"><span class="pmi-name">' + it.n + '</span>' + extraInfo + '</div><span class="pmi-kcal">' + it.k + ' kcal</span><button class="pmi-del" onclick="editPlanNote(' + di + ',\'' + mt + '\',' + ii + ')" style="color:var(--cal);font-size:.8rem" title="Nota">📝</button><button class="pmi-del" onclick="removePlanItem(' + di + ',\'' + mt + '\',' + ii + ')">✕</button></div>';
           });
           html += '</div><button class="planner-add-btn" onclick="addToPlan(' + di + ',\'' + mt + '\')">＋ Añadir a ' + mt + '</button></div>';
         });
@@ -4245,20 +4619,183 @@
     }
 
     function addToPlan(dayIdx, mealType) {
-      // Show a simple prompt to pick from existing dishes
-      const options = D.map((d, i) => (i + 1) + '. ' + d.n + ' (' + d.k + ' kcal)').join('\n');
-      const choice = prompt('Elige un plato (número):\n' + options);
-      if (!choice) return;
-      const idx = parseInt(choice) - 1;
-      if (idx < 0 || idx >= D.length) { ts('❌ Número inválido'); return }
-      const dish = D[idx];
+      window._planTarget = { dayIdx, mealType };
+      document.getElementById('planAddTitle').textContent = 'Añadir a ' + mealType + ' — ' + PLAN_DAYS[dayIdx];
+      // Build tabs
+      const tabs = document.getElementById('planAddTabs');
+      const tabList = [{ k: 'platos', l: '🍽️ Platos' }, { k: 'alimentos', l: '🥩 Alimentos' }, { k: 'guardados', l: '⭐ Guardados' }, { k: 'manual', l: '✏️ Manual' }];
+      tabs.innerHTML = tabList.map((t, i) => '<button class="plan-modal-tab' + (i === 0 ? ' on' : '') + '" data-tab="' + t.k + '">' + t.l + '</button>').join('');
+      tabs.querySelectorAll('.plan-modal-tab').forEach(b => b.addEventListener('click', () => {
+        tabs.querySelectorAll('.plan-modal-tab').forEach(x => x.classList.remove('on'));
+        b.classList.add('on');
+        renderPlanModalList(b.dataset.tab, document.getElementById('planAddSearch').value.trim());
+      }));
+      document.getElementById('planAddSearch').value = '';
+      renderPlanModalList('platos', '');
+      document.getElementById('planAddModal').classList.add('show');
+      setTimeout(() => document.getElementById('planAddSearch').focus(), 300);
+    }
+
+    function closePlanModal() { document.getElementById('planAddModal').classList.remove('show') }
+    document.getElementById('planAddModal').addEventListener('click', function(e) { if (e.target === this) closePlanModal() });
+    document.getElementById('planAddSearch').addEventListener('input', function() {
+      const activeTab = document.querySelector('.plan-modal-tab.on');
+      renderPlanModalList(activeTab ? activeTab.dataset.tab : 'platos', this.value.trim());
+    });
+
+    function renderPlanModalList(tab, query) {
+      const list = document.getElementById('planAddList');
+      const manual = document.querySelector('.plan-manual');
+      const q = (query || '').toLowerCase();
+
+      if (tab === 'manual') {
+        list.innerHTML = '';
+        manual.style.display = 'block';
+        return;
+      }
+      manual.style.display = 'none';
+
+      let items = [];
+      if (tab === 'platos') {
+        items = D.filter(x => !q || x.n.toLowerCase().includes(q) || x.d.toLowerCase().includes(q))
+          .map(x => ({ type: 'dish', emoji: x.e, name: x.n, desc: x.d, k: x.k, p: x.p, c: x.c, f: x.f, fi: x.fi }));
+      } else if (tab === 'alimentos') {
+        items = FF.filter(x => !q || x.n.toLowerCase().includes(q))
+          .map(x => {
+            const po = x.o[0]; const m = po.g / 100;
+            return { type: 'food', name: x.n, desc: po.n + ' · ' + Math.round(x.v.k * m) + ' kcal', emoji: FC2[x.ct] ? FC2[x.ct].split(' ')[0] : '🍽️',
+              k: Math.round(x.v.k * m), p: +(x.v.p * m).toFixed(1), c: +(x.v.c * m).toFixed(1), f: +(x.v.f * m).toFixed(1), fi: +(x.v.fi * m).toFixed(1),
+              foodId: x.id };
+          });
+      } else if (tab === 'guardados') {
+        items = lm().filter(x => !q || x.n.toLowerCase().includes(q))
+          .map(x => ({ type: 'custom', emoji: '⭐', name: x.n, desc: (x.ds || '') + ' · ' + x.p + 'g P', k: x.k, p: x.p, c: x.c, f: x.f, fi: x.fi }));
+      }
+
+      if (!items.length) { list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--tx3);font-size:.82rem">😕 Sin resultados</div>'; return }
+
+      list.innerHTML = items.slice(0, 30).map((it, i) =>
+        '<div class="pml-item" data-idx="' + i + '">' +
+        '<span class="pml-emoji">' + it.emoji + '</span>' +
+        '<div class="pml-info"><div class="pml-name">' + it.name + '</div><div class="pml-desc">' + (it.desc || '') + '</div></div>' +
+        '<span class="pml-kcal">' + it.k + '</span>' +
+        '</div>'
+      ).join('');
+
+      list.querySelectorAll('.pml-item').forEach((el, i) => {
+        el.addEventListener('click', () => {
+          const it = items[i];
+          const t = window._planTarget;
+
+          // For food items (per-100g), open portion modal
+          if (it.type === 'food' && it.foodId) {
+            const food = FF.find(z => z.id === it.foodId);
+            if (food) {
+              closePlanModal();
+              openPortionModal(food.n, food.v, food.o.map(o => ({ n: o.n, g: o.g })),
+                function(g, k, p, c, f, fi) {
+                  const plan = getPlan();
+                  if (!plan[t.dayIdx]) plan[t.dayIdx] = {};
+                  if (!plan[t.dayIdx][t.mealType]) plan[t.dayIdx][t.mealType] = [];
+                  plan[t.dayIdx][t.mealType].push({ n: food.n, po: g + 'g', k, p, c, f, fi, nota: '' });
+                  savePlan(plan);
+                  renderPlanner();
+                  ts('✅ ' + food.n + ' añadido');
+                }
+              );
+              return;
+            }
+          }
+
+          // For dishes and custom: add directly, note can be edited after via 📝 button
+          const plan = getPlan();
+          if (!plan[t.dayIdx]) plan[t.dayIdx] = {};
+          if (!plan[t.dayIdx][t.mealType]) plan[t.dayIdx][t.mealType] = [];
+          plan[t.dayIdx][t.mealType].push({ n: it.name, k: it.k, p: it.p, c: it.c, f: it.f, fi: it.fi, nota: '' });
+          savePlan(plan);
+          closePlanModal();
+          renderPlanner();
+          ts('✅ ' + it.name + ' añadido');
+        });
+      });
+    }
+
+    function planAddManual() {
+      const name = document.getElementById('pmName').value.trim();
+      if (!name) { ts('❌ Escribe un nombre'); return }
+      const k = +document.getElementById('pmK').value || 0;
+      const p = +document.getElementById('pmP').value || 0;
+      const c = +document.getElementById('pmC').value || 0;
+      const f = +document.getElementById('pmF').value || 0;
+      const fi = +document.getElementById('pmFi').value || 0;
+      const po = document.getElementById('pmPortion').value.trim() || '';
+      const nota = document.getElementById('pmNota').value.trim() || '';
+      if (!k && !p) { ts('❌ Indica al menos kcal o proteínas'); return }
+      const t = window._planTarget;
       const plan = getPlan();
-      if (!plan[dayIdx]) plan[dayIdx] = {};
-      if (!plan[dayIdx][mealType]) plan[dayIdx][mealType] = [];
-      plan[dayIdx][mealType].push({ n: dish.n, k: dish.k, p: dish.p, c: dish.c, f: dish.f, fi: dish.fi });
+      if (!plan[t.dayIdx]) plan[t.dayIdx] = {};
+      if (!plan[t.dayIdx][t.mealType]) plan[t.dayIdx][t.mealType] = [];
+      plan[t.dayIdx][t.mealType].push({ n: name, po, k, p, c, f, fi, nota });
       savePlan(plan);
+      ['pmName', 'pmPortion', 'pmK', 'pmP', 'pmC', 'pmF', 'pmFi', 'pmNota'].forEach(id => document.getElementById(id).value = '');
+      closePlanModal();
       renderPlanner();
-      ts('✅ ' + dish.n + ' añadido a ' + mealType);
+      ts('✅ ' + name + ' añadido');
+    }
+
+    // ═══ PORTION MODAL ═══
+    let _portionData = null;
+    let _portionCallback = null;
+
+    function openPortionModal(name, per100, presets, callback) {
+      _portionData = per100; // { k, p, c, f, fi }
+      _portionCallback = callback;
+      document.getElementById('portionName').textContent = name;
+      document.getElementById('portionSub').textContent = 'Valores por 100g: ' + per100.k + ' kcal · ' + per100.p + 'g P · ' + per100.c + 'g HC';
+      document.getElementById('portionGrams').value = presets.length ? presets[0].g : 100;
+      document.getElementById('portionPresets').innerHTML = presets.map(pr =>
+        '<button class="pm-preset" onclick="document.getElementById(\'portionGrams\').value=' + pr.g + ';updatePortionMacros()">' + pr.n + '</button>'
+      ).join('');
+      updatePortionMacros();
+      document.getElementById('portionModal').classList.add('show');
+      setTimeout(() => document.getElementById('portionGrams').focus(), 200);
+    }
+
+    function updatePortionMacros() {
+      const g = parseFloat(document.getElementById('portionGrams').value) || 0;
+      const m = g / 100;
+      const d = _portionData;
+      document.getElementById('portionMacros').innerHTML =
+        '<span class="mp mc">' + Math.round(d.k * m) + ' kcal</span>' +
+        '<span class="mp mpr">' + (d.p * m).toFixed(1) + 'g P</span>' +
+        '<span class="mp mh">' + (d.c * m).toFixed(1) + 'g HC</span>' +
+        '<span class="mp mf">' + (d.f * m).toFixed(1) + 'g G</span>' +
+        '<span class="mp mfi">' + (d.fi * m).toFixed(1) + 'g F</span>';
+    }
+    document.getElementById('portionGrams').addEventListener('input', updatePortionMacros);
+
+    function closePortionModal() { document.getElementById('portionModal').classList.remove('show') }
+    document.getElementById('portionModal').addEventListener('click', function(e) { if (e.target === this) closePortionModal() });
+
+    function confirmPortion() {
+      const g = parseFloat(document.getElementById('portionGrams').value) || 0;
+      if (g <= 0) { ts('❌ Introduce los gramos'); return }
+      const m = g / 100;
+      const d = _portionData;
+      if (_portionCallback) _portionCallback(g, Math.round(d.k * m), +(d.p * m).toFixed(1), +(d.c * m).toFixed(1), +(d.f * m).toFixed(1), +(d.fi * m).toFixed(1));
+      closePortionModal();
+    }
+
+    // Barcode portion modal
+    function openBarcodePortionModal() {
+      const bd = window._barcodeData;
+      if (!bd) return;
+      openPortionModal(bd.name, { k: bd.kcal, p: bd.prot, c: bd.carbs, f: bd.fat, fi: bd.fiber },
+        [{ n: bd.sUnit + ' (' + bd.serving + 'g)', g: bd.serving }, { n: '100g', g: 100 }, { n: '50g', g: 50 }, { n: '200g', g: 200 }],
+        function(g, k, p, c, f, fi) {
+          ap(bd.name, g + 'g · Código ' + bd.code, k, p, c, f, fi);
+        }
+      );
     }
 
     function removePlanItem(dayIdx, mealType, itemIdx) {
@@ -4268,6 +4805,18 @@
         savePlan(plan);
         renderPlanner();
       }
+    }
+
+    function editPlanNote(dayIdx, mealType, itemIdx) {
+      const plan = getPlan();
+      if (!plan[dayIdx] || !plan[dayIdx][mealType] || !plan[dayIdx][mealType][itemIdx]) return;
+      const item = plan[dayIdx][mealType][itemIdx];
+      const nota = prompt('📝 Nota para "' + item.n + '":', item.nota || '');
+      if (nota === null) return;
+      item.nota = nota;
+      savePlan(plan);
+      renderPlanner();
+      ts(nota ? '📝 Nota guardada' : '📝 Nota eliminada');
     }
 
     // ─── BARCODE SCANNER ───
@@ -4365,14 +4914,14 @@
           const fiber = Math.round((n100.fiber_100g || 0) * 10) / 10;
           const serving = p.serving_quantity || 100;
           const sUnit = p.serving_size || '100g';
-          const m = serving / 100;
+          // Store per-100g values for portion modal
+          window._barcodeData = { name, code, kcal, prot, carbs, fat, fiber, serving, sUnit };
           document.getElementById('barcodeResult').innerHTML =
             '<div class="barcode-result">' +
             '<div class="br-name">' + name + '</div>' +
-            '<div style="font-size:.72rem;color:var(--tx3);margin-bottom:10px">Código: ' + code + ' · Ración: ' + sUnit + '</div>' +
-            '<div class="mr"><span class="mp mc">' + Math.round(kcal * m) + ' kcal</span><span class="mp mpr">' + Math.round(prot * m) + 'g P</span><span class="mp mh">' + Math.round(carbs * m) + 'g HC</span><span class="mp mf">' + Math.round(fat * m) + 'g G</span><span class="mp mfi">' + Math.round(fiber * m) + 'g F</span></div>' +
-            '<div style="font-size:.65rem;color:var(--tx3);margin:8px 0">Valores por 100g: ' + kcal + ' kcal · ' + prot + 'g P · ' + carbs + 'g HC · ' + fat + 'g G</div>' +
-            '<button class="dab" onclick="ap(\'' + name.replace(/'/g, "\\'") + '\',\'Código ' + code + '\',' + Math.round(kcal * m) + ',' + Math.round(prot * m) + ',' + Math.round(carbs * m) + ',' + Math.round(fat * m) + ',' + Math.round(fiber * m) + ')">➕ Añadir al plato de hoy</button>' +
+            '<div style="font-size:.72rem;color:var(--tx3);margin-bottom:10px">Código: ' + code + ' · Por 100g: ' + kcal + ' kcal</div>' +
+            '<div class="mr"><span class="mp mc">' + kcal + ' kcal/100g</span><span class="mp mpr">' + prot + 'g P</span><span class="mp mh">' + carbs + 'g HC</span><span class="mp mf">' + fat + 'g G</span><span class="mp mfi">' + fiber + 'g F</span></div>' +
+            '<button class="dab" onclick="openBarcodePortionModal()">⚖️ Elegir porción y añadir</button>' +
             '</div>';
         } else {
           document.getElementById('barcodeResult').innerHTML = '<div class="gn2" style="border-color:rgba(229,91,91,.3);color:var(--fat);background:rgba(229,91,91,.06)">❌ Producto no encontrado. Prueba con otro código.</div>';
@@ -4413,7 +4962,7 @@
 
     // ═══ PAYPAL NCP INTEGRATION ═══
     // Payment is handled via PayPal NCP links (no SDK needed)
-    let paypalRendered = true; // No SDK rendering needed
+    let paypalRendered = true;
     function renderPayPalButton() { /* NCP links used instead */ }
     function loadPayPalSDK() { /* NCP links used instead */ }
 
